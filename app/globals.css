@@ -40,3 +40,16 @@ a {
     color-scheme: dark;
   }
 }
+
+.mentorImg {
+  display: none;
+  max-height: 800px;
+  margin-top: auto;
+  align-self: center;
+}
+
+@media (min-width: 1024px) {
+  .mentorImg {
+    display: block;
+  }
+}
