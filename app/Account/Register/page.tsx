@@ -5,13 +5,11 @@ import CountdownTimer from '@/app/components/CountdownTimer';
 import { redirect } from 'next/navigation';
 import { getExpireToken } from '@/mentorApi';
 
-type RegisterPageProps = {
-  searchParams?: {
-    token?: string;
-  };
-};
-
-export default async function RegisterPage({ searchParams }: RegisterPageProps) {
+export default async function RegisterPage({
+  searchParams,
+}: {
+  searchParams?: { token?: string };
+}) {
   const token = searchParams?.token ?? '';
 
   const result = await getExpireToken(token);
