@@ -18,6 +18,7 @@ import { useState } from 'react';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import { authCrmLogin, loginDto } from '@/mentorApi';
+import { redirect } from 'next/navigation';
 
 type FormData = {
   login: string;
@@ -43,11 +44,13 @@ export default function LoginForm() {
       password: data.password,
     } as loginDto;
 
-    if (data.isElma) {
-      await authCrmLogin(body);
-    }
-
     reset();
+
+    if (data.isElma) {
+      const authResult = await authCrmLogin(body);
+
+      if (authResult?.Result && authResult?.Result === 'CRM login successful') redirect('/');
+    }
   };
 
   return (

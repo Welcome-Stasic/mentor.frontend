@@ -1,4 +1,4 @@
-const BASE_URL = 'https://mentor.eriskip.com:6443';
+const BASE_URL = 'https://devmentor.eriskip.com:6443';
 const API_ROUTE = 'api';
 const VERSION = 'v1';
 const API_URL = `${BASE_URL}/${API_ROUTE}/${VERSION}`;

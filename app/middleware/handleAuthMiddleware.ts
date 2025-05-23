@@ -3,22 +3,22 @@ import { NextRequest } from 'next/server';
 
 export function handleAuthMiddleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
-
-  // Пропускаем страницы Login и Register
-  if (pathname.startsWith('/Account/Login') || pathname.startsWith('/Account/Register')) {
-    return NextResponse.next();
-  }
-
-  // Проверяем наличие токена
   const token = req.cookies.get('token');
 
-  // Если токен не найден, редиректим на страницу Login
-  if (!token) {
-    const url = req.nextUrl.clone();
-    url.pathname = '/Account/Login';
-    return NextResponse.redirect(url);
+  const isAuthPage =
+    pathname.startsWith('/Account/Login') ||
+    pathname.startsWith('/Account/Register');
+
+  if (isAuthPage && token) {
+    const referer = req.headers.get('referer') || '/';
+    return NextResponse.redirect(new URL(referer, req.url));
   }
 
-  // Если токен есть, пропускаем запрос
+  if (!token && !isAuthPage) {
+    const loginUrl = req.nextUrl.clone();
+    loginUrl.pathname = '/Account/Login';
+    return NextResponse.redirect(loginUrl);
+  }
+
   return NextResponse.next();
 }
