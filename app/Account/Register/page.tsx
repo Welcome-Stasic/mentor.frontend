@@ -6,13 +6,13 @@ import { redirect } from 'next/navigation';
 import { getExpireToken } from '@/mentorApi';
 
 type RegisterPageProps = {
-  searchParams: {
-    token: string;
+  searchParams?: {
+    token?: string;
   };
 };
 
 export default async function RegisterPage({ searchParams }: RegisterPageProps) {
-  const { token } = searchParams;
+  const token = searchParams?.token ?? '';
 
   const result = await getExpireToken(token);
   const tokenBody = result?.Result ?? null;
