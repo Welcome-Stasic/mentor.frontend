@@ -3,7 +3,6 @@ import { SITE_BASE_NAME } from '@/app/constants';
 import RegisterForm from '@/app/components/RegisterForm';
 import CountdownTimer from '@/app/components/CountdownTimer';
 import { redirect } from 'next/navigation';
-import { use } from 'react';
 import { getExpireToken } from '@/mentorApi';
 
 type RegisterPageProps = {
@@ -12,14 +11,16 @@ type RegisterPageProps = {
   };
 };
 
-export default function RegisterPage({ searchParams }: RegisterPageProps) {
+export default async function RegisterPage({ searchParams }: RegisterPageProps) {
   const { token } = searchParams;
 
-  const result = use(getExpireToken(token));
+  const result = await getExpireToken(token);
   const tokenBody = result?.Result ?? null;
 
   const isTokenValid =
-    tokenBody?.token === token && tokenBody.expiresAt && new Date(tokenBody.expiresAt).getTime() > Date.now();
+    tokenBody?.token === token &&
+    tokenBody.expiresAt &&
+    new Date(tokenBody.expiresAt).getTime() > Date.now();
 
   if (!isTokenValid) {
     redirect('/Expired');
@@ -35,7 +36,7 @@ export default function RegisterPage({ searchParams }: RegisterPageProps) {
         Зарегистрироваться в системе
       </Typography>
 
-      {tokenBody?.expiresAt && <CountdownTimer expiresAt={tokenBody.expiresAt}/>}
+      {tokenBody?.expiresAt && <CountdownTimer expiresAt={tokenBody.expiresAt} />}
 
       {/* Форма */}
       <RegisterForm />
