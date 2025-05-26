@@ -8,9 +8,10 @@ import { getExpireToken } from '@/mentorApi';
 export default async function RegisterPage({
   searchParams,
 }: {
-  searchParams?: { token?: string };
-}) {
-  const token = searchParams?.token ?? '';
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>
+})  {
+  const rawToken = (await searchParams).token;
+  const token = Array.isArray(rawToken) ? rawToken[0] : rawToken ?? '';
 
   const result = await getExpireToken(token);
   const tokenBody = result?.Result ?? null;
