@@ -1,4 +1,4 @@
-import { SITE_BASE_NAME } from "@/app/constants";
+import { SITE_BASE_NAME } from "@/constants";
 import { Metadata } from "next";
 
 export const metadata: Metadata  = {

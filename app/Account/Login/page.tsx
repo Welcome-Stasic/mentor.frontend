@@ -1,9 +1,9 @@
+import LoginForm from '@/components/LoginForm';
+import { SITE_BASE_NAME } from '@/constants';
 import {
   Typography,
 } from '@mui/material';
 
-import { SITE_BASE_NAME } from '@/app/constants';
-import LoginForm from '@/app/components/LoginForm';
 
 export default function LoginPage() {
   return (

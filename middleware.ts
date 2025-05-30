@@ -1,5 +1,5 @@
 import { NextRequest } from 'next/server';
-import { handleAuthMiddleware, handleRegisterMiddleware } from './app/middleware';
+import { handleAuthMiddleware, handleRegisterMiddleware } from './middlewares';
 
 export async function middleware(req: NextRequest) {
   const url = req.nextUrl;
@@ -12,5 +12,5 @@ export async function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/', '/Account/:path*']
+  matcher: ['/', '/Account/:path*', '/Request/:path*']
 };

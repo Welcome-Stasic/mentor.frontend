@@ -11,18 +11,26 @@ import Tooltip from '@mui/material/Tooltip';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import AdbIcon from '@mui/icons-material/Adb';
+import { useLogout } from '@/hooks/useLogout';
+import { useCurrentUserStore } from '@/providers/current-user-provider';
 
 const settings = ['Account', 'Logout'];
 
 export default function Header() {
+  const { ElmaId } = useCurrentUserStore((state) => state);
+
   const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);
+  const { logout } = useLogout();
 
   const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorElUser(event.currentTarget);
   };
 
-  const handleCloseUserMenu = () => {
+  const handleCloseUserMenu = (setting: string) => {
     setAnchorElUser(null);
+    if (setting == 'Logout') {
+      logout();
+    }
   };
 
   return (
@@ -44,7 +52,7 @@ export default function Header() {
               color: 'inherit',
               textDecoration: 'none',
             }}>
-            НАСТАВНИЧЕСТВО
+            НАСТАВНИЧЕСТВО {ElmaId}
           </Typography>
 
           {/* Right side - Avatar with Menu */}
@@ -72,7 +80,7 @@ export default function Header() {
               open={Boolean(anchorElUser)}
               onClose={handleCloseUserMenu}>
               {settings.map((setting) => (
-                <MenuItem key={setting} onClick={handleCloseUserMenu}>
+                <MenuItem key={setting} onClick={() => handleCloseUserMenu(setting)}>
                   <Typography textAlign="center">{setting}</Typography>
                 </MenuItem>
               ))}

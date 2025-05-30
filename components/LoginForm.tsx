@@ -19,6 +19,8 @@ import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import { authCrmLogin, loginDto } from '@/mentorApi';
 import { redirect } from 'next/navigation';
+import { setCookie } from 'cookies-next';
+import { jwtDecode } from "jwt-decode";
 
 type FormData = {
   login: string;
@@ -49,7 +51,16 @@ export default function LoginForm() {
     if (data.isElma) {
       const authResult = await authCrmLogin(body);
 
-      if (authResult?.Result && authResult?.Result === 'CRM login successful') redirect('/');
+      if (authResult?.Result) {
+        setCookie('token', authResult.Result, {
+          maxAge: jwtDecode(authResult.Result).exp,
+          path: '/',
+          sameSite: 'none',
+          secure: true,
+        });
+
+        redirect('/');
+      }
     }
   };
 

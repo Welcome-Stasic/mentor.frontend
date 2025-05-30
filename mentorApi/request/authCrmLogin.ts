@@ -9,7 +9,6 @@ export async function authCrmLogin(dto: loginDto): Promise<IApiResponse<string> 
       headers: {
         'Content-Type': 'application/json',
       },
-      credentials: "include",
       body: JSON.stringify(dto)
     });
 

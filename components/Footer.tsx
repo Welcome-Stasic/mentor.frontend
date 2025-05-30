@@ -1,6 +1,6 @@
+import { SITE_BASE_NAME } from '@/constants';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
-import { SITE_BASE_NAME } from '../constants';
 
 export default function Footer() {
   return (
