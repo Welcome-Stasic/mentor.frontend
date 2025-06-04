@@ -1,9 +1,9 @@
 import { Typography } from '@mui/material';
-import { SITE_BASE_NAME } from '@/app/constants';
-import RegisterForm from '@/app/components/RegisterForm';
-import CountdownTimer from '@/app/components/CountdownTimer';
 import { redirect } from 'next/navigation';
 import { getExpireToken } from '@/mentorApi';
+import CountdownTimer from '@/components/CountdownTimer';
+import { SITE_BASE_NAME } from '@/constants';
+import RegisterForm from '@/components/RegisterForm';
 
 export default async function RegisterPage({
   searchParams,
