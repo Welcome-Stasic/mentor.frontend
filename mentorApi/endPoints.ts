@@ -1,5 +1,4 @@
-const BASE_URL = 'https://devmentor.eriskip.com:6443';
-//const BASE_URL = 'https://localhost:7219';
+const BASE_URL = 'https://developmentmentor.eriskip.com';
 
 const API_ROUTE = 'api';
 const VERSION = 'v1';
@@ -22,5 +21,20 @@ const POST_CRM_LOGIN = 'CrmLogin';
 
 export function getCrmLoginUrl() {
   return `${API_URL}/${AUTH}/${POST_CRM_LOGIN}`;
+}
+//----
+
+//User
+const USER = 'User';
+const CRM = 'Crm';
+
+const GET_ME = 'Me';
+
+export function getMeUrl() {
+  return `${API_URL}/${USER}/${GET_ME}`;
+}
+
+export function getCrmUserUrl(userId: string) {
+  return `${API_URL}/${USER}/${CRM}/${userId}`;
 }
 //----

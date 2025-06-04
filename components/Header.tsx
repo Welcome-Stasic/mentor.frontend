@@ -17,7 +17,7 @@ import { useCurrentUserStore } from '@/providers/current-user-provider';
 const settings = ['Account', 'Logout'];
 
 export default function Header() {
-  const { ElmaId } = useCurrentUserStore((state) => state);
+  const { userName, photoUrl } = useCurrentUserStore((state) => state);
 
   const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);
   const { logout } = useLogout();
@@ -52,16 +52,16 @@ export default function Header() {
               color: 'inherit',
               textDecoration: 'none',
             }}>
-            НАСТАВНИЧЕСТВО {ElmaId}
+            НАСТАВНИЧЕСТВО
           </Typography>
 
           {/* Right side - Avatar with Menu */}
           <Box sx={{ flexGrow: 1 }} />
 
           <Box sx={{ flexGrow: 0 }}>
-            <Tooltip title="Open settings">
+            <Tooltip title={userName}>
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                <Avatar alt="User Avatar" src="/next.svg" />
+                <Avatar alt={userName} src={photoUrl} />
               </IconButton>
             </Tooltip>
             <Menu
