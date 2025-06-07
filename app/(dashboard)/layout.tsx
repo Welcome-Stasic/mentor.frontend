@@ -1,10 +1,11 @@
-import Footer from "@/components/Footer";
-import Header from "@/components/Header";
-import Sidebar from "@/components/Sidebar";
+import Footer from '@/components/Footer';
+import Header from '@/components/Header';
+import Sidebar from '@/components/Sidebar';
+import { CurrentUserStoreProvider } from '@/providers/current-user-provider';
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   return (
-    <>
+    <CurrentUserStoreProvider>
       <Header />
       <div style={{ display: 'flex', minHeight: '100vh', flexDirection: 'column' }}>
         <div style={{ display: 'flex', flexGrow: 1 }}>
@@ -13,6 +14,6 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         </div>
         <Footer />
       </div>
-    </>
+    </CurrentUserStoreProvider>
   );
 }

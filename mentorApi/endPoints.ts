@@ -18,9 +18,19 @@ export function getExpireTokenUrl(token: string) {
 const AUTH = 'Auth';
 
 const POST_CRM_LOGIN = 'CrmLogin';
+const LOGIN = 'Login';
+const POST_REGISTER = 'Register';
 
 export function getCrmLoginUrl() {
   return `${API_URL}/${AUTH}/${POST_CRM_LOGIN}`;
+}
+
+export function getRegisterUrl() {
+  return `${API_URL}/${AUTH}/${POST_REGISTER}`;
+}
+
+export function getLoginUrl() {
+  return `${API_URL}/${AUTH}/${LOGIN}`;
 }
 //----
 
@@ -36,5 +46,22 @@ export function getMeUrl() {
 
 export function getCrmUserUrl(userId: string) {
   return `${API_URL}/${USER}/${CRM}/${userId}`;
+}
+//----
+
+//Quiz
+const QUIZ = 'Quiz'
+const QUIZ_GET_ALL = 'GetAll'
+
+export function getQuizByIdUrl(id: string) {
+  return `${API_URL}/${QUIZ}/${id}`;
+}
+
+export function getGetAllQuiz(applicationUserId: string) {
+  const url = new URL(`${API_URL}/${QUIZ_GET_ALL}`);
+
+  url.searchParams.append('applicationUserId', applicationUserId);
+
+  return url.toString();
 }
 //----

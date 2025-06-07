@@ -1,5 +1,9 @@
 export interface ICurrentUserVmVm  {
   id: string;
   userName: string;
-  elmaUserId: string;
+  Email: string;
+  elmaUserId?: string;
+  juniorId?: string;
+  quizId?: string;
+  phoneNumber?: string
 }

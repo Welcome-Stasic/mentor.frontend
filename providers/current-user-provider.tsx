@@ -6,20 +6,12 @@ import {
   defaultInitState,
   initCurrentUserState,
 } from '@/stores/current-user-store';
-import {
-  type ReactNode,
-  createContext,
-  useRef,
-  useContext,
-  useEffect,
-} from 'react';
+import { type ReactNode, createContext, useRef, useContext, useEffect } from 'react';
 import { useStore } from 'zustand';
 
 export type UserStoreApi = ReturnType<typeof createCurrentUserStore>;
 
-export const CurrentUserStoreContext = createContext<UserStoreApi | undefined>(
-  undefined,
-);
+export const CurrentUserStoreContext = createContext<UserStoreApi | undefined>(undefined);
 
 export interface UserStoreProviderProps {
   children: ReactNode;
@@ -50,9 +42,7 @@ export const CurrentUserStoreProvider = ({ children }: UserStoreProviderProps) =
   );
 };
 
-export const useCurrentUserStore = <T,>(
-  selector: (store: CurrentUserStore) => T,
-): T => {
+export const useCurrentUserStore = <T,>(selector: (store: CurrentUserStore) => T): T => {
   const currentUserStoreContext = useContext(CurrentUserStoreContext);
 
   if (!currentUserStoreContext) {

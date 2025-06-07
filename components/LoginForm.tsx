@@ -17,10 +17,10 @@ import { useForm, SubmitHandler } from 'react-hook-form';
 import { useState } from 'react';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
-import { authCrmLogin, loginDto } from '@/mentorApi';
+import { appLoginDto, authCrmLogin, authLogin, crmLoginDto } from '@/mentorApi';
 import { redirect } from 'next/navigation';
 import { setCookie } from 'cookies-next';
-import { jwtDecode } from "jwt-decode";
+import { jwtDecode } from 'jwt-decode';
 
 type FormData = {
   login: string;
@@ -40,28 +40,44 @@ export default function LoginForm() {
     reset,
   } = useForm<FormData>();
 
+  const setTokenAndRedirect = (token: string) => {
+    const decoded = jwtDecode(token);
+
+    setCookie('token', token, {
+      maxAge: decoded.exp,
+      path: '/',
+      sameSite: 'none',
+      secure: true,
+    });
+
+    redirect('/');
+  };
   const onSubmit: SubmitHandler<FormData> = async (data) => {
-    const body = {
-      login: data.login,
-      password: data.password,
-    } as loginDto;
-
-    reset();
-
     if (data.isElma) {
+      const body: crmLoginDto = {
+        login: data.login,
+        password: data.password,
+      };
+
       const authResult = await authCrmLogin(body);
 
       if (authResult?.Result) {
-        setCookie('token', authResult.Result, {
-          maxAge: jwtDecode(authResult.Result).exp,
-          path: '/',
-          sameSite: 'none',
-          secure: true,
-        });
+        setTokenAndRedirect(authResult.Result);
+      }
+    } else {
+      const body: appLoginDto = {
+        email: data.login,
+        password: data.password,
+      };
 
-        redirect('/');
+      const authResult = await authLogin(body);
+
+      if (authResult?.Result) {
+        setTokenAndRedirect(authResult.Result);
       }
     }
+
+    reset();
   };
 
   return (

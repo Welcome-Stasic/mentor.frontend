@@ -1,10 +1,10 @@
-import { getCrmLoginUrl } from '@mentorApi/endPoints';
-import { crmLoginDto } from '@mentorApi/model/dto/loginDto';
+import { getLoginUrl } from '@mentorApi/endPoints';
+import { appLoginDto } from '@mentorApi/model/dto/loginDto';
 import IApiResponse from '@mentorApi/model/viewModel/apiResponseVm';
 
-export async function authCrmLogin(dto: crmLoginDto): Promise<IApiResponse<string> | null> {
+export async function authLogin(dto: appLoginDto): Promise<IApiResponse<string> | null> {
   try {
-    const response = await fetch(getCrmLoginUrl(), {
+    const response = await fetch(getLoginUrl(), {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

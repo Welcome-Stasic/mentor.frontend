@@ -1,5 +1,7 @@
 'use client';
 
+import { registerDto } from '@/mentorApi/model/dto/registerDto';
+import { authRegister } from '@/mentorApi/request/authRegister';
 import { Button, TextField, Grid } from '@mui/material';
 import { useForm, SubmitHandler } from 'react-hook-form';
 
@@ -14,10 +16,19 @@ export default function RegisterForm() {
     register,
     handleSubmit,
     formState: { errors },
+    reset,
   } = useForm<FormData>();
 
-  const onSubmit: SubmitHandler<FormData> = (data) => {
-    console.log('Login data:', data);
+  const onSubmit: SubmitHandler<FormData> = async (data) => {
+    const body = {
+      email: data.email,
+      password: data.password,
+      confirmPassword: data.confirmPassword,
+    } as registerDto;
+
+    reset();
+
+    await authRegister(body);
   };
 
   return (
