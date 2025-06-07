@@ -10,9 +10,10 @@ import Avatar from '@mui/material/Avatar';
 import Tooltip from '@mui/material/Tooltip';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
-import AdbIcon from '@mui/icons-material/Adb';
+import Image from 'next/image'
 import { useLogout } from '@/hooks/useLogout';
 import { useCurrentUserStore } from '@/providers/current-user-provider';
+import erisLogo from '@assets/eris_logo.png';
 
 const settings = ['Account', 'Logout'];
 
@@ -37,7 +38,8 @@ export default function Header() {
     <header>
       <AppBar>
         <Toolbar sx={{ justifyContent: 'space-between' }}>
-          <AdbIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }} />
+          <Image src={erisLogo} alt='eris_logo' width={40}  style={{marginRight: '16px'}} />
+
           <Typography
             variant="h6"
             noWrap
