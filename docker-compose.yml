@@ -2,7 +2,7 @@ version: "3.9"
 
 services:
   nextjs:
-    image: ghcr.io/12BSG12/eris.mentor:latest  # будет обновляться из GHCR
+    image: ghcr.io/12bsg12/eris.mentor:latest  # будет обновляться из GHCR
     container_name: nextjs
     restart: always
 

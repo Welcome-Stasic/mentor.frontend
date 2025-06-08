@@ -40,6 +40,7 @@ jobs:
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_KEY }}
           port: ${{ secrets.SSH_PORT }}
+          envs: OWNER_LOWER,IMAGE_NAME
           script: |
             docker login ghcr.io -u $OWNER_LOWER -p ${{ secrets.GITHUB_TOKEN }}
             docker pull ghcr.io/$OWNER_LOWER/$IMAGE_NAME:latest
