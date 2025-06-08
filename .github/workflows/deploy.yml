@@ -43,5 +43,5 @@ jobs:
           script: |
             docker login ghcr.io -u $OWNER_LOWER -p ${{ secrets.GITHUB_TOKEN }}
             docker pull ghcr.io/$OWNER_LOWER/$IMAGE_NAME:latest
-            docker-compose down
-            docker-compose up -d
+            docker compose down
+            docker compose up
