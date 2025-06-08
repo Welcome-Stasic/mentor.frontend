@@ -1,4 +1,4 @@
-name: Deploy via SSH + GHCR
+name: Deploy to GHCR and Server
 
 on:
   push:
@@ -13,24 +13,31 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
+      - name: Set lowercase image namespace
+        id: vars
+        run: |
+          OWNER_LOWER=$(echo "${{ github.repository_owner }}" | tr '[:upper:]' '[:lower:]')
+          echo "OWNER_LOWER=$OWNER_LOWER" >> $GITHUB_ENV
+          echo "IMAGE_NAME=eris.mentor" >> $GITHUB_ENV
+
       - name: Log in to GitHub Container Registry
-        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.repository_owner }} --password-stdin
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u $OWNER_LOWER --password-stdin
 
       - name: Build and push Docker image to GHCR
         run: |
-          IMAGE=ghcr.io/${{ github.repository_owner }}/eris.mentor:latest
+          IMAGE=ghcr.io/$OWNER_LOWER/$IMAGE_NAME:latest
           docker build -t $IMAGE .
           docker push $IMAGE
 
       - name: SSH login and deploy
         uses: appleboy/ssh-action@v0.1.5
         with:
-          host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_USER }}
-          key: ${{ secrets.SSH_KEY }}
-          port: ${{ secrets.SSH_PORT }}
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USERNAME }}
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          port: ${{ secrets.SERVER_PORT }}
           script: |
-            docker login ghcr.io -u ${{ github.repository_owner }} -p ${{ secrets.GITHUB_TOKEN }}
-            docker pull ghcr.io/${{ github.repository_owner }}/eris.mentor:latest
+            docker login ghcr.io -u $OWNER_LOWER -p ${{ secrets.GITHUB_TOKEN }}
+            docker pull ghcr.io/$OWNER_LOWER/$IMAGE_NAME:latest
             docker-compose down
             docker-compose up -d
