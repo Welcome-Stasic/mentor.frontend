@@ -51,6 +51,7 @@ jobs:
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_KEY }}
           port: ${{ secrets.SSH_PORT }}
+          envs: OWNER_LOWER,IMAGE_NAME
           script: |
             cd ${{ secrets.REMOTE_PROJECT_DIR }}
             docker login ghcr.io -u $OWNER_LOWER -p ${{ secrets.GITHUB_TOKEN }}
