@@ -1,4 +1,4 @@
-name: Deploy Next.js App
+name: Deploy via SSH + GHCR
 
 on:
   push:
@@ -6,13 +6,21 @@ on:
       - master
 
 jobs:
-  deploy:
-    name: Deploy to Server
+  build-and-deploy:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
+
+      - name: Log in to GitHub Container Registry
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.repository_owner }} --password-stdin
+
+      - name: Build and push Docker image to GHCR
+        run: |
+          IMAGE=ghcr.io/${{ github.repository_owner }}/eris.mentor:latest
+          docker build -t $IMAGE .
+          docker push $IMAGE
 
       - name: SSH login and deploy
         uses: appleboy/ssh-action@v0.1.5
@@ -22,7 +30,7 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           port: ${{ secrets.SSH_PORT }}
           script: |
-            cd ${{ secrets.PROJECT_DIR }}
-            git pull origin master
+            docker login ghcr.io -u ${{ github.repository_owner }} -p ${{ secrets.GITHUB_TOKEN }}
+            docker pull ghcr.io/${{ github.repository_owner }}/eris.mentor:latest
             docker-compose down
-            docker-compose up -d --build
+            docker-compose up -d

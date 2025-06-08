@@ -2,16 +2,13 @@ version: "3.9"
 
 services:
   nextjs:
-    build: .
-    container_name: next-app
-    expose:
-      - 3000
-    environment:
-      - NODE_ENV=production
+    image: ghcr.io/12BSG12/eris.mentor:latest  # будет обновляться из GHCR
+    container_name: nextjs
+    restart: always
 
   nginx:
     image: nginx:stable-alpine
-    container_name: next-nginx
+    container_name: nginx
     ports:
       - "80:80"
       - "443:443"
