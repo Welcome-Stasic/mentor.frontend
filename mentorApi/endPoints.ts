@@ -20,6 +20,7 @@ const AUTH = 'Auth';
 const POST_CRM_LOGIN = 'CrmLogin';
 const LOGIN = 'Login';
 const POST_REGISTER = 'Register';
+const REFRESH_TOKEN = 'RefreshToken'
 
 export function getCrmLoginUrl() {
   return `${API_URL}/${AUTH}/${POST_CRM_LOGIN}`;
@@ -31,6 +32,10 @@ export function getRegisterUrl() {
 
 export function getLoginUrl() {
   return `${API_URL}/${AUTH}/${LOGIN}`;
+}
+
+export function getRefreshTokenUrl() {
+  return `${API_URL}/${AUTH}/${REFRESH_TOKEN}`;
 }
 //----
 

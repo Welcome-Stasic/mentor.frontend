@@ -6,8 +6,8 @@ export const useQuiz: Middleware = async (req: NextRequest) => {
   const url = req.nextUrl;
   
   if (url.pathname === "/Quiz") return;
-    
-  const token = req.cookies.get('token')?.value
+  
+  const token = req.cookies.get('token')?.value ?? ''
 
   if(!token) return;
 
