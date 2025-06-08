@@ -32,15 +32,14 @@ jobs:
           docker build -t $IMAGE .
           docker push $IMAGE
 
-      # ⬇️ Копируем docker-compose.yml на сервер
-      - name: Copy docker-compose.yml to server
+      - name: Copy entire project to server
         uses: appleboy/scp-action@v0.1.4
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_KEY }}
           port: ${{ secrets.SSH_PORT }}
-          source: 'docker-compose.yml'
+          source: '.'
           target: ${{ secrets.REMOTE_PROJECT_DIR }}
 
       # ⬇️ Запускаем деплой по SSH
