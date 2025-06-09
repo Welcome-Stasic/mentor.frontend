@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { type Middleware } from './types';
 import { jwtDecode } from 'jwt-decode';
+import { getAllQuiz } from '@/mentorApi/request/getAllQuiz';
 
 export const useQuiz: Middleware = async (req: NextRequest) => {
   const url = req.nextUrl;
@@ -13,10 +14,14 @@ export const useQuiz: Middleware = async (req: NextRequest) => {
 
   const decoded: Record<string, unknown> = jwtDecode(token);
 
-  const quizStage = decoded['quiz_stage'] as string;
-  const quizCompleted = decoded['quiz_isCompleted'] as string;
+  const applicationUserId = decoded['id'] as string;
 
-  if(quizStage && quizCompleted === 'False'){
-    return NextResponse.redirect(new URL('/Quiz', req.url))
+  if(applicationUserId){
+    const response = await getAllQuiz(applicationUserId);
+    const quiz = response?.Result?.data?.[0];
+
+    if (!quiz?.isCompleted) {
+      return NextResponse.redirect(new URL('/Quiz', req.url));
+    }
   };
 }

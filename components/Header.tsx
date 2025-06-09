@@ -10,7 +10,7 @@ import Avatar from '@mui/material/Avatar';
 import Tooltip from '@mui/material/Tooltip';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
-import Image from 'next/image'
+import Image from 'next/image';
 import { useLogout } from '@/hooks/useLogout';
 import { useCurrentUserStore } from '@/providers/current-user-provider';
 import erisLogo from '@assets/eris_logo.png';
@@ -38,7 +38,7 @@ export default function Header() {
     <header>
       <AppBar>
         <Toolbar sx={{ justifyContent: 'space-between' }}>
-          <Image src={erisLogo} alt='eris_logo' width={40}  style={{marginRight: '16px'}} />
+          <Image src={erisLogo} alt="eris_logo" width={40} style={{ marginRight: '16px' }} />
 
           <Typography
             variant="h6"
@@ -63,7 +63,7 @@ export default function Header() {
           <Box sx={{ flexGrow: 0 }}>
             <Tooltip title={userName}>
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                <Avatar alt={userName} src={photoUrl} />
+                <Avatar alt={userName} src={photoUrl ?? ''} />
               </IconButton>
             </Tooltip>
             <Menu

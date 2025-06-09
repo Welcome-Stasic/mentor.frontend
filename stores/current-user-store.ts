@@ -7,10 +7,10 @@ import { getQuizById } from '@/mentorApi/request/getQuizById';
 
 export type CurrentUserState = {
   id: string;
-  elmaId: string;
+  elmaId?: string | null;
   userName: string;
-  photoUrl: string;
-  quiz: IQuizVm | null;
+  photoUrl?: string | null;
+  quiz?: IQuizVm | null;
 };
 
 export type CounterActions = object & {};
@@ -19,45 +19,54 @@ export type CurrentUserStore = CurrentUserState & CounterActions;
 
 export const defaultInitState: CurrentUserState = {
   id: '',
-  elmaId: '',
+  elmaId: null,
   userName: '',
-  photoUrl: '',
+  photoUrl: null,
   quiz: null,
 };
 
 export const initCurrentUserState = async (): Promise<CurrentUserState> => {
-  const response = await getMe();
+  try {
+    const meResponse = await getMe();
+    const me = meResponse?.Result;
 
-  if (response !== null && response.Result) {
-    const state = {
-      id: response.Result.id,
-      elmaId: response.Result.elmaUserId,
-      userName: response.Result.userName,
-    } as CurrentUserState;
-
-    const crmResponse = await getCrmUser(state.elmaId);
-
-    if (
-      crmResponse !== null &&
-      crmResponse.Result &&
-      crmResponse.Result.userInfo &&
-      crmResponse.Result.userInfo.photo
-    ) {
-      state.photoUrl = `https://phone.eriskip.com/files/maximize/${crmResponse.Result.userInfo.photo.file}.jpg`;
+    if (!me) {
+      return defaultInitState;
     }
 
-    if(response.Result.quizId){
-      const quizResponse = await getQuizById(response.Result.quizId);
+    const state: CurrentUserState = {
+      id: me.id,
+      elmaId: me.elmaUserId ?? null,
+      userName: me.userName,
+      photoUrl: null,
+      quiz: null,
+    };
+
+    // CRM: фото пользователя
+    if(me.elmaUserId){
+      const crmResponse = await getCrmUser(me.elmaUserId);
+      const photoFile = crmResponse?.Result?.userInfo?.photo?.file;
   
-      if (quizResponse !== null && quizResponse.Result) {
-        state.quiz = quizResponse.Result;
+      if (photoFile) {
+        state.photoUrl = `https://phone.eriskip.com/files/maximize/${photoFile}.jpg`;
+      }
+    }
+
+    // Квиз
+    if (me.quizId) {
+      const quizResponse = await getQuizById(me.quizId);
+      const quiz = quizResponse?.Result;
+
+      if (quiz) {
+        state.quiz = quiz;
       }
     }
 
     return state;
+  } catch (error) {
+    console.error('Error initializing current user state:', error);
+    return defaultInitState;
   }
-
-  return defaultInitState;
 };
 
 export const createCurrentUserStore = (initState: CurrentUserState = defaultInitState) => {

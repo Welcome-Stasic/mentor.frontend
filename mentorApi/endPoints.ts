@@ -63,7 +63,7 @@ export function getQuizByIdUrl(id: string) {
 }
 
 export function getGetAllQuiz(applicationUserId: string) {
-  const url = new URL(`${API_URL}/${QUIZ_GET_ALL}`);
+  const url = new URL(`${API_URL}/${QUIZ}/${QUIZ_GET_ALL}`);
 
   url.searchParams.append('applicationUserId', applicationUserId);
 

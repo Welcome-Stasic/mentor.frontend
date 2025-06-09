@@ -1,16 +1,16 @@
-import { getQuizByIdUrl } from '@mentorApi/endPoints';
+import { getGetAllQuiz } from '@mentorApi/endPoints';
 import IApiResponse from '@mentorApi/model/viewModel/apiResponseVm';
 import { getCookie } from 'cookies-next';
 import { IQuizVm } from '../model/viewModel/quizVm';
 import { IPaginationResponse } from '../model/viewModel/paginationResponse';
 
-export async function getAllQuiz(applicationUserid: string): Promise<IApiResponse<IPaginationResponse<IQuizVm>> | null> {
+export async function getAllQuiz(applicationUserId: string): Promise<IApiResponse<IPaginationResponse<IQuizVm>> | null> {
   const token = getCookie('token');
 
   if(!token) return null;
 
   try {
-    const response = await fetch(getQuizByIdUrl(applicationUserid), {
+    const response = await fetch(getGetAllQuiz(applicationUserId), {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
