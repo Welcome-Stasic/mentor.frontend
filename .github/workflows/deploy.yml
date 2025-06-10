@@ -32,6 +32,16 @@ jobs:
           docker build -t $IMAGE .
           docker push $IMAGE
 
+      - name: Copy entire project to server
+        uses: appleboy/scp-action@v0.1.4
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_KEY }}
+          port: ${{ secrets.SSH_PORT }}
+          source: '.'
+          target: ${{ secrets.REMOTE_PROJECT_DIR }}
+
       # ⬇️ Запускаем деплой по SSH
       - name: SSH login and deploy
         uses: appleboy/ssh-action@v0.1.5
