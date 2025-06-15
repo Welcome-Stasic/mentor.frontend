@@ -1,31 +1,29 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
 import {
+  Box,
   Button,
   TextField,
   Checkbox,
   FormControlLabel,
-  Box,
   Typography,
   FormControl,
   InputLabel,
   OutlinedInput,
 } from '@mui/material';
-import { useForm, SubmitHandler } from 'react-hook-form';
+import { useForm, SubmitHandler, Controller } from 'react-hook-form';
 import { PhoneNumberMaskCustom } from './PhoneNumberMaskCustom';
-import { useState, DragEvent, ChangeEvent } from 'react';
-
-const MAX_FILE_SIZE = 2 * 1024 * 1024; // 2 МБ
-const ALLOWED_FORMATS = ['image/jpeg', 'image/png'];
+import { PhotoDropzone } from './PhotoDropzone'; // ⬅️ импортируем компонент
 
 type FormData = {
   lastName: string;
   firstName: string;
-  middleName: string;
+  middleName?: string;
   place: string;
   phoneNumber: string;
-  birthDate: Date;
-  photo: File;
+  birthDate: string;
+  photo: File | null;
   isAccepted: boolean;
 };
 
@@ -33,47 +31,20 @@ export default function QuizFirstForm() {
   const {
     register,
     handleSubmit,
+    control,
+    setError,
+    clearErrors,
     formState: { errors },
     reset,
-  } = useForm<FormData>();
+  } = useForm<FormData>({
+    defaultValues: {
+      photo: null,
+    },
+  });
 
-  const [dragActive, setDragActive] = useState(false);
-
-  const onSubmit: SubmitHandler<FormData> = async (data) => {
-    console.log('Submitted data:', data);
+  const onSubmit: SubmitHandler<FormData> = (data) => {
+    console.log('Submitted:', data);
     reset();
-  };
-
-  const handleDragOver = (e: DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setDragActive(true);
-  };
-
-  const handleDragLeave = (e: DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setDragActive(false);
-  };
-
-  const handleDrop = (e: DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setDragActive(false);
-
-    const files = e.dataTransfer.files;
-    if (files.length === 0) return;
-
-    const file = files[0];
-  };
-
-  const handleContactChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const { name, value, type, checked, files } = e.target;
-
-    if (name === 'photo' && files) {
-      const file = files[0];
-      if (!file) return;
-    }
   };
 
   return (
@@ -84,116 +55,85 @@ export default function QuizFirstForm() {
       gap={2}
       onSubmit={handleSubmit(onSubmit)}>
       <TextField
-        {...register('lastName', {
-          required: 'Поле обязателено для заполнения',
-        })}
+        {...register('lastName', { required: 'Поле обязательно' })}
         label="Фамилия"
         fullWidth
         error={!!errors.lastName}
-        helperText={errors.lastName ? errors.lastName.message : ''}
+        helperText={errors.lastName?.message}
       />
       <TextField
-        {...register('firstName', {
-          required: 'Поле обязателено для заполнения',
-        })}
+        {...register('firstName', { required: 'Поле обязательно' })}
         label="Имя"
         fullWidth
         error={!!errors.firstName}
-        helperText={errors.firstName ? errors.firstName.message : ''}
+        helperText={errors.firstName?.message}
       />
+      <TextField {...register('middleName')} label="Отчество" fullWidth />
       <TextField
-        {...register('middleName')}
-        label="Отчество"
-        fullWidth
-        error={!!errors.middleName}
-        helperText={errors.middleName ? errors.middleName.message : ''}
-      />
-      <TextField
-        {...register('place', {
-          required: 'Поле обязателено для заполнения',
-        })}
+        {...register('place', { required: 'Поле обязательно' })}
         label="Место проживания"
         fullWidth
         error={!!errors.place}
-        helperText={errors.place ? errors.place.message : ''}
+        helperText={errors.place?.message}
       />
-      <FormControl
-        {...register('phoneNumber', {
-          required: 'Поле обязателено для заполнения',
-        })}
-        fullWidth
-        error={!!errors.phoneNumber}>
-        <InputLabel htmlFor="component-outlined">Номер телефона</InputLabel>
-        <OutlinedInput
-          id="component-outlined"
-          label="Номер телефона"
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          inputComponent={PhoneNumberMaskCustom as any}
-        />
-      </FormControl>
-
-      <TextField
-        {...register('birthDate', {
-          required: 'Поле обязателено для заполнения',
-        })}
-        label="Дата рождения"
-        slotProps={{ inputLabel: { shrink: true } }}
-        fullWidth
-        error={!!errors.birthDate}
-        helperText={errors.birthDate ? errors.birthDate.message : ''}
-        type="date"
-      />
-      <Box
-        onDragOver={handleDragOver}
-        onDragLeave={handleDragLeave}
-        onDrop={handleDrop}
-        sx={{
-          border: '2px dashed',
-          borderColor: dragActive ? 'primary.main' : 'grey.400',
-          borderRadius: 1,
-          height: 120,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          textAlign: 'center',
-          cursor: 'pointer',
-          bgcolor: dragActive ? 'action.hover' : 'transparent',
-          transition: 'background-color 0.3s',
-          color: 'text.secondary',
-          userSelect: 'none',
-          position: 'relative',
-        }}>
-        {false ? (
-          <Typography>Файл загружен: </Typography>
-        ) : (
-          <Typography>
-            Перетащите фото сюда или нажмите ниже, чтобы выбрать файл (JPG, PNG, до 2 МБ)
-          </Typography>
+      <Controller
+        name="phoneNumber"
+        control={control}
+        rules={{ required: 'Поле обязательно' }}
+        render={({ field }) => (
+          <FormControl fullWidth error={!!errors.phoneNumber}>
+            <InputLabel htmlFor="phone-input">Номер телефона</InputLabel>
+            <OutlinedInput
+              id="phone-input"
+              label="Номер телефона"
+              inputComponent={PhoneNumberMaskCustom as any}
+              {...field}
+            />
+          </FormControl>
         )}
-      </Box>
+      />
+      <TextField
+        {...register('birthDate', { required: 'Поле обязательно' })}
+        label="Дата рождения"
+        type="date"
+        fullWidth
+        slotProps={{ inputLabel: { shrink: true } }}
+        error={!!errors.birthDate}
+        helperText={errors.birthDate?.message}
+      />
 
-      {/* Кнопка выбора файла */}
-      <Button variant="outlined" component="label" sx={{ mt: 1 }}>
-        Выбрать файл
-        <input
-          hidden
-          accept="image/jpeg,image/png"
-          type="file"
-          name="photo"
-          onChange={handleContactChange}
-        />
-      </Button>
+      {/* Фото через кастомный компонент */}
+      <Controller
+        name="photo"
+        control={control}
+        rules={{ required: 'Загрузите фотографию' }}
+        render={({ field, fieldState }) => (
+          <PhotoDropzone
+            field={field}
+            error={fieldState.error}
+            onFileError={(message) => {
+              if (message) {
+                setError('photo', { message });
+                field.onChange(null); // сброс файла
+              } else {
+                clearErrors('photo');
+              }
+            }}
+          />
+        )}
+      />
 
       <FormControlLabel
         control={
           <Checkbox
             {...register('isAccepted', {
-              required: 'Поле обязателено для заполнения',
+              required: 'Вы должны согласиться',
             })}
           />
         }
         label="Я согласен(на) на обработку персональных данных"
       />
+      {errors.isAccepted && <Typography color="error">{errors.isAccepted.message}</Typography>}
       <Button variant="contained" type="submit">
         Далее
       </Button>
