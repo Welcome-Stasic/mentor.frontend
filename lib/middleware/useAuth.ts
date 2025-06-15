@@ -5,6 +5,8 @@ import { isTokenExpired } from '../auth';
 export const useAuth: Middleware = (req) => {
   const { pathname } = req.nextUrl;
   const token = req.cookies.get('token')?.value;
+  
+  if(pathname.startsWith('/Expired')) return;
 
   const isAuthPage =
     pathname.startsWith('/Account/Login') || pathname.startsWith('/Account/Register');
