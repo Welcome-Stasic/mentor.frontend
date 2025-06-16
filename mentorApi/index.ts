@@ -1,4 +1,16 @@
-export { getExpireTokenUrl, getCrmLoginUrl, getMeUrl, getCrmUserUrl, getRegisterUrl, getQuizByIdUrl, getLoginUrl, getGetAllQuiz, getRefreshTokenUrl } from './endPoints';
+export {
+  getExpireTokenUrl,
+  getCrmLoginUrl,
+  getMeUrl,
+  getCrmUserUrl,
+  getRegisterUrl,
+  getQuizByIdUrl,
+  getLoginUrl,
+  getGetAllQuiz,
+  getRefreshTokenUrl,
+  getForgotPasswordUrl,
+  getResetPasswordUrl
+} from './endPoints';
 
 export type { IExpireTokenVm } from './model/viewModel/expireTokenVm';
 export type { ICurrentUserVmVm } from './model/viewModel/currentUserVm';
@@ -6,8 +18,10 @@ export type { crmLoginDto, appLoginDto } from './model/dto/loginDto';
 export type { ICrmUserVm } from './model/viewModel/crmUserVm';
 export type { IQuizVm } from './model/viewModel/quizVm';
 export type { IPaginationResponse } from './model/viewModel/paginationResponse';
+export type { resetPasswordDto } from './model/dto/resetPasswordDto';
 
 export { getExpireToken } from './request/getExpireToken';
 export { authCrmLogin } from './request/authCrmLogin';
 export { authLogin } from './request/authLogin';
 export { getRefreshToken } from './request/getRefreshToken';
+export { forgotPassword } from './request/forgotPassword';

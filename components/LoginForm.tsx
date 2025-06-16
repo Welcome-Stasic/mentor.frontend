@@ -12,12 +12,13 @@ import {
   InputAdornment,
   IconButton,
   FormHelperText,
+  Typography,
 } from '@mui/material';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { useState } from 'react';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
-import { appLoginDto, authCrmLogin, authLogin, crmLoginDto } from '@/mentorApi';
+import { appLoginDto, authCrmLogin, authLogin, crmLoginDto, forgotPassword } from '@/mentorApi';
 import { redirect } from 'next/navigation';
 import { setCookie } from 'cookies-next';
 import { jwtDecode } from 'jwt-decode';
@@ -26,10 +27,12 @@ type FormData = {
   login: string;
   password: string;
   isElma: boolean;
+  forgotPassword?: boolean;
 };
 
 export default function LoginForm() {
   const [showPassword, setShowPassword] = useState(false);
+  const [emailSent, setEmailSent] = useState(false);
 
   const handleClickShowPassword = () => setShowPassword((show) => !show);
 
@@ -38,7 +41,11 @@ export default function LoginForm() {
     handleSubmit,
     formState: { errors },
     reset,
+    watch,
   } = useForm<FormData>();
+
+  const isElma = watch('isElma');
+  const isForgotPassword = watch('forgotPassword');
 
   const setTokenAndRedirect = (token: string) => {
     const decoded = jwtDecode(token);
@@ -52,7 +59,16 @@ export default function LoginForm() {
 
     redirect('/');
   };
+
   const onSubmit: SubmitHandler<FormData> = async (data) => {
+
+    if (!data.isElma && data.forgotPassword) {
+      await forgotPassword(data.login);
+      setEmailSent(true);
+      reset();
+      return;
+    }
+
     if (data.isElma) {
       const body: crmLoginDto = {
         login: data.login,
@@ -76,7 +92,7 @@ export default function LoginForm() {
         setTokenAndRedirect(authResult.Result);
       }
     }
-
+    
     reset();
   };
 
@@ -91,46 +107,62 @@ export default function LoginForm() {
               message: 'Некорректный логин',
             },
           })}
-          label="Логин или почта"
+          label={isElma ? 'Логин от ELMA' : 'Почта'}
           variant="outlined"
           fullWidth
           error={!!errors.login}
           helperText={errors.login ? errors.login.message : ''}
         />
-        <Grid>
-          <FormControl fullWidth variant="outlined" error={!!errors.password} sx={{ mb: 2 }}>
-            <InputLabel htmlFor="outlined-adornment-password">Пароль</InputLabel>
-            <OutlinedInput
-              id="outlined-adornment-password"
-              type={showPassword ? 'text' : 'password'}
-              label="Пароль"
-              endAdornment={
-                <InputAdornment position="end">
-                  <IconButton
-                    onClick={handleClickShowPassword}
-                    edge="end"
-                    aria-label="toggle password visibility">
-                    {showPassword ? <VisibilityOff /> : <Visibility />}
-                  </IconButton>
-                </InputAdornment>
-              }
-              {...register('password', {
-                required: 'Пароль обязателен',
-                minLength: {
-                  value: 6,
-                  message: 'Пароль должен содержать минимум 6 символов',
-                },
-              })}
-            />
-            {errors.password && <FormHelperText>{errors.password.message}</FormHelperText>}
-          </FormControl>
-        </Grid>
-        <Grid>
+        {!isForgotPassword && (
+          <Grid>
+            <FormControl fullWidth variant="outlined" error={!!errors.password}>
+              <InputLabel htmlFor="outlined-adornment-password">Пароль</InputLabel>
+              <OutlinedInput
+                id="outlined-adornment-password"
+                type={showPassword ? 'text' : 'password'}
+                label="Пароль"
+                endAdornment={
+                  <InputAdornment position="end">
+                    <IconButton
+                      onClick={handleClickShowPassword}
+                      edge="end"
+                      aria-label="toggle password visibility">
+                      {showPassword ? <VisibilityOff /> : <Visibility />}
+                    </IconButton>
+                  </InputAdornment>
+                }
+                {...register('password', {
+                  required: 'Пароль обязателен',
+                  minLength: {
+                    value: 6,
+                    message: 'Пароль должен содержать минимум 6 символов',
+                  },
+                })}
+              />
+              {errors.password && <FormHelperText>{errors.password.message}</FormHelperText>}
+            </FormControl>
+          </Grid>
+        )}
+        
+        {!isForgotPassword && (
           <FormControlLabel
             control={<Checkbox {...register('isElma')} />}
             label="Вход через BPM ELMA?"
           />
-        </Grid>
+        )}
+        {!isElma && (
+          <FormControlLabel
+            control={<Checkbox {...register('forgotPassword')} />}
+            label="Забыли пароль?"
+          />
+        )}
+        {emailSent && (
+          <Grid>
+            <Typography color="success.main" variant="body2">
+              На почту было отправлено письмо для восстановления пароля
+            </Typography>
+          </Grid>
+        )}
         <Grid>
           <Button
             type="submit"
@@ -142,7 +174,7 @@ export default function LoginForm() {
               textTransform: 'none',
               fontWeight: 'bold',
             }}>
-            Войти
+            {isForgotPassword ? 'Сбросить пароль' : 'Войти'}
           </Button>
         </Grid>
       </Grid>

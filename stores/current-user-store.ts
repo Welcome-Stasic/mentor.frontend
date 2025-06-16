@@ -13,9 +13,11 @@ export type CurrentUserState = {
   quiz?: IQuizVm | null;
 };
 
-export type CounterActions = object & {};
+export type CurrentUserActions = {
+  setQuiz: (quiz: IQuizVm | null) => void;
+};
 
-export type CurrentUserStore = CurrentUserState & CounterActions;
+export type CurrentUserStore = CurrentUserState & CurrentUserActions;
 
 export const defaultInitState: CurrentUserState = {
   id: '',
@@ -72,8 +74,11 @@ export const initCurrentUserState = async (): Promise<CurrentUserState> => {
 export const createCurrentUserStore = (initState: CurrentUserState = defaultInitState) => {
   return createStore<CurrentUserStore>()(
     devtools(
-      () => ({
+      (set) => ({
         ...initState,
+        setQuiz: (quiz: IQuizVm | null) => {
+          set((state) => ({ ...state.quiz, quiz }));
+        },
       }),
       { name: 'CurrentUserStore' },
     )

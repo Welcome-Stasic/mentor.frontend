@@ -8,8 +8,7 @@ export const useAuth: Middleware = (req) => {
   
   if(pathname.startsWith('/Expired')) return;
 
-  const isAuthPage =
-    pathname.startsWith('/Account/Login') || pathname.startsWith('/Account/Register');
+  const isAuthPage = pathname.startsWith('/Account');
 
   const isLoggedIn = token && !isTokenExpired(token);
 

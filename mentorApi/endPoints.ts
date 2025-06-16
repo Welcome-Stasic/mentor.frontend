@@ -21,6 +21,8 @@ const POST_CRM_LOGIN = 'CrmLogin';
 const LOGIN = 'Login';
 const POST_REGISTER = 'Register';
 const REFRESH_TOKEN = 'RefreshToken'
+const FORGOT_PASSWORD = 'ForgotPassword';
+const RESET_PASSWORD = 'ResetPassword';
 
 export function getCrmLoginUrl() {
   return `${API_URL}/${AUTH}/${POST_CRM_LOGIN}`;
@@ -36,6 +38,14 @@ export function getLoginUrl() {
 
 export function getRefreshTokenUrl() {
   return `${API_URL}/${AUTH}/${REFRESH_TOKEN}`;
+}
+
+export function getForgotPasswordUrl() {
+  return `${API_URL}/${AUTH}/${FORGOT_PASSWORD}`;
+}
+
+export function getResetPasswordUrl() {
+  return `${API_URL}/${AUTH}/${RESET_PASSWORD}`;
 }
 //----
 

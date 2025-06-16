@@ -42,8 +42,10 @@ export default function QuizFirstForm() {
     },
   });
 
+
   const onSubmit: SubmitHandler<FormData> = (data) => {
     console.log('Submitted:', data);
+
     reset();
   };
 
@@ -70,7 +72,7 @@ export default function QuizFirstForm() {
       />
       <TextField {...register('middleName')} label="Отчество" fullWidth />
       <TextField
-        {...register('place', { required: 'Поле обязательно' })}
+        {...register('place', { required: 'Поле обязательно', minLength: { value: 3, message: 'Минимум 3 символа' } })}
         label="Место проживания"
         fullWidth
         error={!!errors.place}
@@ -106,7 +108,7 @@ export default function QuizFirstForm() {
       <Controller
         name="photo"
         control={control}
-        rules={{ required: 'Загрузите фотографию' }}
+        rules={{ required: 'Загрузите свою фотографию' }}
         render={({ field, fieldState }) => (
           <PhotoDropzone
             field={field}
@@ -127,7 +129,7 @@ export default function QuizFirstForm() {
         control={
           <Checkbox
             {...register('isAccepted', {
-              required: 'Вы должны согласиться',
+              required: 'Поле обязательно',
             })}
           />
         }

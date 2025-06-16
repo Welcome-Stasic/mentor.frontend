@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, ChangeEvent } from 'react';
+import { useState } from 'react';
 import {
   Box,
   Tabs,
@@ -10,20 +10,16 @@ import {
   Paper,
 } from '@mui/material';
 import QuizFirstForm from '@/components/QuizFirstForm';
+import { useCurrentUserStore } from '@/providers/current-user-provider';
 
+const tabLabels = ['Контактные данные', 'Вопросы'];
 
 export default function QuizPage() {
-  const [tab, setTab] = useState(0);
+  const currentQuiz = useCurrentUserStore(i => i.quiz);
+
+  const tab = currentQuiz?.stage ?? 0;
  
-  const [answers, setAnswers] = useState({ q1: '', q2: '' });
-
-  const handleAnswerChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setAnswers({ ...answers, [e.target.name]: e.target.value });
-  };
-
-  const handleSubmit = () => {
-    alert('Ответы отправлены!');
-  };
+  const [answers] = useState({ q1: '', q2: '' });
 
   return (
     <Paper
@@ -34,12 +30,9 @@ export default function QuizPage() {
         mx: 'auto',
         overflow: 'visible', // <-- важно
       }}>
+        
       <Tabs value={tab} sx={{ mb: 2 }}>
-        <Tab label="Контактные данные" />
-        <Tab
-          label="Вопросы"
-          disabled={true}
-        />
+        {tabLabels.map((label, index) => <Tab key={index} label={label} disabled={index > tab} />)}
       </Tabs>
 
       {tab === 0 && (
@@ -52,17 +45,15 @@ export default function QuizPage() {
             label="Вопрос 1: Как вы узнали о нас?"
             name="q1"
             value={answers.q1}
-            onChange={handleAnswerChange}
             fullWidth
           />
           <TextField
             label="Вопрос 2: Что вы ожидаете от продукта?"
             name="q2"
             value={answers.q2}
-            onChange={handleAnswerChange}
             fullWidth
           />
-          <Button variant="contained" onClick={handleSubmit}>
+          <Button variant="contained">
             Отправить
           </Button>
         </Box>
