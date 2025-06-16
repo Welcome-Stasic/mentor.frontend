@@ -19,7 +19,7 @@ interface ResetPasswordFormProps {
 }
 
 export default function ResetPasswordForm({ email, token }: ResetPasswordFormProps) {
-    const [isSuccessReset, setIsSuccessReset] = useState(false);
+  const [isSuccessReset, setIsSuccessReset] = useState(true);
       
   const {
     register,
@@ -62,6 +62,7 @@ export default function ResetPasswordForm({ email, token }: ResetPasswordFormPro
           error={!!errors.email}
           helperText={errors.email?.message}
           value={email}
+          disabled
         />
         <Grid>
           <TextField
@@ -100,7 +101,7 @@ export default function ResetPasswordForm({ email, token }: ResetPasswordFormPro
         {isSuccessReset && (
           <Grid>
             <Typography color="success.main" variant="body2">
-              Пароль успешно изменен. Вы можете <Link href="/">войти в систему</Link> с новым паролем.
+              Пароль успешно изменен. Вы можете <Link href="/Account/Login" style={{color: '#1976d2', textDecoration: 'underline'}}>войти в систему</Link> с новым паролем.
             </Typography>
           </Grid>
         )}

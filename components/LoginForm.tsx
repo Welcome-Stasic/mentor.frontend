@@ -27,7 +27,7 @@ type FormData = {
   login: string;
   password: string;
   isElma: boolean;
-  forgotPassword?: boolean;
+  forgotPassword: boolean;
 };
 
 export default function LoginForm() {
