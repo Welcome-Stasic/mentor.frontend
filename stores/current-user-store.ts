@@ -1,19 +1,19 @@
-import { IQuizVm } from './../mentorApi/model/viewModel/quizVm';
 import { createStore } from 'zustand/vanilla';
 import { devtools } from 'zustand/middleware';
 import { API } from '@/lib/axios';
+import { IQuiz } from '@/lib/axios/types/quiz';
 
 export type CurrentUserState = {
   id: string;
   elmaId?: string | null;
   userName: string;
   photoUrl?: string | null;
-  quiz?: IQuizVm | null;
+  quiz?: IQuiz| null;
   roles: string[];
 };
 
 export type CurrentUserActions = {
-  setQuiz: (quiz: IQuizVm | null) => void;
+  setQuiz: (quiz: IQuiz | null) => void;
 };
 
 export type CurrentUserStore = CurrentUserState & CurrentUserActions;
@@ -79,7 +79,7 @@ export const createCurrentUserStore = (initState: CurrentUserState = defaultInit
     devtools(
       (set) => ({
         ...initState,
-        setQuiz: (quiz: IQuizVm | null) => {
+        setQuiz: (quiz: IQuiz | null) => {
           set((state) => ({ ...state.quiz, quiz }));
         },
       }),

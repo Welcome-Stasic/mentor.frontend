@@ -11,5 +11,5 @@ export function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/((?!_next/static|favicon.ico|api).*)'], // исключаем _next/static, favicon.ico и api
+  matcher: ['/((?!_next/static|favicon.ico|api|EmailConfirmed).*)'], // исключаем _next/static, favicon.ico и api
 };

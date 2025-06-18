@@ -116,11 +116,6 @@ export default function RequestPage() {
 
   const pageCount = Math.ceil(filteredRequests.length / ITEMS_PER_PAGE);
 
-  const paginatedRequests = useMemo(() => {
-    const start = (page - 1) * ITEMS_PER_PAGE;
-    return filteredRequests.slice(start, start + ITEMS_PER_PAGE);
-  }, [page, filteredRequests]);
-
   const handleCategoryChange = (selectedCategory: string) => {
     setCategory(selectedCategory);
     setPage(1);
@@ -200,30 +195,28 @@ export default function RequestPage() {
           </Typography>
         ) : (
           quizzes.map((quiz) => (
-            <Grid item xs={12} sm={6} key={quiz.id}>
-              <Card>
-                <CardMedia component="img" height="200" image='' alt='' />
-                <CardContent>
-                  <Typography variant="h6" gutterBottom>
-                    1
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary" mb={1}>
-                    2
-                  </Typography>
-                  <Typography variant="caption" color="text.secondary" display="block" mb={2}>
-                    Дата создания: {new Date(quiz.creationDate).toLocaleDateString('ru-RU')}
-                  </Typography>
-                  <Box display="flex" gap={1}>
-                    <Button variant="contained" size="small" fullWidth>
-                      Просмотр
-                    </Button>
-                    <Button variant="outlined" size="small" fullWidth>
-                      Контакт
-                    </Button>
-                  </Box>
-                </CardContent>
-              </Card>
-            </Grid>
+            <Card key={quiz.id}>
+              <CardMedia component="img" height="200" image="" alt="" />
+              <CardContent>
+                <Typography variant="h6" gutterBottom>
+                  1
+                </Typography>
+                <Typography variant="body2" color="text.secondary" mb={1}>
+                  2
+                </Typography>
+                <Typography variant="caption" color="text.secondary" display="block" mb={2}>
+                  Дата создания: {new Date(quiz.creationDate).toLocaleDateString('ru-RU')}
+                </Typography>
+                <Box display="flex" gap={1}>
+                  <Button variant="contained" size="small" fullWidth>
+                    Просмотр
+                  </Button>
+                  <Button variant="outlined" size="small" fullWidth>
+                    Контакт
+                  </Button>
+                </Box>
+              </CardContent>
+            </Card>
           ))
         )}
       </Grid>

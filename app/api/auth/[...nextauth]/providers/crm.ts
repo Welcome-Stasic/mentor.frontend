@@ -28,6 +28,7 @@ export const CRMProvider = CredentialsProvider({
 
       return {
         id: decoded.id,
+        email: decoded.email,
         accessToken,
         refreshToken,
         accessTokenExpires: decoded.exp * 1000,

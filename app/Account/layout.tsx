@@ -1,6 +1,8 @@
 import { Box, Paper } from '@mui/material';
 import logo from '@assets/logo.png';
 import mentor from '@assets/resize_ai_mentor_orig_without_bg.png';
+import back from '@assets/back.png';
+
 import Link from 'next/link';
 
 export default function AccountLayout({ children }: { children: React.ReactNode }) {
@@ -13,7 +15,7 @@ export default function AccountLayout({ children }: { children: React.ReactNode 
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundImage: 'url("/assets/back.png")',
+        backgroundImage: `url(${back.src})`,
         backgroundRepeat: 'no-repeat',
         backgroundAttachment: 'fixed',
         gap: '75px',

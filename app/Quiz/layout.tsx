@@ -1,14 +1,15 @@
 'use client';
 
-import { useLogout } from '@/hooks/useLogout';
 import { CurrentUserStoreProvider } from '@/providers/current-user-provider';
 import { AppBar, Toolbar, Typography, Button, Container } from '@mui/material';
+import { signOut } from 'next-auth/react';
 
 export default function QuizLayout({ children }: { children: React.ReactNode }) {
-  const { logout } = useLogout();
-
   const handleLogout = () => {
-    logout();
+    signOut({
+      redirect: true,
+      callbackUrl: '/',
+    });
   };
 
   return (

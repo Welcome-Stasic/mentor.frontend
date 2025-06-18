@@ -1,14 +1,16 @@
 import { API } from '@/lib/axios';
 import { NextAuthOptions } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
-import { CRMProvider } from './crm-provider';
+import { CRMProvider } from './providers/crm';
 import { decodeToken } from '@/lib/utils/decodeToken';
 import { refreshAccessToken } from '@/lib/utils/refreshAccessToken';
+import { TokenProvider } from './providers/token';
 
 export const authOptions: NextAuthOptions = {
   debug: true,
   providers: [
     CRMProvider,
+    TokenProvider,
     CredentialsProvider({
       name: 'Credentials',
       credentials: {
@@ -34,6 +36,7 @@ export const authOptions: NextAuthOptions = {
 
           return {
             id: decoded.id,
+            email: decoded.email,
             accessToken,
             refreshToken,
             accessTokenExpires: decoded.exp * 1000,

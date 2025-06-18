@@ -1,9 +1,10 @@
-import { AUTH_IS_EMAIL_CONFIRMED, AUTH_RESET_PASSWORD } from './../endpoint';
+import { AUTH_IS_EMAIL_CONFIRMED, AUTH_REFRESH_TOKEN, AUTH_RESET_PASSWORD } from './../endpoint';
 import { handleApiError } from "@/lib/utils/handleApiError";
 import axiosInstance from "../axios";
 import { AUTH_CRM_LOGIN, AUTH_FORGOT_PASSWORD, AUTH_LOGIN, AUTH_REGISTER } from "../endpoint";
 import { IAppLoginDto, ICrmLoginDto, IRegisterDto, IResetPasswordDto } from "../types/auth";
 import { IApiResponse } from "../types/base";
+import { getAuthAxios } from '../authAxios';
 
 export async function login (payload: IAppLoginDto): Promise<IApiResponse<string> | null> {
   try {
@@ -57,7 +58,25 @@ export async function resetPassword (payload: IResetPasswordDto): Promise<IApiRe
 
 export async function isEmailConfirmed (email: string): Promise<IApiResponse<boolean> | null> {
   try {
-    const res = await axiosInstance.post<IApiResponse<boolean>>(AUTH_IS_EMAIL_CONFIRMED, { email });
+    if(!email) return null;
+    
+    const res = await axiosInstance.post<IApiResponse<boolean>>(AUTH_IS_EMAIL_CONFIRMED, email);
+    return res.data;
+  } catch (e) {
+    handleApiError(e);
+    return null;
+  }
+};
+
+
+export async function refreshToken(token: string): Promise<IApiResponse<string> | null> {
+  try {
+    if(!token) return null;
+    
+    const authAxios = await getAuthAxios(token);
+
+    const res = await authAxios.post<IApiResponse<string>>(AUTH_REFRESH_TOKEN);
+    
     return res.data;
   } catch (e) {
     handleApiError(e);

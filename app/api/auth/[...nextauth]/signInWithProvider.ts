@@ -1,8 +1,7 @@
-import { signIn } from 'next-auth/react';
+import { signIn } from "next-auth/react";
 
-type Provider = 'crm' | 'credentials';
+type Provider = 'crm' | 'credentials' | 'token';
 
-// Описываем параметры для каждого провайдера:
 type SignInParams<T extends Provider> = 
   T extends 'crm' ? {
     login: string;
@@ -16,11 +15,16 @@ type SignInParams<T extends Provider> =
     redirect?: boolean;
     callbackUrl?: string;
   } :
+  T extends 'token' ? {
+    token: string;
+    redirect?: boolean;
+    callbackUrl?: string;
+  } :
   never;
 
 export async function signInWithProvider<T extends Provider>(
   provider: T,
   params: SignInParams<T>
 ) {
-  return await signIn(provider, { ...params});
+  return await signIn(provider, { ...params });
 }
