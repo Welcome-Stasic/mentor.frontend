@@ -11,9 +11,9 @@ import Tooltip from '@mui/material/Tooltip';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import Image from 'next/image';
-import { useLogout } from '@/hooks/useLogout';
 import { useCurrentUserStore } from '@/providers/current-user-provider';
 import erisLogo from '@assets/eris_logo.png';
+import { signOut } from 'next-auth/react';
 
 const settings = ['Account', 'Logout'];
 
@@ -21,7 +21,6 @@ export default function Header() {
   const { userName, photoUrl } = useCurrentUserStore((state) => state);
 
   const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);
-  const { logout } = useLogout();
 
   const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorElUser(event.currentTarget);
@@ -30,7 +29,10 @@ export default function Header() {
   const handleCloseUserMenu = (setting: string) => {
     setAnchorElUser(null);
     if (setting == 'Logout') {
-      logout();
+      signOut({
+        redirect: true,
+        callbackUrl: '/Account/Login'
+      });
     }
   };
 

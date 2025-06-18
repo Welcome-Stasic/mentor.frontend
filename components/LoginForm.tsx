@@ -18,10 +18,8 @@ import { useForm, SubmitHandler } from 'react-hook-form';
 import { useState } from 'react';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
-import { appLoginDto, authCrmLogin, authLogin, crmLoginDto, forgotPassword } from '@/mentorApi';
-import { redirect } from 'next/navigation';
-import { setCookie } from 'cookies-next';
-import { jwtDecode } from 'jwt-decode';
+import { handleSignIn } from '@/lib/utils/handleSignIn';
+import { API } from '@/lib/axios';
 
 type FormData = {
   login: string;
@@ -47,51 +45,16 @@ export default function LoginForm() {
   const isElma = watch('isElma');
   const isForgotPassword = watch('forgotPassword');
 
-  const setTokenAndRedirect = (token: string) => {
-    const decoded = jwtDecode(token);
-
-    setCookie('token', token, {
-      maxAge: decoded.exp,
-      path: '/',
-      sameSite: 'none',
-      secure: true,
-    });
-
-    redirect('/');
-  };
-
   const onSubmit: SubmitHandler<FormData> = async (data) => {
 
     if (!data.isElma && data.forgotPassword) {
-      await forgotPassword(data.login);
+      await API.auth.forgotPassword(data.login);
       setEmailSent(true);
       reset();
       return;
     }
 
-    if (data.isElma) {
-      const body: crmLoginDto = {
-        login: data.login,
-        password: data.password,
-      };
-
-      const authResult = await authCrmLogin(body);
-
-      if (authResult?.Result) {
-        setTokenAndRedirect(authResult.Result);
-      }
-    } else {
-      const body: appLoginDto = {
-        email: data.login,
-        password: data.password,
-      };
-
-      const authResult = await authLogin(body);
-
-      if (authResult?.Result) {
-        setTokenAndRedirect(authResult.Result);
-      }
-    }
+    await handleSignIn(data.login, data.password, data.isElma);
     
     reset();
   };

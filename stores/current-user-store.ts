@@ -1,9 +1,7 @@
 import { IQuizVm } from './../mentorApi/model/viewModel/quizVm';
 import { createStore } from 'zustand/vanilla';
 import { devtools } from 'zustand/middleware';
-import { getMe } from '@/mentorApi/request/getMe';
-import { getCrmUser } from '@/mentorApi/request/getCrmUser';
-import { getQuizById } from '@/mentorApi/request/getQuizById';
+import { API } from '@/lib/axios';
 
 export type CurrentUserState = {
   id: string;
@@ -11,6 +9,7 @@ export type CurrentUserState = {
   userName: string;
   photoUrl?: string | null;
   quiz?: IQuizVm | null;
+  roles: string[];
 };
 
 export type CurrentUserActions = {
@@ -25,11 +24,13 @@ export const defaultInitState: CurrentUserState = {
   userName: '',
   photoUrl: null,
   quiz: null,
+  roles: [],
 };
 
-export const initCurrentUserState = async (): Promise<CurrentUserState> => {
+export const initCurrentUserState = async (accessToken: string): Promise<CurrentUserState> => {
   try {
-    const meResponse = await getMe();
+    const meResponse = await API.user.me(accessToken);
+
     const me = meResponse?.Result;
 
     if (!me) {
@@ -42,11 +43,13 @@ export const initCurrentUserState = async (): Promise<CurrentUserState> => {
       userName: me.userName,
       photoUrl: null,
       quiz: null,
+      roles: [],
     };
 
     // CRM: фото пользователя
     if(me.elmaUserId){
-      const crmResponse = await getCrmUser(me.elmaUserId);
+      const crmResponse = await API.user.getCrmUserById(me.elmaUserId, accessToken);
+
       const photoFile = crmResponse?.Result?.userInfo?.photo?.file;
   
       if (photoFile) {
@@ -56,7 +59,7 @@ export const initCurrentUserState = async (): Promise<CurrentUserState> => {
 
     // Квиз
     if (me.quizId) {
-      const quizResponse = await getQuizById(me.quizId);
+      const quizResponse = await API.quiz.getById(me.quizId, accessToken);
       const quiz = quizResponse?.Result;
 
       if (quiz) {

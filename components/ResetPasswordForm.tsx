@@ -1,7 +1,7 @@
 'use client';
 
-import { resetPasswordDto } from '@/mentorApi';
-import { resetPassword } from '@/mentorApi/request/resetPassword';
+import { API } from '@/lib/axios';
+import { IResetPasswordDto } from '@/lib/axios/types/auth';
 import { Button, TextField, Grid, Typography } from '@mui/material';
 import Link from 'next/link';
 import { useState } from 'react';
@@ -34,9 +34,9 @@ export default function ResetPasswordForm({ email, token }: ResetPasswordFormPro
       password: data.password,
       confirmPassword: data.confirmPassword,
       token: token,
-    } as resetPasswordDto;
+    } as IResetPasswordDto;
     
-    const result = await resetPassword(body);
+    const result = await API.auth.resetPassword(body);
     
     reset();
 

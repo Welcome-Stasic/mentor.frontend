@@ -1,7 +1,7 @@
 'use client';
 
-import { registerDto } from '@/mentorApi/model/dto/registerDto';
-import { authRegister } from '@/mentorApi/request/authRegister';
+import { API } from '@/lib/axios';
+import { IRegisterDto } from '@/lib/axios/types/auth';
 import { Button, TextField, Grid } from '@mui/material';
 import { useForm, SubmitHandler } from 'react-hook-form';
 
@@ -24,11 +24,11 @@ export default function RegisterForm() {
       email: data.email,
       password: data.password,
       confirmPassword: data.confirmPassword,
-    } as registerDto;
+    } as IRegisterDto;
+    
+    await API.auth.register(body);
 
     reset();
-
-    await authRegister(body);
   };
 
   return (

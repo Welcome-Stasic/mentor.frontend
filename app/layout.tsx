@@ -1,7 +1,6 @@
 import type { Metadata } from 'next';
 import './globals.css';
-import { AppRouterCacheProvider } from '@mui/material-nextjs/v15-appRouter';
-import ClientAuthGuard from '@/components/ClientAuthGuard';
+import Providers from '@/components/Providers';
 
 export const metadata: Metadata = {
   title: 'Главная',
@@ -16,9 +15,7 @@ export default async function RootLayout({
   return (
     <html lang="en">
       <body>
-        <AppRouterCacheProvider>
-          <ClientAuthGuard>{children}</ClientAuthGuard>
-        </AppRouterCacheProvider>
+        <Providers>{children}</Providers>
       </body>
     </html>
   );
