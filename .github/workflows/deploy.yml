@@ -1,75 +1,36 @@
-name: Deploy to GHCR and Server
+# .github/workflows/deploy.yml
+name: CI/CD to Self-Hosted Server
 
 on:
   push:
     branches:
       - master
 
-permissions:
-  contents: read
-  packages: write
-
 jobs:
-  build-and-deploy:
-    runs-on: ubuntu-latest
+  deploy:
+    runs-on: self-hosted
+
+    env:
+      IMAGE_NAME: eris.mentor
+      OWNER: ${{ github.repository_owner }}
 
     steps:
-      - name: Checkout code
+      - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Set lowercase image namespace
-        run: |
-          OWNER_LOWER=$(echo "${{ github.repository_owner }}" | tr '[:upper:]' '[:lower:]')
-          echo "OWNER_LOWER=$OWNER_LOWER" >> $GITHUB_ENV
-          echo "IMAGE_NAME=eris.mentor" >> $GITHUB_ENV
-
-      - name: Log in to GitHub Container Registry
-        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u $OWNER_LOWER --password-stdin
+      - name: Login to GHCR
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u $OWNER --password-stdin
 
       - name: Build and push Docker image
         run: |
-          IMAGE=ghcr.io/$OWNER_LOWER/$IMAGE_NAME:latest
+          IMAGE=ghcr.io/${OWNER}/${IMAGE_NAME}:latest
           docker build -t $IMAGE .
           docker push $IMAGE
 
-      - name: Copy entire project to server
-        uses: appleboy/scp-action@v0.1.4
-        with:
-          host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_USER }}
-          key: ${{ secrets.SSH_KEY }}
-          port: ${{ secrets.SSH_PORT }}
-          source: '.'
-          target: ${{ secrets.REMOTE_PROJECT_DIR }}
-
-      - name: SSH login and deploy
-        uses: appleboy/ssh-action@v0.1.5
-        with:
-          host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_USER }}
-          key: ${{ secrets.SSH_KEY }}
-          port: ${{ secrets.SSH_PORT }}
-          envs: OWNER_LOWER,IMAGE_NAME
-          script: |
-            set -e
-            echo "Logging in to GitHub Container Registry..."
-            docker login ghcr.io -u $OWNER_LOWER -p ${{ secrets.GITHUB_TOKEN }}
-
-            echo "Stopping and removing existing container if exists..."
-            docker rm -f ghcr.io/$OWNER_LOWER/$IMAGE_NAME:latest || true
-
-            echo "Pulling latest image..."
-            docker pull ghcr.io/$OWNER_LOWER/$IMAGE_NAME:latest
-
-            cd ${{ secrets.REMOTE_PROJECT_DIR }}
-
-            echo "Writing .env file from GitHub Secrets..."
-                  cat > .env <<EOF
-            NEXTAUTH_SECRET=${{ secrets.NEXTAUTH_SECRET }}
-            NEXTAUTH_URL=${{ secrets.NEXTAUTH_URL }}
-            EOF
-
-            echo "Starting container with Docker Compose..."
-            docker compose down || true
-            docker compose pull
-            docker compose up -d
+      - name: Pull new image and restart container
+        working-directory: /home/<deploy_user>/app
+        run: |
+          IMAGE=ghcr.io/${OWNER}/${IMAGE_NAME}:latest
+          docker pull $IMAGE
+          docker compose down || true
+          docker compose up -d
