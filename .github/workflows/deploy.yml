@@ -56,7 +56,7 @@ jobs:
             docker login ghcr.io -u $OWNER_LOWER -p ${{ secrets.GITHUB_TOKEN }}
 
             echo "Stopping and removing existing container if exists..."
-            docker rm -f $IMAGE_NAME || true
+            docker rm -f ghcr.io/$OWNER_LOWER/$IMAGE_NAME:latest || true
 
             echo "Pulling latest image..."
             docker pull ghcr.io/$OWNER_LOWER/$IMAGE_NAME:latest
