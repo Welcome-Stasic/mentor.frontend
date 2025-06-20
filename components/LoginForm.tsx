@@ -15,7 +15,7 @@ import {
   Typography,
 } from '@mui/material';
 import { useForm, SubmitHandler } from 'react-hook-form';
-import { useState } from 'react';
+import { Suspense, useState } from 'react';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import { handleSignIn } from '@/lib/utils/handleSignIn';
@@ -31,7 +31,7 @@ type FormData = {
   forgotPassword: boolean;
 };
 
-export default function LoginForm() {
+function Login() {
   const searchParams = useSearchParams();
   const error = searchParams.get('error');
   const [isLoading, setIsLoading] = useState(false);
@@ -163,5 +163,13 @@ export default function LoginForm() {
         </Grid>
       </form>
     </>
+  );
+}
+
+export function LoginForm() {
+  return (
+    <Suspense>
+      <Login />
+    </Suspense>
   );
 }

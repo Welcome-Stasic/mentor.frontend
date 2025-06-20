@@ -1,4 +1,5 @@
-import LoginForm from '@/components/LoginForm';
+
+import { LoginForm } from '@/components/LoginForm';
 import { SITE_BASE_NAME } from '@/constants';
 import { Typography } from '@mui/material';
 
@@ -18,3 +19,4 @@ export default function LoginPage() {
     </>
   );
 }
+
