@@ -8,7 +8,8 @@ services:
       - .env
     restart: always
     networks:
-      - eris-net
+      eris-net:
+        ipv4_address: 172.22.0.3
 
 networks:
   eris-net:
