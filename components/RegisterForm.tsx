@@ -3,6 +3,7 @@
 import { API } from '@/lib/axios';
 import { IRegisterDto } from '@/lib/axios/types/auth';
 import { Button, TextField, Grid } from '@mui/material';
+import { redirect } from 'next/navigation';
 import { useForm, SubmitHandler } from 'react-hook-form';
 
 type FormData = {
@@ -26,9 +27,12 @@ export default function RegisterForm() {
       confirmPassword: data.confirmPassword,
     } as IRegisterDto;
     
-    await API.auth.register(body);
+    const result = await API.auth.register(body);
 
-    reset();
+    if(result?.Result){
+      reset();
+      redirect('/Account/Login');
+    }
   };
 
   return (

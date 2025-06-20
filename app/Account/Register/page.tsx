@@ -1,29 +1,8 @@
 import { Typography } from '@mui/material';
-// import CountdownTimer from '@/components/CountdownTimer';
 import { SITE_BASE_NAME } from '@/constants';
 import RegisterForm from '@/components/RegisterForm';
 
-export default async function RegisterPage({
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  searchParams,
-}: {
-  searchParams: Promise<{ [key: string]: string | string[] | undefined }>
-})  {
-  // const rawToken = (await searchParams).token;
-  // const token = Array.isArray(rawToken) ? rawToken[0] : rawToken ?? '';
-
-  // const result = await getExpireToken(token);
-  // const tokenBody = result?.Result ?? null;
-
-  // const isTokenValid =
-  //   tokenBody?.token === token &&
-  //   tokenBody.expiresAt &&
-  //   new Date(tokenBody.expiresAt).getTime() > Date.now();
-
-  // if (!isTokenValid) {
-  //   redirect('/Expired');
-  // }
-
+export default async function RegisterPage()  {
   return (
     <>
       {/* Заголовок */}
@@ -33,9 +12,7 @@ export default async function RegisterPage({
       <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
         Зарегистрироваться в системе
       </Typography>
-
-      {/* {tokenBody?.expiresAt && <CountdownTimer expiresAt={tokenBody.expiresAt} />} */}
-
+      
       {/* Форма */}
       <RegisterForm />
     </>

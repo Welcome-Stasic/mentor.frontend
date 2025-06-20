@@ -1,11 +1,8 @@
 import LoginForm from '@/components/LoginForm';
 import { SITE_BASE_NAME } from '@/constants';
-import {
-  Typography,
-} from '@mui/material';
+import { Typography } from '@mui/material';
 
-
-export default function LoginPage() {
+export default async function LoginPage() {
   return (
     <>
       {/* Заголовок */}

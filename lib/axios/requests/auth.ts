@@ -59,7 +59,6 @@ export async function resetPassword (payload: IResetPasswordDto): Promise<IApiRe
 export async function isEmailConfirmed (email: string): Promise<IApiResponse<boolean> | null> {
   try {
     if(!email) return null;
-    
     const res = await axiosInstance.post<IApiResponse<boolean>>(AUTH_IS_EMAIL_CONFIRMED, email);
     return res.data;
   } catch (e) {
