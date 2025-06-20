@@ -6,8 +6,8 @@ services:
     container_name: nextjs
     restart: always
     networks:
-      - nginx_eris-net
+      - eris-net
 
 networks:
-  nginx_eris-net:
+  eris-net:
     external: true
