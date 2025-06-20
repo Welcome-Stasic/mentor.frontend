@@ -5,6 +5,7 @@ export const AUTH_REGISTER = 'Auth/Register';
 export const AUTH_FORGOT_PASSWORD = 'Auth/ForgotPassword';
 export const AUTH_RESET_PASSWORD = 'Auth/ResetPassword';
 export const AUTH_IS_EMAIL_CONFIRMED = 'Auth/IsEmailConfirmed';
+export const AUTH_GET_REFRESH_TOKEN = 'Auth/GetRefreshToken';
 
 export const USER_ME = 'User/Me';
 export const USER_CRM = 'User/Crm';

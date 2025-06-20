@@ -1,32 +1,40 @@
-import CredentialsProvider from "next-auth/providers/credentials";
-import { decodeToken } from "@/lib/utils/decodeToken";
+import CredentialsProvider from 'next-auth/providers/credentials';
+import { decodeToken } from '@/lib/utils/decodeToken';
+import { API } from '@/lib/axios';
 
 export const TokenProvider = CredentialsProvider({
-  id: "token",
-  name: "Token Provider",
+  id: 'token',
+  name: 'Token Provider',
   credentials: {
-    token: { label: "Token", type: "text" }
+    token: { label: 'Token', type: 'text' },
   },
   async authorize(credentials) {
-    const token = credentials?.token;
-    
-    if (!token) return null;
+    const accessToken = credentials?.token;
+
+    if (!accessToken) return null;
 
     try {
-      const decoded = decodeToken(token);
+      const decoded = decodeToken(accessToken);
 
       if (!decoded?.id) return null;
+
+      const response = await API.auth.getRefreshToken(accessToken);
+
+      const refreshToken = response?.Result?.token || null;
+      const refreshTokenExpires = response?.Result?.expires || null;
+
+      if (!accessToken || !refreshToken || !refreshTokenExpires) return null;
 
       return {
         id: decoded.id,
         email: decoded.email,
-        accessToken: token,
-        refreshToken: token,
-        accessTokenExpires: decoded.exp * 1000
+        accessToken,
+        refreshToken,
+        refreshTokenExpires: new Date(refreshTokenExpires).getTime(),
       };
     } catch (error) {
-      console.error("TokenProvider Error:", error);
+      console.error('TokenProvider Error:', error);
       return null;
     }
-  }
+  },
 });

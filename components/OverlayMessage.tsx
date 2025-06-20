@@ -1,7 +1,8 @@
 'use client';
 
 import { ReactNode } from 'react';
-import { Box, Paper, Typography } from '@mui/material';
+import { Box, Button, Paper, Typography } from '@mui/material';
+import { signOut } from 'next-auth/react';
 
 type OverlayMessageProps = {
   title?: string;
@@ -10,6 +11,7 @@ type OverlayMessageProps = {
   blurBackground?: boolean;
   blurPercent?: number;
   children?: ReactNode;
+  isShowLogout?: boolean;
 };
 
 const OverlayMessage: React.FC<OverlayMessageProps> = ({
@@ -18,9 +20,17 @@ const OverlayMessage: React.FC<OverlayMessageProps> = ({
   icon,
   blurBackground = false,
   blurPercent = 50, // по умолчанию 50%
+  isShowLogout = false,
   children,
 }) => {
   const blurPx = `${(blurPercent / 100) * 16}px`; // 100% → 16px
+
+  const logoutOnClick = () => {
+    signOut({
+      redirect: true,
+      callbackUrl: '/',
+    });
+  };
 
   return (
     <Box
@@ -47,6 +57,11 @@ const OverlayMessage: React.FC<OverlayMessageProps> = ({
           {message}
         </Typography>
         {children}
+        {isShowLogout && (
+          <Button color="primary" variant="contained" onClick={logoutOnClick} sx={{ mt: 2 }}>
+            Выйти
+          </Button>
+        )}
       </Paper>
     </Box>
   );

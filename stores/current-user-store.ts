@@ -9,7 +9,6 @@ export type CurrentUserState = {
   userName: string;
   photoUrl?: string | null;
   quiz?: IQuiz| null;
-  roles: string[];
 };
 
 export type CurrentUserActions = {
@@ -24,7 +23,6 @@ export const defaultInitState: CurrentUserState = {
   userName: '',
   photoUrl: null,
   quiz: null,
-  roles: [],
 };
 
 export const initCurrentUserState = async (accessToken: string): Promise<CurrentUserState> => {
@@ -43,7 +41,6 @@ export const initCurrentUserState = async (accessToken: string): Promise<Current
       userName: me.userName,
       photoUrl: null,
       quiz: null,
-      roles: [],
     };
 
     // CRM: фото пользователя

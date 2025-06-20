@@ -24,3 +24,15 @@ export type IResetPasswordDto = {
   confirmPassword: string;
   token: string;
 }
+
+export interface ITokens {
+  accessToken: string;
+  refreshToken: string;
+  refreshTokenExpires: string
+}
+
+export interface IRefreshToken {
+  token: string;
+  id: string;
+  expires: string
+}

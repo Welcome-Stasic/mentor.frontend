@@ -1,4 +1,4 @@
-import { crmLogin, forgotPassword, isEmailConfirmed, login, refreshToken, register, resetPassword } from './requests/auth';
+import { crmLogin, forgotPassword, getRefreshToken, isEmailConfirmed, login, refreshToken, register, resetPassword } from './requests/auth';
 import { me } from './requests/me';
 import { addAnswersToQuestions, getAll, getById } from './requests/quiz';
 import { getCrmUserById } from './requests/user';
@@ -11,7 +11,8 @@ export const API = {
     register,
     forgotPassword,
     resetPassword,
-    isEmailConfirmed
+    isEmailConfirmed,
+    getRefreshToken
   },
   user: {
     me,

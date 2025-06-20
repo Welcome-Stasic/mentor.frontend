@@ -27,19 +27,22 @@ export const authOptions: NextAuthOptions = {
             password: credentials.password,
           })
 
-          const accessToken = response?.Result || null;
-          const refreshToken = accessToken;
+          const accessToken = response?.Result?.accessToken || null;
+          const refreshToken = response?.Result?.refreshToken || null;
+          const refreshTokenExpires = response?.Result?.refreshTokenExpires || null;
 
-          if (!accessToken || !refreshToken) return null;
+          if (!accessToken || !refreshToken || !refreshTokenExpires) return null;
 
           const decoded = decodeToken(accessToken);
-
+          const roles = decoded.roles;
+          
           return {
             id: decoded.id,
             email: decoded.email,
             accessToken,
             refreshToken,
-            accessTokenExpires: decoded.exp * 1000,
+            refreshTokenExpires: new Date(refreshTokenExpires).getTime(),
+            roles
           };
         } catch (error) {
           console.error('Authorize error:', error);
@@ -59,23 +62,32 @@ export const authOptions: NextAuthOptions = {
       if (user) {
         token.accessToken = user.accessToken;
         token.refreshToken = user.refreshToken;
-        token.accessTokenExpires = user.accessTokenExpires;
+        token.refreshTokenExpires = user.refreshTokenExpires;
         return token;
       }
 
-      if (Date.now() < (token.accessTokenExpires as number)) {
+      if (Date.now() < (token.refreshTokenExpires as number)) {
         return token;
       }
-
-      return await refreshAccessToken(token);
+      
+      return await refreshAccessToken(token)
     },
 
     async session({ session, token }) {
+      const decoded = decodeToken(token.accessToken);
+      const roles = decoded.roles;
+
       session.user = {
         ...session.user,
         accessToken: token.accessToken,
         refreshToken: token.refreshToken,
+        roles
       };
+
+      if (token?.error) {
+        session.error = token.error;
+      }
+
       return session;
     },
   },

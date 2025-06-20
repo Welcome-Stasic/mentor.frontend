@@ -20,13 +20,19 @@ export async function getById (id: string, token: string): Promise<IApiResponse<
 };
 
 
-export async function getAll(token: string, applicationUserId?: string, ): Promise<IApiResponse<IPaginationResponse<IQuiz>> | null> {
+export async function getAll(token: string, applicationUserId: string | null = null): Promise<IApiResponse<IPaginationResponse<IQuiz>> | null> {
   try {
     if(!token) return null;
         
     const authAxios = await getAuthAxios(token);
     
-    const res = await authAxios.get<IApiResponse<IPaginationResponse<IQuiz>>>(`${QUIZ_ALL}?${applicationUserId}`);
+    const searchParams = new URLSearchParams();
+
+    if(applicationUserId){
+      searchParams.append("applicationUserId", applicationUserId);
+    }
+
+    const res = await authAxios.get<IApiResponse<IPaginationResponse<IQuiz>>>(`${QUIZ_ALL}?${searchParams.toString()}`);
 
     return res.data;
     

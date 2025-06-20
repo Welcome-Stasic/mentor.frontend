@@ -19,10 +19,11 @@ export const CRMProvider = CredentialsProvider({
         password: credentials.password,
       });
 
-      const accessToken = response?.Result || null;
-      const refreshToken = accessToken;
+      const accessToken = response?.Result?.accessToken || null;
+      const refreshToken = response?.Result?.refreshToken || null;
+      const refreshTokenExpires = response?.Result?.refreshTokenExpires || null;;
 
-      if (!accessToken || !refreshToken) return null;
+      if (!accessToken || !refreshToken || !refreshTokenExpires) return null;
 
       const decoded = decodeToken(accessToken);
 
@@ -31,7 +32,7 @@ export const CRMProvider = CredentialsProvider({
         email: decoded.email,
         accessToken,
         refreshToken,
-        accessTokenExpires: decoded.exp * 1000,
+        refreshTokenExpires: new Date(refreshTokenExpires).getTime(),
       };
     } catch (error) {
       console.error('CRM Authorize Error:', error);

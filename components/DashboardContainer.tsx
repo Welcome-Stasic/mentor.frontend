@@ -1,23 +1,14 @@
-'use client';
-
+import { authOptions } from '@/app/api/auth/[...nextauth]/options';
 import Footer from '@/components/Footer';
 import Header from '@/components/Header';
 import OverlayMessage from '@/components/OverlayMessage';
 import Sidebar from '@/components/Sidebar';
-import { useCurrentUserStore } from '@/providers/current-user-provider';
 import ManageSearchOutlinedIcon from '@mui/icons-material/ManageSearchOutlined';
-import { Button } from '@mui/material';
-import { signOut } from 'next-auth/react';
+import { getServerSession } from 'next-auth';
 
-export default function DashboardContainer({ children }: { children: React.ReactNode }) {
-  const logoutOnClick = () => {
-    signOut({
-      redirect: true,
-      callbackUrl: '/'
-    });
-  }
-
-  const currentUserRoles = useCurrentUserStore((state) => state.roles);
+export default async function DashboardContainer({ children }: { children: React.ReactNode }) {
+  const session = await getServerSession(authOptions);
+  const currentUserRoles = session?.user.roles || [];
 
   return (
     <div className="container" style={{ position: 'relative', zIndex: 1 }}>
@@ -27,11 +18,9 @@ export default function DashboardContainer({ children }: { children: React.React
           message="Мы внимательно ознакомимся с вашими ответами, и свяжемся с вами в ближайшее время 😉"
           blurBackground
           blurPercent={80}
-          icon={<ManageSearchOutlinedIcon color="info" sx={{ fontSize: 60 }} />}>
-          <Button color="primary" variant="contained" onClick={logoutOnClick} sx={{ mt: 2 }}>
-            Выйти
-          </Button>
-        </OverlayMessage>
+          isShowLogout
+          icon={<ManageSearchOutlinedIcon color="info" sx={{ fontSize: 60 }} />}
+        />
       )}
       <Header />
       <div style={{ display: 'flex', minHeight: '100vh', flexDirection: 'column' }}>

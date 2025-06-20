@@ -1,27 +1,23 @@
 import { JWT } from "next-auth/jwt";
 import { API } from "../axios";
-import { decodeToken } from "./decodeToken";
 
 export async function refreshAccessToken(token: JWT): Promise<JWT> {
   try {
-    const response = await API.auth.refreshToken(token.accessToken);
+    const response = await API.auth.refreshToken(token.accessToken, token.refreshToken);
 
-    const accessToken = response?.Result || null;
+    const accessToken = response?.Result?.accessToken || null;
+    const refreshToken = response?.Result?.refreshToken || null;
+    const refreshTokenExpires = response?.Result?.refreshTokenExpires || null;
 
-    if (!accessToken) return { ...token, error: 'RefreshAccessTokenError' };
+    if (!accessToken || !refreshToken || !refreshTokenExpires) return { ...token, error: 'RefreshTokenError' };
     
-    const refreshToken = accessToken;
-
-    const decoded = decodeToken(accessToken);
-
     return {
       ...token,
       accessToken,
       refreshToken,
-      accessTokenExpires: decoded.exp * 1000,
+      refreshTokenExpires: new Date(refreshTokenExpires).getTime(),
     };
-  } catch (error) {
-    console.error('Error refreshing access token:', error);
+  } catch {
     return { ...token, error: 'RefreshTokenError' };
   }
 }

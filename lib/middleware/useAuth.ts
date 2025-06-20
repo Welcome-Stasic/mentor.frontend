@@ -6,6 +6,11 @@ export const useAuth: Middleware = async (req) => {
   const { pathname } = req.nextUrl;
   
   const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
+
+  if(token?.error === 'RefreshTokenError') {
+    return NextResponse.redirect(new URL('/Account/Login', req.url));
+  }
+
   const accessToken = token?.accessToken || '';
 
   if(pathname.startsWith('/Expired')) return;

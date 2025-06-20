@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { type Middleware } from './types';
-import { jwtDecode } from 'jwt-decode';
 import { getToken } from 'next-auth/jwt';
 import { API } from '../axios';
+import { decodeToken } from '../utils/decodeToken';
 
 export const useQuiz: Middleware = async (req: NextRequest) => {
   const url = req.nextUrl;
@@ -11,9 +11,10 @@ export const useQuiz: Middleware = async (req: NextRequest) => {
   // Нет токена — пропускаем запрос
   if (!token?.accessToken) return;
 
-  const decoded = jwtDecode<Record<string, unknown>>(token.accessToken);
-  const userId = decoded['id'] as string | undefined;
-  const isWithOutQuiz = decoded['isWithOutQuiz'] === 'True';
+  const decoded = decodeToken(token.accessToken);
+
+  const userId = decoded.id;
+  const isWithOutQuiz = decoded.isWithOutQuiz === 'True';
 
   // Если нет ID пользователя — пропускаем
   if (!userId) return;
@@ -43,7 +44,7 @@ export const useQuiz: Middleware = async (req: NextRequest) => {
 };
 
 const getFirstQuiz = async (userId: string, token: string) => {
-  const response = await API.quiz.getAll(userId, token);
+  const response = await API.quiz.getAll(token, userId);
 
   return response?.Result?.data?.[0] || null;
 };

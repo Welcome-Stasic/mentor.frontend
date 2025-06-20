@@ -42,7 +42,6 @@ jobs:
           source: '.'
           target: ${{ secrets.REMOTE_PROJECT_DIR }}
 
-      # ⬇️ Запускаем деплой по SSH
       - name: SSH login and deploy
         uses: appleboy/ssh-action@v0.1.5
         with:
@@ -52,8 +51,19 @@ jobs:
           port: ${{ secrets.SSH_PORT }}
           envs: OWNER_LOWER,IMAGE_NAME
           script: |
-            cd ${{ secrets.REMOTE_PROJECT_DIR }}
+            set -e
+            echo "Logging in to GitHub Container Registry..."
             docker login ghcr.io -u $OWNER_LOWER -p ${{ secrets.GITHUB_TOKEN }}
+
+            echo "Stopping and removing existing container if exists..."
+            docker rm -f $IMAGE_NAME || true
+
+            echo "Pulling latest image..."
             docker pull ghcr.io/$OWNER_LOWER/$IMAGE_NAME:latest
-            docker compose down
-            docker compose up -d
+
+            cd ${{ secrets.REMOTE_PROJECT_DIR }}
+
+            echo "Starting container with Docker Compose..."
+            docker-compose down || true
+            docker-compose pull
+            docker-compose up -d
