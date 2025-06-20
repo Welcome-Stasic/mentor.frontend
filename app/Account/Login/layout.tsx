@@ -1,7 +1,7 @@
-import { SITE_BASE_NAME } from "@/constants";
-import { Metadata } from "next";
+import { SITE_BASE_NAME } from '@/constants';
+import { Metadata } from 'next';
 
-export const metadata: Metadata  = {
+export const metadata: Metadata = {
   title: `Авторизация | ${SITE_BASE_NAME}`,
   description: `Авторизация пользователя в системе ${SITE_BASE_NAME}`,
 };

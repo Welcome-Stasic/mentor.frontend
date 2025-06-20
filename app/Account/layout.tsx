@@ -25,6 +25,7 @@ export default function AccountLayout({ children }: { children: React.ReactNode 
       <Paper
         elevation={3}
         sx={{
+          position: 'relative',
           p: 4,
           width: 400,
           display: 'flex',

@@ -13,8 +13,6 @@ export const useAuth: Middleware = async (req) => {
 
   const accessToken = token?.accessToken || '';
 
-  if(pathname.startsWith('/Expired')) return;
-
   const isAuthPage = pathname.startsWith('/Account');
 
   // Если пользователь уже авторизован и идёт на страницу входа/регистрации — редиректим обратно
