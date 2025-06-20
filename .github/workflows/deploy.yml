@@ -28,7 +28,7 @@ jobs:
           docker push $IMAGE
 
       - name: Pull new image and restart container
-        working-directory: /home/<deploy_user>/app
+        working-directory: /home/service/app
         run: |
           IMAGE=ghcr.io/${OWNER}/${IMAGE_NAME}:latest
           docker pull $IMAGE
