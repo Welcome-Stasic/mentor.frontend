@@ -7,3 +7,7 @@ services:
     restart: always
     networks:
       - nginx_eris-net
+
+networks:
+  nginx_eris-net:
+    external: true
