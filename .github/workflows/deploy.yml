@@ -64,6 +64,6 @@ jobs:
             cd ${{ secrets.REMOTE_PROJECT_DIR }}
 
             echo "Starting container with Docker Compose..."
-            docker-compose down || true
-            docker-compose pull
-            docker-compose up -d
+            docker compose down || true
+            docker compose pull
+            docker compose up -d
