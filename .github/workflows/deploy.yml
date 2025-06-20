@@ -63,6 +63,12 @@ jobs:
 
             cd ${{ secrets.REMOTE_PROJECT_DIR }}
 
+            echo "Writing .env file from GitHub Secrets..."
+                  cat > .env <<EOF
+            NEXTAUTH_SECRET=${{ secrets.NEXTAUTH_SECRET }}
+            NEXTAUTH_URL=${{ secrets.NEXTAUTH_URL }}
+            EOF
+
             echo "Starting container with Docker Compose..."
             docker compose down || true
             docker compose pull
