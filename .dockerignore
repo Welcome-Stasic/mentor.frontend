@@ -4,3 +4,6 @@ node_modules
 *.log
 Dockerfile
 docker-compose.yml
+.dockerignore
+README.md
+.next
