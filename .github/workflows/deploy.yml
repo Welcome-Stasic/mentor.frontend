@@ -1,4 +1,3 @@
-# .github/workflows/deploy.yml
 name: CI/CD to Self-Hosted Server
 
 on:
@@ -7,36 +6,61 @@ on:
       - master
 
 permissions:
-    contents: read
-    packages: write
+  contents: read
+  packages: write
 
 jobs:
-  deploy:
-    runs-on: self-hosted
-   
-    env:
-      IMAGE_NAME: eris.mentor
-      OWNER: ${{ github.repository_owner }}
+  build:
+    name: Build and Push Image
+    runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout
+      - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Login to GHCR
-        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u $OWNER --password-stdin
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
 
-      - name: Build and push Docker image
+      - name: Cache Docker layers
+        uses: actions/cache@v4
+        with:
+          path: /tmp/.buildx-cache
+          key: ${{ runner.os }}-buildx-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-buildx-
+
+      - name: Log in to GHCR
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.repository_owner }} --password-stdin
+
+      - name: Build and push image to GHCR
         run: |
-          OWNER_LOWER=$(echo "${OWNER}" | tr '[:upper:]' '[:lower:]')
-          IMAGE=ghcr.io/${OWNER_LOWER}/${IMAGE_NAME}:latest
-          docker build -t $IMAGE .
-          docker push $IMAGE
+          OWNER_LOWER=$(echo "${{ github.repository_owner }}" | tr '[:upper:]' '[:lower:]')
+          IMAGE=ghcr.io/${OWNER_LOWER}/eris.mentor:latest
 
+          docker buildx build \
+            --cache-from=type=local,src=/tmp/.buildx-cache \
+            --cache-to=type=local,dest=/tmp/.buildx-cache-new \
+            --push \
+            -t $IMAGE .
+
+      - name: Move build cache for next run
+        run: |
+          rm -rf /tmp/.buildx-cache
+          mv /tmp/.buildx-cache-new /tmp/.buildx-cache
+
+  deploy:
+    name: Deploy on Self-Hosted Runner
+    runs-on: self-hosted
+    needs: build
+
+    steps:
       - name: Pull new image and restart container
         working-directory: /home/runner/app
         run: |
-          OWNER_LOWER=$(echo "${OWNER}" | tr '[:upper:]' '[:lower:]')
-          IMAGE=ghcr.io/${OWNER_LOWER}/${IMAGE_NAME}:latest
-          docker pull $IMAGE
-          docker compose down || true
-          docker compose up -d
+          docker compose up -d --pull always --remove-orphans
+
+      - name: Clean up unused Docker images and cache
+        run: |
+          echo "Cleaning up dangling images and build cache..."
+          docker image prune -f
+          docker builder prune -f
