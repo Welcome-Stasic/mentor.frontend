@@ -9,6 +9,9 @@ permissions:
   contents: read
   packages: write
 
+env:
+  IMAGE: ghcr.io/12bsg12/eris.mentor:latest
+
 jobs:
   build:
     name: Build and Push Image
@@ -34,19 +37,18 @@ jobs:
 
       - name: Build and push image to GHCR
         run: |
-          OWNER_LOWER=$(echo "${{ github.repository_owner }}" | tr '[:upper:]' '[:lower:]')
-          IMAGE=ghcr.io/${OWNER_LOWER}/eris.mentor:latest
-
           docker buildx build \
             --cache-from=type=local,src=/tmp/.buildx-cache \
-            --cache-to=type=local,dest=/tmp/.buildx-cache-new \
+            --cache-to=type=local,dest=/tmp/.buildx-cache-new,mode=max \
             --push \
             -t $IMAGE .
 
       - name: Move build cache for next run
         run: |
-          rm -rf /tmp/.buildx-cache
-          mv /tmp/.buildx-cache-new /tmp/.buildx-cache
+          if [ -d /tmp/.buildx-cache-new ]; then
+            rm -rf /tmp/.buildx-cache
+            mv /tmp/.buildx-cache-new /tmp/.buildx-cache
+          fi
 
   deploy:
     name: Deploy on Self-Hosted Runner
@@ -54,10 +56,14 @@ jobs:
     needs: build
 
     steps:
+      - name: Log in to GHCR on self-hosted runner
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.repository_owner }} --password-stdin
+
       - name: Pull new image and restart container
         working-directory: /home/runner/app
         run: |
-          docker compose up -d --pull always --remove-orphans
+          docker compose pull
+          docker compose up -d --remove-orphans
 
       - name: Clean up unused Docker images and cache
         run: |
