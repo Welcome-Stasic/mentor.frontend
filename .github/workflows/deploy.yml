@@ -23,14 +23,16 @@ jobs:
 
       - name: Build and push Docker image
         run: |
-          IMAGE=ghcr.io/${OWNER}/${IMAGE_NAME}:latest
+          OWNER_LOWER=$(echo "${OWNER}" | tr '[:upper:]' '[:lower:]')
+          IMAGE=ghcr.io/${OWNER_LOWER}/${IMAGE_NAME}:latest
           docker build -t $IMAGE .
           docker push $IMAGE
 
       - name: Pull new image and restart container
         working-directory: /home/service/app
         run: |
-          IMAGE=ghcr.io/${OWNER}/${IMAGE_NAME}:latest
+          OWNER_LOWER=$(echo "${OWNER}" | tr '[:upper:]' '[:lower:]')
+          IMAGE=ghcr.io/${OWNER_LOWER}/${IMAGE_NAME}:latest
           docker pull $IMAGE
           docker compose down || true
           docker compose up -d
