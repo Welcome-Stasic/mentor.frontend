@@ -1,15 +1,26 @@
+import { withAuth } from 'next-auth/middleware';
+import { useQuiz } from './lib/middleware/useQuiz';
 import { NextRequest } from 'next/server';
 import { runMiddlewarePipeline } from './lib/middleware';
-import { useAuth } from './lib/middleware/useAuth';
-import { useQuiz } from './lib/middleware/useQuiz';
 
-export function middleware(req: NextRequest) {
-  return runMiddlewarePipeline(req, [
-    useAuth,
-    useQuiz
-  ])
+function middleware(req: NextRequest) {
+  // Пользователь уже авторизован — теперь выполняем useQuiz
+  return runMiddlewarePipeline(req, [useQuiz]);
 }
 
+export default withAuth(middleware, {
+  pages: {
+    signIn: '/Account/Login',
+  },
+  callbacks: {
+    authorized: ({ token }) => {
+      // Проверяем, что есть токены и нет ошибки
+      return !!token?.accessToken && !!token?.refreshToken && !token?.error;
+    },
+  },
+});
+
+// 🔐 Указываем исключения: разрешён доступ к этим маршрутам без авторизации
 export const config = {
-  matcher: ['/((?!_next/static|favicon.ico|api|EmailConfirmed).*)'], // исключаем _next/static, favicon.ico и api
+  matcher: ['/((?!_next/static|favicon.ico|api|Account/Login|Account/Register|EmailConfirmed).*)'],
 };

@@ -6,45 +6,45 @@ import { decodeToken } from '../utils/decodeToken';
 
 export const useQuiz: Middleware = async (req: NextRequest) => {
   const url = req.nextUrl;
+
   const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
+  const accessToken = token?.accessToken;
 
-  // Нет токена — пропускаем запрос
-  if (!token?.accessToken) return;
+  if (!accessToken) return;
 
-  const decoded = decodeToken(token.accessToken);
-
+  const decoded = decodeToken(accessToken);
   const userId = decoded.id;
-  const isWithOutQuiz = decoded.isWithOutQuiz === 'True';
+  const isWithoutQuiz = decoded.isWithOutQuiz === 'True';
 
-  // Если нет ID пользователя — пропускаем
   if (!userId) return;
 
-  const redirectToReferer = () => {
-    const referer = req.headers.get('referer') || '/';
-    return NextResponse.redirect(new URL(referer, req.url));
-  };
+  const isQuizPage = url.pathname.startsWith('/Quiz');
 
-  // Страница викторины
-  if (url.pathname.startsWith('/Quiz')) {
-    if (isWithOutQuiz) return redirectToReferer();
+  if (isQuizPage) {
+    // На странице Quiz: редирект, если викторины не должно быть или она уже пройдена
+    if (isWithoutQuiz) return redirectToReferer(req);
 
-    const quiz = await getFirstQuiz(userId, token.accessToken);
-    if (quiz?.isCompleted) return redirectToReferer();
+    const quiz = await getFirstQuiz(userId, accessToken);
+    if (quiz?.isCompleted) return redirectToReferer(req);
 
-    return; // доступ разрешён
+    return; // Доступ разрешён
   }
 
-  // Прочие страницы: если у пользователя есть невыполненная викторина — редирект
-  if (!isWithOutQuiz) {
-    const quiz = await getFirstQuiz(userId, token.accessToken);
+  // На других страницах: редирект, если у пользователя есть непройденная викторина
+  if (!isWithoutQuiz) {
+    const quiz = await getFirstQuiz(userId, accessToken);
     if (quiz && !quiz.isCompleted) {
       return NextResponse.redirect(new URL('/Quiz', req.url));
     }
   }
 };
 
+const redirectToReferer = (req: NextRequest) => {
+  const referer = req.headers.get('referer') || '/';
+  return NextResponse.redirect(new URL(referer, req.url));
+};
+
 const getFirstQuiz = async (userId: string, token: string) => {
   const response = await API.quiz.getAll(token, userId);
-
-  return response?.Result?.data?.[0] || null;
+  return response?.Result?.data?.[0] ?? null;
 };
