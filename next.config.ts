@@ -4,6 +4,7 @@ const nextConfig: NextConfig = {
   images: {
     domains: ['randomuser.me'],
   },
+  output: 'standalone',
 };
 
 export default nextConfig;
