@@ -1,10 +1,10 @@
 import { AUTH_GET_REFRESH_TOKEN, AUTH_IS_EMAIL_CONFIRMED, AUTH_REFRESH_TOKEN, AUTH_RESET_PASSWORD } from './../endpoint';
-import { handleApiError } from "@/lib/utils/handleApiError";
 import axiosInstance from "../axios";
 import { AUTH_CRM_LOGIN, AUTH_FORGOT_PASSWORD, AUTH_LOGIN, AUTH_REGISTER } from "../endpoint";
 import { IAppLoginDto, ICrmLoginDto, IRefreshToken, IRegisterDto, IResetPasswordDto, ITokens } from "../types/auth";
 import { IApiResponse } from "../types/base";
 import { getAuthAxios } from '../authAxios';
+import { handleApiError } from '@/lib/utils/handleApiError';
 
 export async function login (payload: IAppLoginDto): Promise<IApiResponse<ITokens> | null> {
   try {

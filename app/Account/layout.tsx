@@ -1,26 +1,13 @@
 import { Box, Paper } from '@mui/material';
 import logo from '@assets/logo.png';
 import mentor from '@assets/resize_ai_mentor_orig_without_bg.png';
-import back from '@assets/back.png';
 
 import Link from 'next/link';
+import BackGroundImageWrapper from '@/components/BackGroundImageWrapper';
 
 export default function AccountLayout({ children }: { children: React.ReactNode }) {
   return (
-    <Box
-      sx={{
-        minHeight: '100vh',
-        backgroundSize: 'contain',
-        backgroundPosition: 'center',
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundImage: `url(${back.src})`,
-        backgroundRepeat: 'no-repeat',
-        backgroundAttachment: 'fixed',
-        gap: '75px',
-        overflow: 'hidden',
-      }}>
+    <BackGroundImageWrapper>
       <img className="mentorImg" src={mentor.src} alt="Mentor" />
       <Paper
         elevation={3}
@@ -42,6 +29,6 @@ export default function AccountLayout({ children }: { children: React.ReactNode 
         </Box>
         {children}
       </Paper>
-    </Box>
+    </BackGroundImageWrapper>
   );
 }

@@ -31,7 +31,7 @@ export const authOptions: NextAuthOptions = {
           const refreshToken = response?.Result?.refreshToken || null;
           const refreshTokenExpires = response?.Result?.refreshTokenExpires || null;
 
-          if (!accessToken || !refreshToken || !refreshTokenExpires) return null;
+          if (!accessToken || !refreshToken || !refreshTokenExpires) throw new Error(response?.Message);
 
           const decoded = decodeToken(accessToken);
           const roles = decoded.roles;

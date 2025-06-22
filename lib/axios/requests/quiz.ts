@@ -1,8 +1,8 @@
-import { handleApiError } from "@/lib/utils/handleApiError";
 import { QUIZ, QUIZ_ADD_ANSWERS_TO_QUESTIONS, QUIZ_ALL } from "../endpoint";
 import { IApiResponse, IPaginationResponse } from "../types/base";
 import { getAuthAxios } from "../authAxios";
 import { IAddAnswersToQuestionsDto, IQuiz } from "../types/quiz";
+import { handleApiError } from "@/lib/utils/handleApiError";
 
 export async function getById (id: string, token: string): Promise<IApiResponse<IQuiz> | null> {
   try {

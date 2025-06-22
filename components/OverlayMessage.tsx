@@ -15,8 +15,8 @@ type OverlayMessageProps = {
 };
 
 const OverlayMessage: React.FC<OverlayMessageProps> = ({
-  title = 'Сообщение',
-  message = 'Произошла непредвиденная ошибка.',
+  title = '',
+  message = '',
   icon,
   blurBackground = false,
   blurPercent = 50, // по умолчанию 50%
