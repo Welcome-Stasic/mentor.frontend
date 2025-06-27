@@ -1,6 +1,5 @@
 import { Box } from '@mui/material';
 import back from '@assets/back.png';
-('next/link');
 
 export default function BackGroundImageWrapper({ children }: { children: React.ReactNode }) {
   return (
