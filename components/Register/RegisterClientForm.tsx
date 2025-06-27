@@ -4,7 +4,6 @@ import { API } from '@/lib/axios';
 import { IRegisterDto } from '@/lib/axios/types/auth';
 import { Button, TextField, Grid, Typography } from '@mui/material';
 import { useForm, SubmitHandler } from 'react-hook-form';
-import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import BackdropLoader from '../BackdropLoader';
 
