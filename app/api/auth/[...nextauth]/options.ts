@@ -31,7 +31,7 @@ export const authOptions: NextAuthOptions = {
           const refreshToken = response?.Result?.refreshToken || null;
           const refreshTokenExpires = response?.Result?.refreshTokenExpires || null;
 
-          if (!accessToken || !refreshToken || !refreshTokenExpires) throw new Error(response?.Message);
+          if (!accessToken || !refreshToken || !refreshTokenExpires) return null;
 
           const decoded = decodeToken(accessToken);
           const roles = decoded.roles;
@@ -45,7 +45,6 @@ export const authOptions: NextAuthOptions = {
             roles
           };
         } catch (error) {
-          console.error('Authorize error:', error);
           return null;
         }
       },

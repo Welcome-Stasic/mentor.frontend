@@ -1,5 +1,4 @@
-
-import { LoginForm } from '@/components/LoginForm';
+import LoginForm from '@/components/Login/LoginForm';
 import { SITE_BASE_NAME } from '@/constants';
 import { Typography } from '@mui/material';
 
@@ -8,7 +7,7 @@ export default function LoginPage() {
     <>
       {/* Заголовок */}
       <Typography variant="h6" fontWeight="bold" gutterBottom>
-        {SITE_BASE_NAME}. Авторизация
+        {SITE_BASE_NAME}
       </Typography>
       <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
         Войдите в систему
@@ -19,4 +18,3 @@ export default function LoginPage() {
     </>
   );
 }
-

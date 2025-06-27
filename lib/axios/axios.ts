@@ -1,4 +1,5 @@
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
+import { IApiResponse } from './types/base';
 
 const API_VERSION = 'v1';
 const BASE_URL = 'https://developmentmentor.eriskip.com';
@@ -9,5 +10,27 @@ const axiosInstance = axios.create({
     'Content-Type': 'application/json',
   },
 });
+
+// Унифицированная обработка ответов
+axiosInstance.interceptors.response.use(
+  (response) => response, // Успешный ответ — просто возвращаем
+  (error: AxiosError<IApiResponse<any>>) => {
+    if (error.response?.data) {
+      // Ошибка от сервера в формате IApiResponse — возвращаем как успешный .data
+      return Promise.resolve({ data: error.response.data });
+    }
+
+    // Нет ответа от сервера или не IApiResponse
+    const fallbackResponse: IApiResponse<null> = {
+      Result: null,
+      Message: 'Произошла ошибка соединения с сервером',
+      Errors: [],
+      StatusCode: 500,
+      Timestamp: new Date().toISOString(),
+    };
+
+    return Promise.resolve({ data: fallbackResponse });
+  },
+);
 
 export default axiosInstance;

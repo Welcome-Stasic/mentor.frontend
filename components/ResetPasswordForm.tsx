@@ -19,8 +19,8 @@ interface ResetPasswordFormProps {
 }
 
 export default function ResetPasswordForm({ email, token }: ResetPasswordFormProps) {
-  const [isSuccessReset, setIsSuccessReset] = useState(true);
-      
+  const [isSuccessReset, setIsSuccessReset] = useState(false);
+
   const {
     register,
     handleSubmit,
@@ -35,14 +35,14 @@ export default function ResetPasswordForm({ email, token }: ResetPasswordFormPro
       confirmPassword: data.confirmPassword,
       token: token,
     } as IResetPasswordDto;
-    
+
     const result = await API.auth.resetPassword(body);
-    
+
     reset();
 
     const isSuccess = result?.Result ?? false;
 
-    setIsSuccessReset(isSuccess);  
+    setIsSuccessReset(isSuccess);
   };
 
   return (
@@ -101,7 +101,11 @@ export default function ResetPasswordForm({ email, token }: ResetPasswordFormPro
         {isSuccessReset && (
           <Grid>
             <Typography color="success.main" variant="body2">
-              Пароль успешно изменен. Вы можете <Link href="/Account/Login" style={{color: '#1976d2', textDecoration: 'underline'}}>войти в систему</Link> с новым паролем.
+              Пароль успешно изменен. Вы можете{' '}
+              <Link href="/Account/Login" style={{ color: '#1976d2', textDecoration: 'underline' }}>
+                войти в систему
+              </Link>{' '}
+              с новым паролем.
             </Typography>
           </Grid>
         )}

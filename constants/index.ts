@@ -1,4 +1,4 @@
-export const SITE_BASE_NAME: string = 'ERIS-Mentor';
+export const SITE_BASE_NAME: string = 'ЭРИС. Наставничество';
 
 type Question = {
   question: string;
