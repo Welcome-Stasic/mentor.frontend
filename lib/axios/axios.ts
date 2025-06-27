@@ -14,7 +14,7 @@ const axiosInstance = axios.create({
 // Унифицированная обработка ответов
 axiosInstance.interceptors.response.use(
   (response) => response, // Успешный ответ — просто возвращаем
-  (error: AxiosError<IApiResponse<any>>) => {
+  (error: AxiosError<IApiResponse<unknown>>) => {
     if (error.response?.data) {
       // Ошибка от сервера в формате IApiResponse — возвращаем как успешный .data
       return Promise.resolve({ data: error.response.data });

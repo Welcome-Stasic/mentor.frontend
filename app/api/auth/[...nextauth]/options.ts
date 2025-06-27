@@ -44,7 +44,7 @@ export const authOptions: NextAuthOptions = {
             refreshTokenExpires: new Date(refreshTokenExpires).getTime(),
             roles
           };
-        } catch (error) {
+        } catch {
           return null;
         }
       },

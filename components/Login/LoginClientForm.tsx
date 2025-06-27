@@ -101,8 +101,8 @@ export default function LoginClientForm() {
 
       await handleSignIn(data.login, data.password, data.isElma);
       reset(); // только после успешной авторизации
-    } catch (err: any) {
-      setErrorMessage(err?.message || 'Произошла ошибка авторизации');
+    } catch {
+      setErrorMessage('Произошла ошибка авторизации');
     } finally {
       setIsLoading(false);
     }

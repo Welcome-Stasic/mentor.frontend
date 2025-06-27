@@ -50,7 +50,7 @@ export default function RegisterClientForm() {
         reset();
       } else {
       }
-    } catch (error) {
+    } catch {
       setErrorMessage('Ошибка регистрации');
     } finally {
       setIsLoading(false);
