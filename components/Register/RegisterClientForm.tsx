@@ -110,7 +110,7 @@ export default function RegisterClientForm() {
         {emailSent && (
           <Typography color="success.main" variant="body2">
             Мы отправили письмо со ссылкой для подтверждения на указанный вами email. Если вы не
-            получили письмо, проверьте папку "Спам".
+            получили письмо, проверьте папку Спам.
           </Typography>
         )}
 
