@@ -27,7 +27,6 @@ export default function RegisterClientForm() {
     reset,
   } = useForm<IFormData>();
 
-  const router = useRouter();
   const passwordValue = watch('password');
 
   const onSubmit: SubmitHandler<IFormData> = async (data) => {

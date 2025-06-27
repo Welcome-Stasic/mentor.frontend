@@ -17,7 +17,6 @@ import {
 import { IApiResponse } from '../types/base';
 import { getAuthAxios } from '../authAxios';
 import { handleApiError } from '@/lib/utils/handleApiError';
-import axios from 'axios';
 
 export async function login(payload: IAppLoginDto): Promise<IApiResponse<ITokens> | null> {
   try {
