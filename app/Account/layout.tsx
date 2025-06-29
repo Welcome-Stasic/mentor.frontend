@@ -4,6 +4,7 @@ import mentor from '@assets/resize_ai_mentor_orig_without_bg.png';
 
 import Link from 'next/link';
 import BackGroundImageWrapper from '@/components/BackGroundImageWrapper';
+import Image from 'next/image';
 
 export default function AccountLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -22,11 +23,13 @@ export default function AccountLayout({ children }: { children: React.ReactNode 
           mx: 1,
         }}>
         {/* Логотип */}
-        <Box sx={{ mb: 2 }}>
-          <Link href="/">
-            <img src={logo.src} alt="Logo" style={{ height: 40 }} />
-          </Link>
-        </Box>
+        <Link
+          href="/"
+          style={{
+            marginBottom: '18px',
+          }}>
+          <Image src="https://eriskip.com/images/logo.svg" alt="Logo" width="223" height="46" />
+        </Link>
         {children}
       </Paper>
     </BackGroundImageWrapper>

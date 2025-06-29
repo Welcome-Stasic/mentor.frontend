@@ -41,7 +41,6 @@ export default function RegisterClientForm() {
 
     try {
       const registerResult = await API.auth.register(body);
-      setErrorMessage(registerResult?.Message ?? '');
 
       if (registerResult?.Result) {
         setEmailSent(true);
