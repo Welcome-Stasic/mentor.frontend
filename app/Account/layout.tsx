@@ -1,5 +1,4 @@
-import { Box, Paper } from '@mui/material';
-import logo from '@assets/logo.png';
+import { Paper } from '@mui/material';
 import mentor from '@assets/resize_ai_mentor_orig_without_bg.png';
 
 import Link from 'next/link';
