@@ -3,6 +3,7 @@ import { IApiResponse } from './types/base';
 
 const API_VERSION = 'v1';
 const BASE_URL = 'https://developmentmentor.eriskip.com';
+//const BASE_URL = 'https://localhost:44330';
 
 const axiosInstance = axios.create({
   baseURL: `${BASE_URL}/api/${API_VERSION}`,

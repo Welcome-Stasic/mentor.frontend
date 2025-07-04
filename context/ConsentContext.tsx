@@ -4,60 +4,84 @@ import { createContext, useContext, useEffect, useState } from 'react';
 import { getCookie, setCookie } from 'cookies-next';
 
 type ConsentContextType = {
-  consentGiven: boolean;
-  setConsent: () => void;
+  necessary: boolean;
+  analytics: boolean;
+  marketing: boolean;
+  isBannerShow: boolean;
+  setConsent: (data: { necessary: boolean; analytics: boolean; marketing: boolean }) => void;
   loading: boolean;
 };
 
-const ConsentContext = createContext<ConsentContextType | undefined>(undefined);
+const ONE_YEAR = 60 * 60 * 24 * 365;
+
+export const ConsentContext = createContext<ConsentContextType | undefined>(undefined);
 
 export const ConsentProvider = ({ children }: { children: React.ReactNode }) => {
-  const [consentGiven, setConsentGiven] = useState(false);
-  const [loading, setLoading] = useState(true);
+  const [necessary, setNecessary] = useState(true);
+  const [analytics, setAnalytics] = useState(true);
+  const [marketing, setMarketing] = useState(true);
+  const [isBannerShow, setBannerShow] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  const getUserConsent = async () => {
+    setLoading(true);
+
+    const necessaryCookie = getCookie('necessary_cookies');
+    const analyticsCookie = getCookie('analytics_cookies');
+    const marketingCookie = getCookie('marketing_cookies');
+    const consentDateStr = getCookie('consent_cookies') as string | undefined;
+
+    try {
+      if (consentDateStr) {
+        const savedDate = new Date(consentDateStr);
+        const now = new Date();
+        const diffDays = Math.floor((now.getTime() - savedDate.getTime()) / (1000 * 60 * 60 * 24));
+        setBannerShow(diffDays >= 30);
+      } else {
+        setBannerShow(true);
+      }
+
+      setNecessary(necessaryCookie === 'true');
+      setAnalytics(analyticsCookie === 'true');
+      setMarketing(marketingCookie === 'true');
+    } catch {
+      setNecessary(true);
+      setAnalytics(true);
+      setMarketing(true);
+      setBannerShow(true);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const consentDateStr = getCookie('user_consent_date') as string | undefined;
-
-    if (consentDateStr) {
-      const savedDate = new Date(consentDateStr);
-      const now = new Date();
-
-      const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-      const startOfSavedDay = new Date(
-        savedDate.getFullYear(),
-        savedDate.getMonth(),
-        savedDate.getDate(),
-      );
-
-      const diffMs = startOfToday.getTime() - startOfSavedDay.getTime();
-      const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
-
-      if (diffDays >= 30) {
-        setConsentGiven(true);
-      }
-    } else {
-      setConsentGiven(true);
-    }
-    setLoading(false);
+    getUserConsent();
   }, []);
 
-  const setConsent = () => {
+  const setConsent = (data: { necessary: boolean; analytics: boolean; marketing: boolean }) => {
     const nowISO = new Date().toISOString();
-    setCookie('user_consent_date', nowISO, {
-      maxAge: 60 * 60 * 24 * 365, // 1 year in seconds
-    });
-    setConsentGiven(true);
+    setCookie('necessary_cookies', String(data.necessary), { maxAge: ONE_YEAR });
+    setCookie('analytics_cookies', String(data.analytics), { maxAge: ONE_YEAR });
+    setCookie('marketing_cookies', String(data.marketing), { maxAge: ONE_YEAR });
+    setCookie('consent_cookies', nowISO, { maxAge: ONE_YEAR });
+
+    setNecessary(data.necessary);
+    setAnalytics(data.analytics);
+    setMarketing(data.marketing);
+    setBannerShow(true);
   };
 
   return (
-    <ConsentContext.Provider value={{ consentGiven, setConsent, loading }}>
+    <ConsentContext.Provider
+      value={{
+        necessary,
+        analytics,
+        marketing,
+        isBannerShow,
+        setConsent,
+        loading,
+      }}>
       {children}
     </ConsentContext.Provider>
   );
-};
-
-export const useConsent = () => {
-  const context = useContext(ConsentContext);
-  if (!context) throw new Error('useConsent must be used within ConsentProvider');
-  return context;
 };

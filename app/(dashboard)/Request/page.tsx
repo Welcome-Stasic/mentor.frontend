@@ -19,6 +19,7 @@ import {
   SelectChangeEvent,
 } from '@mui/material';
 import { useQuizzesStore } from '@/providers/quizzes-provider';
+import { RequestCard } from '@/components/Requset/RequestCard';
 
 type Request = {
   id: number;
@@ -136,10 +137,6 @@ export default function RequestPage() {
 
   return (
     <Box>
-      <Typography variant="h3" mb={1} align="left">
-        Анкеты
-      </Typography>
-
       {/* Фильтры: категории, поиск, сортировка */}
       <Box
         mb={4}
@@ -194,30 +191,7 @@ export default function RequestPage() {
             Анкет не найдено.
           </Typography>
         ) : (
-          quizzes.map((quiz) => (
-            <Card key={quiz.id}>
-              <CardMedia component="img" height="200" image="" alt="" />
-              <CardContent>
-                <Typography variant="h6" gutterBottom>
-                  1
-                </Typography>
-                <Typography variant="body2" color="text.secondary" mb={1}>
-                  2
-                </Typography>
-                <Typography variant="caption" color="text.secondary" display="block" mb={2}>
-                  Дата создания: {new Date(quiz.creationDate).toLocaleDateString('ru-RU')}
-                </Typography>
-                <Box display="flex" gap={1}>
-                  <Button variant="contained" size="small" fullWidth>
-                    Просмотр
-                  </Button>
-                  <Button variant="outlined" size="small" fullWidth>
-                    Контакт
-                  </Button>
-                </Box>
-              </CardContent>
-            </Card>
-          ))
+          quizzes.map((quiz) => <RequestCard key={quiz.id} quiz={quiz} />)
         )}
       </Grid>
 

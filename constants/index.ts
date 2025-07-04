@@ -1,6 +1,6 @@
 export const SITE_BASE_NAME: string = 'ЭРИС. Наставничество';
 
-type Question = {
+export type Question = {
   question: string;
   number: number;
   type: 'text' | 'select';
@@ -8,31 +8,17 @@ type Question = {
   requiredMessage?: string;
 }
 
-type QuestionOption = {
+export type QuestionOption = {
   label: string;
-  value: number | null;
+  value: string | null;
 }
 
 export const TypeWork: QuestionOption[] = [
   { label: '', value: null },
-  { label: 'Работа', value: 1 },
-  { label: 'Подработка', value: 2 },
-  { label: 'Практика', value: 3 }
+  { label: 'Работа', value: '1' },
+  { label: 'Подработка', value: '' },
+  { label: 'Практика', value: '' }
 ]
-
-export const RequestDepartments: QuestionOption[] = [
-  { label: '', value: null },
-  { label: 'Отдел бухгалтерии', value: 2 },
-  { label: 'Отдел информационных технологий и связи', value: 11 },
-  { label: 'Отдел кадров', value: 4 },
-  { label: 'Отдел логистики', value: 5 },
-  { label: 'Отдел разработок', value: 9 },
-  { label: 'Отдел снабжения', value: 6 },
-  { label: 'Производство', value: 8 },
-  { label: 'Сервис', value: 304 },
-  { label: 'Экономический отдел', value: 16 },
-  { label: 'Коммерческий отдел', value: 15 },
-];
 
 export const Questions: Question[] = [
   {
@@ -119,7 +105,7 @@ export const Questions: Question[] = [
     number: 14,
     type: 'select',
     requiredMessage: '',
-    options: RequestDepartments
+    options: []
   },
 ];
 
@@ -141,3 +127,46 @@ export const DepartmentQuestions: Record<string, Question[]> = {
     },
   ],
 };
+
+export const USER_ROLES: Record<KeyUserRole, IUserRole> = {
+  ADMIN: {
+    name: 'Admin',
+    description: 'Полный доступ'
+  },
+  JUNIOR: {
+    name: 'Junior',
+    description: 'Базовая роль для одобренного пользователя'
+  },
+  PENDING_APPROVAL: {
+    name: 'PendingApproval',
+    description: 'Пользователь ожидающий подтверждения'
+  }
+}
+
+type KeyUserRole = "ADMIN" | "JUNIOR" | "PENDING_APPROVAL"
+
+export interface IUserRole {
+  name: string,
+  description: string;
+}
+
+export const PAGE: Record<KeyPage, IPage> = {
+  HOME: {
+    name: 'Главная',
+    pathPrefix: '/',
+    roles: [],
+  },
+  REQUEST: {
+    name: 'Анкеты',
+    pathPrefix: '/Request',
+    roles: [USER_ROLES.ADMIN.name],
+  }
+}
+
+export interface IPage {
+  name: string,
+  pathPrefix: string;
+  roles: string[]
+}
+
+type KeyPage = "HOME" | "REQUEST"

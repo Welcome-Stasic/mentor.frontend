@@ -1,5 +1,6 @@
 'use client';
 
+import { USER_ROLES } from '@/constants';
 import {
   createCurrentUserStore,
   CurrentUserStore,
@@ -19,8 +20,10 @@ export interface UserStoreProviderProps {
 }
 
 export const CurrentUserStoreProvider = ({ children }: UserStoreProviderProps) => {
-  const session = useSession()
+  const session = useSession();
   const accessToken = session.data?.user.accessToken || '';
+  const roles = session.data?.user.roles || [];
+  const isAdmin = roles.includes(USER_ROLES.ADMIN.name);
 
   const storeRef = useRef<UserStoreApi | null>(null);
 
@@ -29,7 +32,7 @@ export const CurrentUserStoreProvider = ({ children }: UserStoreProviderProps) =
   }
 
   const load = async (accessToken: string) => {
-    const initialState = await initCurrentUserState(accessToken);
+    const initialState = await initCurrentUserState(accessToken, isAdmin);
     if (initialState) {
       storeRef.current?.setState(initialState);
     }

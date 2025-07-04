@@ -1,75 +1,120 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Snackbar, Alert, Button, Link, Stack, useTheme, useMediaQuery } from '@mui/material';
-import { useConsent } from '@/context/ConsentContext';
+import {
+  Box,
+  Button,
+  Checkbox,
+  FormControlLabel,
+  IconButton,
+  Link,
+  Paper,
+  Stack,
+  Typography,
+  useTheme,
+} from '@mui/material';
+import CloseIcon from '@mui/icons-material/Close';
+import { useConsent } from '@/hooks/useConsent';
 
 export default function ConsentBanner() {
-  const { consentGiven, setConsent, loading } = useConsent();
+  const { isBannerShow, setConsent, analytics, marketing, loading } = useConsent();
+
   const [open, setOpen] = useState(false);
+  const [settingsOpen, setSettingsOpen] = useState(false);
+
+  const [selectedAnalytics, setSelectedAnalytics] = useState(true);
+  const [selectedMarketing, setSelectedMarketing] = useState(true);
 
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   useEffect(() => {
-    setOpen(consentGiven);
-  }, [consentGiven]);
+    setOpen(isBannerShow);
+    setSelectedAnalytics(analytics);
+    setSelectedMarketing(marketing);
+  }, [isBannerShow]);
 
-  const handleAccept = () => {
-    setConsent();
+  const handleAcceptAll = () => {
+    setConsent({
+      necessary: true,
+      analytics: true,
+      marketing: true,
+    });
     setOpen(false);
   };
 
-  if (loading) return null;
+  const handleAcceptSelected = () => {
+    setConsent({
+      necessary: true,
+      analytics: selectedAnalytics,
+      marketing: selectedMarketing,
+    });
+    setOpen(false);
+  };
+
+  const handleToggleAnalytics = () => {
+    setSelectedAnalytics((prev) => !prev);
+  };
+
+  const handleToggleMarketing = () => {
+    setSelectedMarketing((prev) => !prev);
+  };
+
+  const handleClose = () => setOpen(false);
+
+  if (loading || !open) return null;
 
   return (
-    <Snackbar
-      open={open}
-      anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
-      sx={{ zIndex: theme.zIndex.snackbar + 1 }}>
-      <Alert
-        severity="info"
-        variant="filled"
-        sx={{
-          width: '100%',
-          maxWidth: 600,
-          mx: 'auto',
-          alignItems: 'center',
-          fontSize: isMobile ? '0.8rem' : '1rem',
-        }}
-        action={
-          <Stack direction="row" spacing={1} alignItems="center">
-            <Button
-              color="inherit"
-              size="small"
-              variant="outlined"
-              onClick={handleAccept}
-              sx={{
-                borderColor: '#fff',
-                color: '#fff',
-                '&:hover': {
-                  backgroundColor: 'rgba(255,255,255,0.1)',
-                  borderColor: '#fff',
-                },
-              }}>
-              Согласен
-            </Button>
-            <Link
-              href="/privacy-policy"
-              underline="hover"
-              target="_blank"
-              rel="noopener"
-              color="inherit"
-              sx={{
-                fontSize: '0.75rem',
-                whiteSpace: 'nowrap',
-              }}>
-              Подробнее
-            </Link>
-          </Stack>
-        }>
-        Мы используем cookies и обрабатываем персональные данные для улучшения работы сайта.
-      </Alert>
-    </Snackbar>
+    <Paper
+      elevation={3}
+      sx={{
+        position: 'fixed',
+        bottom: 16,
+        left: 16,
+        right: 16,
+        maxWidth: 500,
+        p: 2,
+        zIndex: theme.zIndex.snackbar + 1,
+      }}>
+      <Box display="flex" justifyContent="space-between" alignItems="center">
+        <Typography fontWeight="bold">Мы используем Cookies</Typography>
+        <IconButton onClick={handleClose} size="small">
+          <CloseIcon />
+        </IconButton>
+      </Box>
+
+      <Typography variant="body2" mt={1} mb={2}>
+        Продолжая использовать наш сайт, вы соглашаетесь с{' '}
+        <Link href="/privacy-policy" target="_blank" rel="noopener" color="info">
+          политикой использования Cookies
+        </Link>
+        . Это файлы, которые помогают сделать ваш опыт взаимодействия с сайтом удобнее.
+      </Typography>
+
+      {!settingsOpen ? (
+        <Stack direction="row" spacing={1}>
+          <Button fullWidth variant="contained" onClick={handleAcceptAll}>
+            Согласен со всеми
+          </Button>
+          <Button fullWidth variant="outlined" onClick={() => setSettingsOpen(true)}>
+            Настроить
+          </Button>
+        </Stack>
+      ) : (
+        <>
+          <FormControlLabel control={<Checkbox checked disabled />} label="Обязательные" />
+          <FormControlLabel
+            control={<Checkbox checked={selectedAnalytics} onChange={handleToggleAnalytics} />}
+            label="Аналитические"
+          />
+          <FormControlLabel
+            control={<Checkbox checked={selectedMarketing} onChange={handleToggleMarketing} />}
+            label="Маркетинговые"
+          />
+          <Button fullWidth variant="contained" onClick={handleAcceptSelected}>
+            Согласен с выбранными
+          </Button>
+        </>
+      )}
+    </Paper>
   );
 }

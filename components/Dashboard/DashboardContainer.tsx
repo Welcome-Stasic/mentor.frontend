@@ -5,6 +5,8 @@ import OverlayMessage from '@/components/OverlayMessage';
 import Sidebar from '@/components/Sidebar';
 import ManageSearchOutlinedIcon from '@mui/icons-material/ManageSearchOutlined';
 import { getServerSession } from 'next-auth';
+import { DashboardPageTitle } from './DashboardPageTitle';
+import { USER_ROLES } from '@/constants';
 
 export default async function DashboardContainer({ children }: { children: React.ReactNode }) {
   const session = await getServerSession(authOptions);
@@ -12,7 +14,7 @@ export default async function DashboardContainer({ children }: { children: React
 
   return (
     <div className="container" style={{ position: 'relative', zIndex: 1 }}>
-      {currentUserRoles.includes('PendingApproval') && (
+      {currentUserRoles.includes(USER_ROLES.PENDING_APPROVAL.name) && (
         <OverlayMessage
           title="Спасибо за прохождение опроса!"
           message="Мы внимательно ознакомимся с вашими ответами, и свяжемся с вами в ближайшее время 😉"
@@ -26,7 +28,10 @@ export default async function DashboardContainer({ children }: { children: React
       <div style={{ display: 'flex', minHeight: '100vh', flexDirection: 'column' }}>
         <div style={{ display: 'flex', flexGrow: 1 }}>
           <Sidebar />
-          <main style={{ flexGrow: 1, padding: '24px', marginTop: '64px' }}>{children}</main>
+          <main style={{ position: 'relative', flexGrow: 1, padding: '24px', marginTop: '64px' }}>
+            <DashboardPageTitle />
+            {children}
+          </main>
         </div>
         <Footer />
       </div>

@@ -9,6 +9,7 @@ export type CurrentUserState = {
   userName: string;
   photoUrl?: string | null;
   quiz?: IQuiz| null;
+  isAdmin: boolean;
 };
 
 export type CurrentUserActions = {
@@ -23,9 +24,10 @@ export const defaultInitState: CurrentUserState = {
   userName: '',
   photoUrl: null,
   quiz: null,
+  isAdmin: false
 };
 
-export const initCurrentUserState = async (accessToken: string): Promise<CurrentUserState> => {
+export const initCurrentUserState = async (accessToken: string, isAdmin: boolean): Promise<CurrentUserState> => {
   try {
     const meResponse = await API.user.me(accessToken);
 
@@ -41,6 +43,7 @@ export const initCurrentUserState = async (accessToken: string): Promise<Current
       userName: me.userName,
       photoUrl: null,
       quiz: null,
+      isAdmin
     };
 
     // CRM: фото пользователя

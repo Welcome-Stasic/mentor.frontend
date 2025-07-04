@@ -27,3 +27,21 @@ export interface ICrmUser {
     }
   }
 }
+
+export interface IApplicationUser {
+  id: string;
+  elmaUserId?: number;
+  birthDay?: string;
+  photoUid?: string;
+  isWithOutQuiz: boolean;
+  quizId?: string;
+  acceptedPrivacyAgreement: boolean;
+  lastName: string;
+  firstName: string;
+  middleName: string;
+  address: string;
+  email: string;
+  isEmailConfirmed: boolean;
+  phoneNumber: string;
+  userName: string;
+}

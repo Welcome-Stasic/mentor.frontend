@@ -5,7 +5,11 @@ export interface IQuiz  {
   isCompleted: boolean;
   stage: number;
   questions: string[];
-  applicationUserId: string
+  applicationUserId: string;
+  selectedDepartmentId: string;
+  institution: string;
+  course: string;
+  specialty: string;
 }
 
 export interface IAddAnswersToQuestionsDto {
@@ -17,4 +21,26 @@ export interface IQuestion {
   question: string;
   answer: string; 
   number: number;
+}
+
+export interface IUpdateFirstStageDto {
+  quizId: string;
+  lastName: string;
+  firstName: string;
+  middleName: string;
+  place: string;
+  phoneNumber: string;
+  birthDate: Date;
+  isAccepted: boolean;
+  specialty: string;
+  institution: string;
+  course: number;
+}
+
+export interface IUpdateQuizDto {
+  quizId: string;
+  stage?: number;
+  IsCompleted?: boolean;
+  finishDate?: Date
+  departmentId?: string;
 }
