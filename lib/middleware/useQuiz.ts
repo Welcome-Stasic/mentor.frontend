@@ -45,6 +45,6 @@ const redirectToReferer = (req: NextRequest) => {
 };
 
 const getFirstQuiz = async (userId: string, token: string) => {
-  const response = await API.quiz.getAll(token, userId);
+  const response = await API.quiz.getAll(token, {applicationUserId: userId});
   return response?.Result?.data?.[0] ?? null;
 };
