@@ -1,7 +1,7 @@
 import { getAuthAxios } from "../authAxios";
-import { USER, USER_CRM, USER_ME_UPDATE_PHOTO } from "../endpoint";
+import { USER, USER_CRM, USER_ME_UPDATE_PHOTO, USER_PHOTO_INFO } from "../endpoint";
 import { IApiResponse } from "../types/base";
-import { IApplicationUser, ICrmUser } from "../types/user";
+import { IApplicationUser, ICrmUser, IUserPhoto } from "../types/user";
 
 export async function getCrmUserById(crmUserId: string, token: string): Promise<IApiResponse<ICrmUser> | null> {
   try {
@@ -37,6 +37,15 @@ export async function updatePhotoCurrentUser(file: File, token: string): Promise
   const res = await authAxios.put<IApiResponse<string>>(USER_ME_UPDATE_PHOTO, formData, { headers : {
     'Content-Type': 'multipart/form-data'
   }});
+
+  return res.data;
+}
+
+export async function getUserPhoto(userId: string, token: string): Promise<IApiResponse<IUserPhoto> | null> {
+  if(!token || !userId) return null;
+  
+  const authAxios = await getAuthAxios(token);
+  const res = await authAxios.get<IApiResponse<IUserPhoto>>(`USER_PHOTO_INFO/${userId}`);
 
   return res.data;
 }

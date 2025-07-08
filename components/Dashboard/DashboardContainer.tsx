@@ -28,7 +28,7 @@ export default async function DashboardContainer({ children }: { children: React
       <div style={{ display: 'flex', minHeight: '100vh', flexDirection: 'column' }}>
         <div style={{ display: 'flex', flexGrow: 1 }}>
           <Sidebar />
-          <main style={{ position: 'relative', flexGrow: 1, padding: '24px', marginTop: '64px' }}>
+          <main style={{ position: 'relative', flexGrow: 1, padding: '14px', marginTop: '64px' }}>
             <DashboardPageTitle />
             {children}
           </main>

@@ -9,7 +9,7 @@ export function DashboardClientPageTitle() {
   const title = getTitleFromPath(pathname);
 
   return (
-    <Typography variant="h6" sx={{ mb: 2 }}>
+    <Typography variant="h4" sx={{ mb: 2 }}>
       {title}
     </Typography>
   );

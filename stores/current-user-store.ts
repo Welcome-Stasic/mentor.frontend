@@ -57,6 +57,13 @@ export const initCurrentUserState = async (accessToken: string, isAdmin: boolean
       }
     }
 
+    if(!state.photoUrl){
+      const photoResponse = await API.user.getUserPhoto(me.id, accessToken);
+      const photoUrl = photoResponse?.Result?.url || '';
+
+      state.photoUrl = photoUrl;
+    }
+
     // Квиз
     if (me.quizId) {
       const quizResponse = await API.quiz.getById(me.quizId, accessToken);

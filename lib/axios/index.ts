@@ -1,8 +1,8 @@
 import { crmLogin, forgotPassword, getRefreshToken, isEmailConfirmed, login, refreshToken, register, resetPassword } from './requests/auth';
 import { me } from './requests/me';
-import { addAnswersToQuestions, getAll, getById, update, updateFirstStage } from './requests/quiz';
+import { addAnswersToQuestions, getAll, getAllQuizStatues, getById, update, updateFirstStage } from './requests/quiz';
 import { getDepartmentAll } from './requests/department';
-import { getCrmUserById, getUserById, updatePhotoCurrentUser } from './requests/user';
+import { getCrmUserById, getUserById, getUserPhoto, updatePhotoCurrentUser } from './requests/user';
 
 export const API = {
   auth: {
@@ -19,14 +19,16 @@ export const API = {
     me,
     getCrmUserById,
     getUserById,
-    updatePhotoCurrentUser
+    updatePhotoCurrentUser,
+    getUserPhoto
   },
   quiz: {
     getById,
     getAll,
     addAnswersToQuestions,
     updateFirstStage,
-    update
+    update,
+    getAllQuizStatues
   },
   department: {
     getAll: getDepartmentAll

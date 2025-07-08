@@ -11,11 +11,13 @@ export const USER = 'User';
 export const USER_ME = 'User/Me';
 export const USER_CRM = 'User/Crm';
 export const USER_ME_UPDATE_PHOTO = 'User/Me/PhotoUpdate';
+export const USER_PHOTO_INFO = 'User/Photo/Info';
 
 export const QUIZ = 'Quiz';
 export const QUIZ_ALL = 'Quiz/GetAll';
 export const QUIZ_ADD_ANSWERS_TO_QUESTIONS = 'Quiz/AddAnswersToQuestions';
 export const QUIZ_UPDATE_FIRST_STAGE = 'Quiz/UpdateFirstStage';
 export const QUIZ_UPDATE = 'Quiz/Update';
+export const QUIZ_GET_ALL_STATUES = 'Quiz/GetAllStatues';
 
 export const DEPARTMENT_GET_ALL = 'Department/GetAll';

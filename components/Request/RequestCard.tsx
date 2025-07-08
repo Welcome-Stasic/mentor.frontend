@@ -25,12 +25,14 @@ import { IApplicationUser } from '@/lib/axios/types/user';
 import { API } from '@/lib/axios';
 import { useSession } from 'next-auth/react';
 import { useDepartments } from '@/hooks/useDepartments';
+import { IDepartment } from '@/lib/axios/types/department';
 
 interface IRequestCardProps {
   quiz: IQuiz;
+  departments: IDepartment[];
 }
 
-export const RequestCard = ({ quiz }: IRequestCardProps) => {
+export const RequestCard = ({ quiz, departments }: IRequestCardProps) => {
   const session = useSession();
   const accessToken = session.data?.user.accessToken || '';
 
@@ -38,8 +40,6 @@ export const RequestCard = ({ quiz }: IRequestCardProps) => {
   const [photoOpen, setPhotoOpen] = useState(false);
 
   const [user, setUser] = useState<IApplicationUser | null>(null);
-
-  const { data: departments } = useDepartments();
 
   const fetchAllData = async () => {
     try {

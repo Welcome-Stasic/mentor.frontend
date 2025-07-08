@@ -1,4 +1,8 @@
 export const SITE_BASE_NAME: string = 'ЭРИС. Наставничество';
+import HomeIcon from '@mui/icons-material/Home';
+import { SvgIconTypeMap } from '@mui/material';
+import { OverridableComponent } from '@mui/material/OverridableComponent';
+import ContactsIcon from '@mui/icons-material/Contacts';
 
 export type Question = {
   question: string;
@@ -155,18 +159,21 @@ export const PAGE: Record<KeyPage, IPage> = {
     name: 'Главная',
     pathPrefix: '/',
     roles: [],
+    icon: HomeIcon
   },
   REQUEST: {
     name: 'Анкеты',
     pathPrefix: '/Request',
     roles: [USER_ROLES.ADMIN.name],
+    icon: ContactsIcon
   }
 }
 
 export interface IPage {
   name: string,
   pathPrefix: string;
-  roles: string[]
+  roles: string[],
+  icon: OverridableComponent<SvgIconTypeMap<{}, "svg">>
 }
 
 type KeyPage = "HOME" | "REQUEST"

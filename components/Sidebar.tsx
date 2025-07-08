@@ -7,8 +7,6 @@ import ListItemText from '@mui/material/ListItemText';
 import { getServerSession } from 'next-auth';
 import Link from 'next/link';
 
-const drawerWidth = 200;
-
 const navItems = [PAGE.HOME, PAGE.REQUEST];
 
 export default async function Sidebar() {
@@ -22,20 +20,28 @@ export default async function Sidebar() {
     <Drawer
       variant="permanent"
       sx={{
-        width: drawerWidth,
+        width: 100,
         flexShrink: 0,
         [`& .MuiDrawer-paper`]: {
-          width: drawerWidth,
+          width: 'maxContent',
           boxSizing: 'border-box',
           marginTop: '64px', // header height
         },
       }}>
       <List>
-        {filteredNavItems.map((item) => (
-          <ListItem key={item.name} component={Link} href={item.pathPrefix}>
-            <ListItemText primary={item.name} />
-          </ListItem>
-        ))}
+        {filteredNavItems.map((item) => {
+          const Icon = item.icon;
+          return (
+            <ListItem
+              sx={{ display: 'flex', flexDirection: 'column', gap: '5px' }}
+              key={item.name}
+              component={Link}
+              href={item.pathPrefix}>
+              <Icon sx={{ fontSize: '30px' }} />
+              <ListItemText primary={item.name} />
+            </ListItem>
+          );
+        })}
       </List>
     </Drawer>
   );

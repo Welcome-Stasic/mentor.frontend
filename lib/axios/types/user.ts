@@ -45,3 +45,8 @@ export interface IApplicationUser {
   phoneNumber: string;
   userName: string;
 }
+
+export interface IUserPhoto{
+  key:string;
+  url:string;
+}

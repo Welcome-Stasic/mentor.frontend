@@ -10,6 +10,7 @@ export interface IQuiz  {
   institution: string;
   course: string;
   specialty: string;
+  status: string;
 }
 
 export interface IAddAnswersToQuestionsDto {
@@ -43,4 +44,9 @@ export interface IUpdateQuizDto {
   IsCompleted?: boolean;
   finishDate?: Date
   departmentId?: string;
+}
+
+export interface IQuizStatus {
+  id: string;
+  name: string;
 }
