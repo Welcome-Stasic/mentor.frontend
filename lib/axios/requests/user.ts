@@ -45,7 +45,7 @@ export async function getUserPhoto(userId: string, token: string): Promise<IApiR
   if(!token || !userId) return null;
   
   const authAxios = await getAuthAxios(token);
-  const res = await authAxios.get<IApiResponse<IUserPhoto>>(`USER_PHOTO_INFO/${userId}`);
+  const res = await authAxios.get<IApiResponse<IUserPhoto>>(`${USER_PHOTO_INFO}/${userId}`);
 
   return res.data;
 }
