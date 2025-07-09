@@ -20,8 +20,8 @@ export type QuestionOption = {
 export const TypeWork: QuestionOption[] = [
   { label: '', value: null },
   { label: 'Работа', value: '1' },
-  { label: 'Подработка', value: '' },
-  { label: 'Практика', value: '' }
+  { label: 'Подработка', value: '2' },
+  { label: 'Практика', value: '3' }
 ]
 
 export const Questions: Question[] = [

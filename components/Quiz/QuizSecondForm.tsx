@@ -46,8 +46,9 @@ export default function QuizSecondForm() {
 
   const selectedDepartmentValue = watch('q14');
 
-  const selectedDepartmentLabel =
-    departments.find((d) => d.value === selectedDepartmentValue)?.label || '';
+  const selectedDepartment = departments.find((d) => d.value === selectedDepartmentValue) || null;
+
+  const selectedDepartmentLabel = selectedDepartment?.label || '';
 
   const deptQuestions = selectedDepartmentLabel
     ? DepartmentQuestions[selectedDepartmentLabel] || []
@@ -92,7 +93,10 @@ export default function QuizSecondForm() {
 
       const [questionResponse] = await Promise.all([
         API.quiz.addAnswersToQuestions(body, accessToken),
-        API.quiz.update({ quizId: currentQuiz?.id, departmentId: '' }, accessToken),
+        API.quiz.update(
+          { quizId: currentQuiz?.id, departmentId: selectedDepartment?.value || '' },
+          accessToken,
+        ),
       ]);
 
       if (questionResponse?.Errors?.length) {

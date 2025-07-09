@@ -1,7 +1,7 @@
-import { QUIZ, QUIZ_ADD_ANSWERS_TO_QUESTIONS, QUIZ_ALL, QUIZ_GET_ALL_STATUES, QUIZ_UPDATE, QUIZ_UPDATE_FIRST_STAGE } from "../endpoint";
+import { QUIZ, QUIZ_ADD_ANSWERS_TO_QUESTIONS, QUIZ_ALL, QUIZ_GET_ALL_STATUES, QUIZ_GET_ANSWERS_TO_QUESTIONS, QUIZ_UPDATE, QUIZ_UPDATE_FIRST_STAGE } from "../endpoint";
 import { IApiResponse, IPaginationResponse } from "../types/base";
 import { getAuthAxios } from "../authAxios";
-import { IAddAnswersToQuestionsDto, IQuiz, IQuizStatus, IUpdateFirstStageDto, IUpdateQuizDto } from "../types/quiz";
+import { IAddAnswersToQuestionsDto, IAnswerOnQuestion, IQuiz, IQuizStatus, IUpdateFirstStageDto, IUpdateQuizDto } from "../types/quiz";
 import { handleApiError } from "@/lib/utils/handleApiError";
 
 export async function getById (id: string, token: string): Promise<IApiResponse<IQuiz> | null> {
@@ -57,7 +57,6 @@ export async function getAll(
   }
 }
 
-
 export async function addAnswersToQuestions(payload: IAddAnswersToQuestionsDto, token: string): Promise<IApiResponse<IQuiz> | null> {
   if(!token) return null;
         
@@ -93,7 +92,17 @@ export async function getAllQuizStatues(token: string): Promise<IApiResponse<IQu
         
   const authAxios = await getAuthAxios(token);
   
-  const res = await authAxios.put<IApiResponse<IQuizStatus[]>>(QUIZ_GET_ALL_STATUES);
+  const res = await authAxios.get<IApiResponse<IQuizStatus[]>>(QUIZ_GET_ALL_STATUES);
+
+  return res.data;
+}
+
+export async function getAnswersToQuestions(quizId: string, token: string): Promise<IApiResponse<IAnswerOnQuestion[]> | null> {
+  if(!token) return null;
+        
+  const authAxios = await getAuthAxios(token);
+  
+  const res = await authAxios.get<IApiResponse<IAnswerOnQuestion[]>>(`${QUIZ_GET_ANSWERS_TO_QUESTIONS}/${quizId}`);
 
   return res.data;
 }

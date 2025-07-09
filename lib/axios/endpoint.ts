@@ -19,5 +19,6 @@ export const QUIZ_ADD_ANSWERS_TO_QUESTIONS = 'Quiz/AddAnswersToQuestions';
 export const QUIZ_UPDATE_FIRST_STAGE = 'Quiz/UpdateFirstStage';
 export const QUIZ_UPDATE = 'Quiz/Update';
 export const QUIZ_GET_ALL_STATUES = 'Quiz/GetAllStatues';
+export const QUIZ_GET_ANSWERS_TO_QUESTIONS = 'Quiz/GetAnswersToQuestions';
 
 export const DEPARTMENT_GET_ALL = 'Department/GetAll';

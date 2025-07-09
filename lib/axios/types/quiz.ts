@@ -49,4 +49,11 @@ export interface IUpdateQuizDto {
 export interface IQuizStatus {
   id: string;
   name: string;
+  quizCount: number
+}
+
+export interface IAnswerOnQuestion {
+  questionText: string;
+  answerText: string; 
+  number: number;
 }

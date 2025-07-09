@@ -13,8 +13,9 @@ import {
   Pagination,
   Chip,
   Grid,
+  styled,
 } from '@mui/material';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { RequestCard } from './RequestCard';
 import { useDepartments } from '@/hooks/useDepartments';
 import { useQuizStatues } from '@/hooks/useQuizStatues';
@@ -22,8 +23,29 @@ import { IQuizStatus } from '@/lib/axios/types/quiz';
 
 const ITEMS_PER_PAGE = 10;
 
+const formatNumber = (value: number) => new Intl.NumberFormat('ru-RU').format(value);
+
+const CountBox = styled(Box)(({ theme }) => ({
+  padding: '0 6px',
+  border: `1px solid ${theme.palette.info}`,
+  borderRadius: theme.shape.borderRadius,
+  fontSize: '0.75rem',
+  fontWeight: 600,
+  color: theme.palette.text.secondary,
+  backgroundColor: theme.palette.action.hover,
+  lineHeight: 1.5,
+}));
+
+const StyledChip = styled(Chip)(({ theme }) => ({
+  '& .MuiChip-label': {
+    display: 'flex',
+    alignItems: 'center',
+    gap: theme.spacing(1),
+  },
+}));
+
 export const RequestContainer = () => {
-  const [category, setCategory] = useState<IQuizStatus>({ id: '', name: 'Все' });
+  const [category, setCategory] = useState<IQuizStatus>({ id: '', name: 'Все', quizCount: 0 });
   const [page, setPage] = useState<number>(1);
   const [search, setSearch] = useState<string>('');
   const [sortOrder, setSortOrder] = useState<'newest' | 'oldest'>('newest');
@@ -43,7 +65,12 @@ export const RequestContainer = () => {
 
   const pageCount = Math.ceil((data?.Result?.totalCount || 0) / ITEMS_PER_PAGE);
 
-  const categories = [{ id: '', name: 'Все' }, ...allQuizStatues];
+  const categories = useMemo(() => {
+    const totalQuizCount = allQuizStatues
+      .filter((s) => s.quizCount > 0)
+      .reduce((sum, s) => sum + s.quizCount, 0);
+    return [{ id: '', name: 'Все', quizCount: totalQuizCount }, ...allQuizStatues];
+  }, [allQuizStatues]);
 
   const handleCategoryChange = (selectedCategory: IQuizStatus) => {
     setCategory(selectedCategory);
@@ -68,9 +95,14 @@ export const RequestContainer = () => {
       <Box mb={4} display="flex" flexWrap="wrap" gap={2} justifyContent="space-between">
         <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
           {categories.map((cat) => (
-            <Chip
+            <StyledChip
               key={cat.id}
-              label={cat.name}
+              label={
+                <>
+                  {cat.name}
+                  {cat.quizCount > 0 && <CountBox>{formatNumber(cat.quizCount)}</CountBox>}
+                </>
+              }
               color={category.id === cat.id ? 'primary' : 'default'}
               variant={category.id === cat.id ? 'filled' : 'outlined'}
               onClick={() => handleCategoryChange(cat)}

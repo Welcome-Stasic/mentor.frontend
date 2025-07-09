@@ -12,6 +12,9 @@ import {
   DialogContent,
   Divider,
   IconButton,
+  List,
+  ListItem,
+  ListItemText,
   MenuItem,
   Select,
   SelectChangeEvent,
@@ -20,7 +23,7 @@ import {
 } from '@mui/material';
 import { Delete, Download, Visibility } from '@mui/icons-material';
 import { ChangeEvent, ReactElement, useEffect, useState } from 'react';
-import { IQuiz } from '@/lib/axios/types/quiz';
+import { IAnswerOnQuestion, IQuiz } from '@/lib/axios/types/quiz';
 import { IApplicationUser } from '@/lib/axios/types/user';
 import { API } from '@/lib/axios';
 import { useSession } from 'next-auth/react';
@@ -38,16 +41,23 @@ export const RequestCard = ({ quiz, departments }: IRequestCardProps) => {
 
   const [loading, setLoading] = useState(true);
   const [photoOpen, setPhotoOpen] = useState(false);
+  const [questionListOpen, setQuestionListOpen] = useState(false);
+  const [answersToQuestions, setAnswersToQuestions] = useState<IAnswerOnQuestion[]>([]);
 
   const [user, setUser] = useState<IApplicationUser | null>(null);
+  const [photoUrl, setPhotoUrl] = useState<string>('');
 
   const fetchAllData = async () => {
     try {
       setLoading(true);
 
-      const userResponse = await API.user.getUserById(quiz.applicationUserId, accessToken);
+      const [userResponse, userPhotoResponse] = await Promise.all([
+        await API.user.getUserById(quiz.applicationUserId, accessToken),
+        await API.user.getUserPhoto(quiz.applicationUserId, accessToken),
+      ]);
 
       setUser(userResponse?.Result || null);
+      setPhotoUrl(userPhotoResponse?.Result?.url || '');
     } catch {
       setUser(null);
     } finally {
@@ -67,8 +77,13 @@ export const RequestCard = ({ quiz, departments }: IRequestCardProps) => {
     console.log(newValue);
   };
 
-  const handleViewResults = () => {
-    alert(`Просмотр результатов анкетирования для ${user?.id}`);
+  const handleViewResults = async () => {
+    const response = await API.quiz.getAnswersToQuestions(quiz.id, accessToken);
+    const resultItems = response?.Result || [];
+
+    setAnswersToQuestions(resultItems);
+
+    setQuestionListOpen(true);
   };
 
   const handleDownload = () => {
@@ -115,7 +130,8 @@ export const RequestCard = ({ quiz, departments }: IRequestCardProps) => {
         <Divider />
         <CardContent sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
           <Typography variant="body2">
-            <strong>Дата рождения:</strong> {user.birthDay}
+            <strong>Дата рождения:</strong>{' '}
+            {user.birthDay && new Date(user.birthDay).toLocaleDateString()}
           </Typography>
           <Typography variant="body2">
             <strong>Телефон:</strong> {user.phoneNumber}
@@ -184,33 +200,63 @@ export const RequestCard = ({ quiz, departments }: IRequestCardProps) => {
       </Card>
 
       {/* Модальное окно с изображением */}
-      <Dialog
-        open={photoOpen}
-        onClose={() => setPhotoOpen(false)}
-        maxWidth="md"
-        slotProps={{
-          paper: {
-            sx: {
-              backgroundColor: 'transparent',
-              boxShadow: 'none',
+      {photoUrl && (
+        <Dialog
+          open={photoOpen}
+          onClose={() => setPhotoOpen(false)}
+          maxWidth="md"
+          slotProps={{
+            paper: {
+              sx: {
+                backgroundColor: 'transparent',
+                boxShadow: 'none',
+              },
             },
-          },
-        }}>
-        <DialogContent sx={{ p: 0 }}>
-          <img
-            src=""
-            alt="Фото пользователя"
-            style={{
-              width: '100%',
-              height: 'auto',
-              display: 'block',
-              maxHeight: '80vh',
-              objectFit: 'contain',
-              borderRadius: '12px',
-            }}
-          />
-        </DialogContent>
-      </Dialog>
+          }}>
+          <DialogContent sx={{ p: 0 }}>
+            <img
+              src={photoUrl}
+              alt="Фото пользователя"
+              style={{
+                width: '100%',
+                height: 'auto',
+                display: 'block',
+                maxHeight: '80vh',
+                objectFit: 'contain',
+                borderRadius: '12px',
+              }}
+            />
+          </DialogContent>
+        </Dialog>
+      )}
+
+      {/* Модальное окно с вопросами */}
+      {quiz.questions.length > 0 && (
+        <Dialog open={questionListOpen} onClose={() => setQuestionListOpen(false)} maxWidth="md">
+          <DialogContent>
+            <List>
+              {answersToQuestions.map((item) => (
+                <div key={item.number}>
+                  <ListItem alignItems="flex-start">
+                    <ListItemText
+                      primary={
+                        <Typography component="p" variant="subtitle1" sx={{ marginBottom: '5px' }}>
+                          {item.number}. {item.questionText}
+                        </Typography>
+                      }
+                      secondary={
+                        <Typography component="p" variant="subtitle2">
+                          {item.answerText}
+                        </Typography>
+                      }
+                    />
+                  </ListItem>
+                </div>
+              ))}
+            </List>
+          </DialogContent>
+        </Dialog>
+      )}
     </>
   );
 };
