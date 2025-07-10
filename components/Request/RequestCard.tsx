@@ -29,6 +29,7 @@ import { API } from '@/lib/axios';
 import { useSession } from 'next-auth/react';
 import { useDepartments } from '@/hooks/useDepartments';
 import { IDepartment } from '@/lib/axios/types/department';
+import { useDeleteQuiz } from '@/hooks/useDeleteQuiz';
 
 interface IRequestCardProps {
   quiz: IQuiz;
@@ -46,6 +47,8 @@ export const RequestCard = ({ quiz, departments }: IRequestCardProps) => {
 
   const [user, setUser] = useState<IApplicationUser | null>(null);
   const [photoUrl, setPhotoUrl] = useState<string>('');
+
+  const deleteQuiz = useDeleteQuiz();
 
   const fetchAllData = async () => {
     try {
@@ -86,14 +89,14 @@ export const RequestCard = ({ quiz, departments }: IRequestCardProps) => {
     setQuestionListOpen(true);
   };
 
-  const handleDownload = () => {
-    alert(`Скачивание анкеты ${user?.id}`);
+  const handleDownload = async () => {
+    await API.quiz.quizDownload(quiz.id, accessToken);
   };
 
   const handleDelete = () => {
-    const confirmed = confirm(`Удалить анкету ${user?.id}?`);
+    const confirmed = confirm(`Удалить анкету?`);
     if (confirmed) {
-      alert(`Анкета ${user?.id} удалена`);
+      deleteQuiz.mutate(quiz.id);
     }
   };
 
