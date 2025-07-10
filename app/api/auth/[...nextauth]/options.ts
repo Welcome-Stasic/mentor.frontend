@@ -3,7 +3,7 @@ import { NextAuthOptions } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import { CRMProvider } from './providers/crm';
 import { decodeToken } from '@/lib/utils/decodeToken';
-import { refreshAccessToken } from '@/lib/utils/refreshAccessToken';
+import { GRACE_SEC, refreshAccessToken } from '@/lib/utils/refreshAccessToken';
 import { TokenProvider } from './providers/token';
 
 export const authOptions: NextAuthOptions = {
@@ -21,11 +21,10 @@ export const authOptions: NextAuthOptions = {
         if (!credentials) return null;
 
         try {
-          
           const response = await API.auth.login({
             email: credentials.email,
             password: credentials.password,
-          })
+          });
 
           const accessToken = response?.Result?.accessToken || null;
           const refreshToken = response?.Result?.refreshToken || null;
@@ -35,14 +34,14 @@ export const authOptions: NextAuthOptions = {
 
           const decoded = decodeToken(accessToken);
           const roles = decoded.roles;
-          
+
           return {
             id: decoded.id,
             email: decoded.email,
             accessToken,
             refreshToken,
             refreshTokenExpires: new Date(refreshTokenExpires).getTime(),
-            roles
+            roles,
           };
         } catch {
           return null;
@@ -65,11 +64,15 @@ export const authOptions: NextAuthOptions = {
         return token;
       }
 
-      if (Date.now() < (token.refreshTokenExpires as number)) {
-        return token;
-      }
-      
-      return await refreshAccessToken(token)
+      /* -------- проверяем life‑time refresh‑токена -------- */
+      const expires = token.refreshTokenExpires as number;
+      const nowWithGrace = Date.now() + GRACE_SEC * 1000;
+
+      // Ещё валиден → просто вернуть
+      if (nowWithGrace < expires) return token;
+
+      // Иначе пробуем обновить
+      return await refreshAccessToken(token);
     },
 
     async session({ session, token }) {
@@ -80,7 +83,7 @@ export const authOptions: NextAuthOptions = {
         ...session.user,
         accessToken: token.accessToken,
         refreshToken: token.refreshToken,
-        roles
+        roles,
       };
 
       if (token?.error) {

@@ -30,13 +30,13 @@ export async function login(payload: IAppLoginDto): Promise<IApiResponse<ITokens
 
 export async function crmLogin(payload: ICrmLoginDto): Promise<IApiResponse<ITokens> | null> {
   const res = await axiosInstance.post<IApiResponse<ITokens>>(AUTH_CRM_LOGIN, payload);
-  
+
   return res.data;
 }
 
 export async function register(payload: IRegisterDto): Promise<IApiResponse<string>> {
   const res = await axiosInstance.post<IApiResponse<string>>(AUTH_REGISTER, payload);
-  
+
   return res.data;
 }
 
@@ -77,18 +77,14 @@ export async function refreshToken(
   token: string,
   refreshToken: string,
 ): Promise<IApiResponse<ITokens> | null> {
-  try {
-    if (!token || !refreshToken) return null;
+  
+  if (!token || !refreshToken) return null;
 
-    const authAxios = await getAuthAxios(token);
+  const authAxios = await getAuthAxios(token);
 
-    const res = await authAxios.post<IApiResponse<ITokens>>(AUTH_REFRESH_TOKEN, { refreshToken });
+  const res = await authAxios.post<IApiResponse<ITokens>>(AUTH_REFRESH_TOKEN, { refreshToken });
 
-    return res.data;
-  } catch (e) {
-    handleApiError(e);
-    return null;
-  }
+  return res.data;
 }
 
 export async function getRefreshToken(token: string): Promise<IApiResponse<IRefreshToken> | null> {
