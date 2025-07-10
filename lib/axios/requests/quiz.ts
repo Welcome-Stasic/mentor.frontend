@@ -154,27 +154,39 @@ export async function quizDelete(
   return res.data;
 }
 
+// export async function quizDownload(quizId: string, token: string): Promise<void> {
+//   if (!token) return;
+
+//   const authAxios = await getAuthAxios(token);
+
+//   try {
+//     const res = await authAxios.get(`${QUIZ_DOWNLOAD}/${quizId}`, {
+//       responseType: 'blob',
+//     });
+
+//     const disposition = res.headers['content-disposition'];
+//     let filename = 'Анкета.pdf';
+
+//     if (disposition && disposition.includes('filename*=')) {
+//       const match = disposition.match(/filename\*=UTF-8''(.+)/);
+//       if (match && match[1]) {
+//         filename = decodeURIComponent(match[1]);
+//       }
+//     }
+
+//     saveAs(res.data, filename);
+//   } catch (error) {
+//     console.error('Ошибка при скачивании анкеты:', error);
+//   }
+// }
+
 export async function quizDownload(quizId: string, token: string): Promise<void> {
   if (!token) return;
 
   const authAxios = await getAuthAxios(token);
 
   try {
-    const res = await authAxios.get(`${QUIZ_DOWNLOAD}/${quizId}`, {
-      responseType: 'blob',
-    });
-
-    const disposition = res.headers['content-disposition'];
-    let filename = 'Анкета.pdf';
-
-    if (disposition && disposition.includes('filename*=')) {
-      const match = disposition.match(/filename\*=UTF-8''(.+)/);
-      if (match && match[1]) {
-        filename = decodeURIComponent(match[1]);
-      }
-    }
-
-    saveAs(res.data, filename);
+    await authAxios.get(`${QUIZ_DOWNLOAD}/${quizId}`);
   } catch (error) {
     console.error('Ошибка при скачивании анкеты:', error);
   }

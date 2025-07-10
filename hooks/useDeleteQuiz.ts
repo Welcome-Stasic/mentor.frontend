@@ -13,6 +13,7 @@ export const useDeleteQuiz = () => {
     // ❶ Инвалидация
     onSuccess: (_data, id, _ctx) => {
       queryClient.invalidateQueries({ queryKey: ['quizzes'] });
+      queryClient.invalidateQueries({ queryKey: ['quizStatues'] });
     },
   });
 };
