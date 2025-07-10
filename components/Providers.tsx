@@ -7,6 +7,7 @@ import { ConsentProvider } from '@/context/ConsentContext';
 import ConsentBanner from './ConsentBanner';
 import YandexMetrika from './YandexMetrika';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { AuthWrapper } from './AuthWrapper';
 
 const queryClient = new QueryClient();
 
@@ -15,13 +16,15 @@ export default function Providers({ children }: { children: React.ReactNode }) {
     <QueryClientProvider client={queryClient}>
       <NuqsAdapter>
         <SessionProvider>
-          <AppRouterCacheProvider>
-            <ConsentProvider>
-              {children}
-              <ConsentBanner />
-              <YandexMetrika />
-            </ConsentProvider>
-          </AppRouterCacheProvider>
+          <AuthWrapper>
+            <AppRouterCacheProvider>
+              <ConsentProvider>
+                {children}
+                <ConsentBanner />
+                <YandexMetrika />
+              </ConsentProvider>
+            </AppRouterCacheProvider>
+          </AuthWrapper>
         </SessionProvider>
       </NuqsAdapter>
     </QueryClientProvider>

@@ -1,6 +1,8 @@
 import {
   AUTH_GET_REFRESH_TOKEN,
   AUTH_IS_EMAIL_CONFIRMED,
+  AUTH_IS_VALID_REFRESH_TOKEN,
+  AUTH_LOG_OUT,
   AUTH_REFRESH_TOKEN,
   AUTH_RESET_PASSWORD,
 } from './../endpoint';
@@ -100,4 +102,24 @@ export async function getRefreshToken(token: string): Promise<IApiResponse<IRefr
     handleApiError(e);
     return null;
   }
+}
+
+export async function logOut(token: string, refreshToken: string): Promise<IApiResponse<boolean> | null> {
+  if (!token || !refreshToken) return null;
+
+  const authAxios = await getAuthAxios(token);
+  
+  const res = await authAxios.post<IApiResponse<boolean>>(AUTH_LOG_OUT, { refreshToken });
+
+  return res.data;
+}
+
+export async function isValidRefreshToken(token: string, refreshToken: string): Promise<IApiResponse<boolean> | null> {
+  if (!token || !refreshToken) return null;
+
+  const authAxios = await getAuthAxios(token);
+  
+  const res = await authAxios.get<IApiResponse<boolean>>(`${AUTH_IS_VALID_REFRESH_TOKEN}?refreshToken=${refreshToken}`);
+
+  return res.data;
 }

@@ -15,7 +15,7 @@ import { useCurrentUserStore } from '@/providers/current-user-provider';
 import erisLogo from '@assets/eris_logo.png';
 import { signOut } from 'next-auth/react';
 
-const settings = ['Account', 'Logout'];
+const settings = ['Профиль', 'Выход'];
 
 export default function Header() {
   const { userName, photoUrl } = useCurrentUserStore((state) => state);
@@ -28,10 +28,10 @@ export default function Header() {
 
   const handleCloseUserMenu = (setting: string) => {
     setAnchorElUser(null);
-    if (setting == 'Logout') {
+    if (setting == 'Выход') {
       signOut({
         redirect: true,
-        callbackUrl: '/Account/Login'
+        callbackUrl: '/Account/Login',
       });
     }
   };

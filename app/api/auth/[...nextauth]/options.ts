@@ -5,6 +5,7 @@ import { CRMProvider } from './providers/crm';
 import { decodeToken } from '@/lib/utils/decodeToken';
 import { GRACE_SEC, refreshAccessToken } from '@/lib/utils/refreshAccessToken';
 import { TokenProvider } from './providers/token';
+import { checkAccessToken } from '@/lib/utils/checkAccessToken';
 
 export const authOptions: NextAuthOptions = {
   debug: true,
@@ -47,8 +48,19 @@ export const authOptions: NextAuthOptions = {
           return null;
         }
       },
+
     }),
   ],
+  events: {
+    async signOut({ token }) {
+      const refreshToken = token.refreshToken;
+      const accessToken = token.accessToken;
+
+      try {
+        await API.auth.logOut(accessToken, refreshToken);
+      } catch (error) {console.error("logOut failed:", error)}
+    },
+  },
 
   pages: {
     signIn: '/Account/Login',
@@ -63,13 +75,9 @@ export const authOptions: NextAuthOptions = {
         token.refreshTokenExpires = user.refreshTokenExpires;
         return token;
       }
-
-      /* -------- проверяем life‑time refresh‑токена -------- */
-      const expires = token.refreshTokenExpires as number;
-      const nowWithGrace = Date.now() + GRACE_SEC * 1000;
-
+      
       // Ещё валиден → просто вернуть
-      if (nowWithGrace < expires) return token;
+      if (await checkAccessToken(token)) return token;
 
       // Иначе пробуем обновить
       return await refreshAccessToken(token);

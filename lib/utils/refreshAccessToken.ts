@@ -15,8 +15,8 @@ export async function refreshAccessToken(token: JWT): Promise<JWT> {
       const refreshToken = response?.Result?.refreshToken || null;
       const refreshTokenExpires = response?.Result?.refreshTokenExpires || null;
 
-      if (!accessToken || !refreshToken || !refreshTokenExpires) {
-        return { ...token, error: 'RefreshTokenError' };
+      if (response?.StatusCode === 401 || !accessToken || !refreshToken || !refreshTokenExpires) {
+        return { ...token, error: 'RefreshTokenInvalid' };
       }
 
       return {
