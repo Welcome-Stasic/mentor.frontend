@@ -26,6 +26,7 @@ export const CRMProvider = CredentialsProvider({
       if (!accessToken || !refreshToken || !refreshTokenExpires) return null;
 
       const decoded = decodeToken(accessToken);
+      const roles = decoded.roles;
 
       return {
         id: decoded.id,
@@ -33,9 +34,9 @@ export const CRMProvider = CredentialsProvider({
         accessToken,
         refreshToken,
         refreshTokenExpires: new Date(refreshTokenExpires).getTime(),
+        roles,
       };
-    } catch (error) {
-      console.error('CRM Authorize Error:', error);
+    } catch {
       return null;
     }
   },
