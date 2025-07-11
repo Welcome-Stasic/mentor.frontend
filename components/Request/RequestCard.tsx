@@ -1,7 +1,6 @@
 'use client';
 
 import {
-  Avatar,
   Box,
   Button,
   Card,
@@ -29,6 +28,7 @@ import { API } from '@/lib/axios';
 import { useSession } from 'next-auth/react';
 import { IDepartment } from '@/lib/axios/types/department';
 import { useDeleteQuiz } from '@/hooks/useDeleteQuiz';
+import StatusAvatar from '../StatusAvatar';
 
 interface IRequestCardProps {
   quiz: IQuiz;
@@ -119,10 +119,10 @@ export const RequestCard = ({ quiz, departments }: IRequestCardProps) => {
         <CardHeader
           avatar={
             <Tooltip title="Нажмите, чтобы увеличить фото">
-              <Avatar
-                src={photoUrl}
-                sx={{ width: 56, height: 56, cursor: 'pointer' }}
-                onClick={() => setPhotoOpen(true)}
+              <StatusAvatar
+                photoUrl={photoUrl}
+                online={false}
+                onAvatarClick={() => setPhotoOpen(true)}
               />
             </Tooltip>
           }
