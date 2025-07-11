@@ -9,13 +9,12 @@ export const useQuiz: Middleware = async (req: NextRequest) => {
 
   const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
   const accessToken = token?.accessToken;
-
   if (!accessToken) return;
-
+  
   const decoded = decodeToken(accessToken);
   const userId = decoded.id;
   const isWithoutQuiz = decoded.isWithOutQuiz === 'True';
-
+  
   if (!userId) return;
 
   const isQuizPage = url.pathname.startsWith('/Quiz');

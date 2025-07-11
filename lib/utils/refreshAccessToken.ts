@@ -16,7 +16,7 @@ export async function refreshAccessToken(token: JWT): Promise<JWT> {
       const refreshTokenExpires = response?.Result?.refreshTokenExpires || null;
 
       if (response?.StatusCode === 401 || !accessToken || !refreshToken || !refreshTokenExpires) {
-        return { ...token, error: 'RefreshTokenInvalid' };
+        return { ...token, error: 'RefreshTokenInvalid', refreshTokenValid: false };
       }
 
       return {
@@ -24,9 +24,11 @@ export async function refreshAccessToken(token: JWT): Promise<JWT> {
         accessToken,
         refreshToken,
         refreshTokenExpires: new Date(refreshTokenExpires).getTime(),
+        lastChecked: Date.now(),
+        refreshTokenValid: true,
       };
     } catch {
-      return { ...token, error: 'RefreshTokenError' };
+      return { ...token, error: 'RefreshTokenError', refreshTokenValid: false };
     }
   });
 }

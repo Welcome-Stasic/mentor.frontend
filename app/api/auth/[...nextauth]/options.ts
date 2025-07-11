@@ -3,9 +3,11 @@ import { NextAuthOptions } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import { CRMProvider } from './providers/crm';
 import { decodeToken } from '@/lib/utils/decodeToken';
-import { GRACE_SEC, refreshAccessToken } from '@/lib/utils/refreshAccessToken';
+import { refreshAccessToken } from '@/lib/utils/refreshAccessToken';
 import { TokenProvider } from './providers/token';
 import { checkAccessToken } from '@/lib/utils/checkAccessToken';
+
+const TOKEN_VALIDITY_CACHE_MS = 5000;
 
 export const authOptions: NextAuthOptions = {
   debug: true,
@@ -48,7 +50,6 @@ export const authOptions: NextAuthOptions = {
           return null;
         }
       },
-
     }),
   ],
   events: {
@@ -58,7 +59,9 @@ export const authOptions: NextAuthOptions = {
 
       try {
         await API.auth.logOut(accessToken, refreshToken);
-      } catch (error) {console.error("logOut failed:", error)}
+      } catch (error) {
+        console.error('logOut failed:', error);
+      }
     },
   },
 
@@ -70,16 +73,40 @@ export const authOptions: NextAuthOptions = {
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
-        token.accessToken = user.accessToken;
-        token.refreshToken = user.refreshToken;
-        token.refreshTokenExpires = user.refreshTokenExpires;
+        return {
+          ...token,
+          accessToken: user.accessToken,
+          refreshToken: user.refreshToken,
+          refreshTokenExpires: user.refreshTokenExpires,
+          justLoggedIn: true,
+          refreshTokenValid: true, // кэш результата проверки
+          lastChecked: Date.now(), // когда последний раз проверяли
+        };
+      }
+
+      // Пропускаем проверку токена сразу после логина
+      if (token.justLoggedIn) {
+        token.justLoggedIn = false;
         return token;
       }
-      
-      // Ещё валиден → просто вернуть
-      if (await checkAccessToken(token)) return token;
 
-      // Иначе пробуем обновить
+      // Если недавно уже проверяли accessToken → пропускаем проверку
+      const now = Date.now();
+      const timeSinceLastCheck = now - (token.lastChecked || 0);
+
+      if (timeSinceLastCheck < TOKEN_VALIDITY_CACHE_MS) {
+        return token;
+      }
+
+      // Проверка валидности accessToken через бекенд
+      const isValid = await checkAccessToken(token);
+
+      if (isValid) {
+        token.refreshTokenValid = true;
+        token.lastChecked = now;
+        return token;
+      }
+
       return await refreshAccessToken(token);
     },
 
@@ -97,6 +124,8 @@ export const authOptions: NextAuthOptions = {
       if (token?.error) {
         session.error = token.error;
       }
+
+      session.refreshTokenValid = token.refreshTokenValid;
 
       return session;
     },
