@@ -22,12 +22,11 @@ import {
   Typography,
 } from '@mui/material';
 import { Delete, Download, Visibility } from '@mui/icons-material';
-import { ChangeEvent, ReactElement, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { IAnswerOnQuestion, IQuiz } from '@/lib/axios/types/quiz';
 import { IApplicationUser } from '@/lib/axios/types/user';
 import { API } from '@/lib/axios';
 import { useSession } from 'next-auth/react';
-import { useDepartments } from '@/hooks/useDepartments';
 import { IDepartment } from '@/lib/axios/types/department';
 import { useDeleteQuiz } from '@/hooks/useDeleteQuiz';
 
@@ -121,7 +120,7 @@ export const RequestCard = ({ quiz, departments }: IRequestCardProps) => {
           avatar={
             <Tooltip title="Нажмите, чтобы увеличить фото">
               <Avatar
-                src=""
+                src={photoUrl}
                 sx={{ width: 56, height: 56, cursor: 'pointer' }}
                 onClick={() => setPhotoOpen(true)}
               />

@@ -14,7 +14,7 @@ export const useQuiz: Middleware = async (req: NextRequest) => {
   const decoded = decodeToken(accessToken);
   const userId = decoded.id;
   const isWithoutQuiz = decoded.isWithOutQuiz === 'True';
-  
+
   if (!userId) return;
 
   const isQuizPage = url.pathname.startsWith('/Quiz');

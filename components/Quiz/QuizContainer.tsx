@@ -14,13 +14,13 @@ const QuizContainer = () => {
   const tab = useCurrentUserStore((i) => i.quiz?.stage);
   const isCompleted = useCurrentUserStore((i) => i.quiz?.isCompleted ?? false);
 
-  if(isCompleted) redirect('/');
+  if (isCompleted) redirect('/');
 
   if (tab === undefined || tab === null)
     return (
       <OverlayMessage
         title="Ожидайте"
-        message="Идет поиск ваших данны..."
+        message="Идет поиск ваших данных..."
         blurBackground
         blurPercent={80}
         icon={<SearchIcon color="info" sx={{ fontSize: 80 }} />}
