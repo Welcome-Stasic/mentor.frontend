@@ -1,6 +1,6 @@
 import React from 'react';
 import { Avatar, Badge } from '@mui/material';
-import { styled } from '@mui/material/styles';
+import { CSSObject, styled } from '@mui/material/styles';
 
 interface StatusAvatarProps {
   photoUrl: string;
@@ -13,7 +13,7 @@ const StyledBadge = styled(Badge, {
 })<{
   online: boolean;
 }>(({ theme, online }) => {
-  const badgeStyles: any = {
+  const badgeStyles: CSSObject  = {
     backgroundColor: online ? '#44b700' : theme.palette.grey[500],
     color: online ? '#44b700' : theme.palette.grey[500],
     boxShadow: `0 0 0 2px ${theme.palette.background.paper}`,
