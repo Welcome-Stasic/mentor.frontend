@@ -29,6 +29,7 @@ import { useSession } from 'next-auth/react';
 import { IDepartment } from '@/lib/axios/types/department';
 import { useDeleteQuiz } from '@/hooks/useDeleteQuiz';
 import StatusAvatar from '../StatusAvatar';
+import { useDownloadQuiz } from '@/hooks/useDownloadQuiz';
 
 interface IRequestCardProps {
   quiz: IQuiz;
@@ -48,6 +49,7 @@ export const RequestCard = ({ quiz, departments }: IRequestCardProps) => {
   const [photoUrl, setPhotoUrl] = useState<string>('');
 
   const deleteQuiz = useDeleteQuiz();
+  const downloadQuiz = useDownloadQuiz();
 
   const fetchAllData = async () => {
     try {
@@ -89,13 +91,13 @@ export const RequestCard = ({ quiz, departments }: IRequestCardProps) => {
   };
 
   const handleDownload = async () => {
-    await API.quiz.quizDownload(quiz.id, accessToken);
+    await downloadQuiz.mutateAsync(quiz.id);
   };
 
-  const handleDelete = () => {
+  const handleDelete = async () => {
     const confirmed = confirm(`Удалить анкету?`);
     if (confirmed) {
-      deleteQuiz.mutate(quiz.id);
+      await deleteQuiz.mutateAsync(quiz.id);
     }
   };
 
@@ -121,7 +123,7 @@ export const RequestCard = ({ quiz, departments }: IRequestCardProps) => {
             <Tooltip title="Нажмите, чтобы увеличить фото">
               <StatusAvatar
                 photoUrl={photoUrl}
-                online={false}
+                online={user.isOnline}
                 onAvatarClick={() => setPhotoOpen(true)}
               />
             </Tooltip>
@@ -188,12 +190,12 @@ export const RequestCard = ({ quiz, departments }: IRequestCardProps) => {
           </Tooltip>
           <Box>
             <Tooltip title="Скачать анкету">
-              <IconButton color="primary" onClick={handleDownload}>
+              <IconButton color="primary" onClick={handleDownload} loading={downloadQuiz.isPending}>
                 <Download />
               </IconButton>
             </Tooltip>
             <Tooltip title="Удалить анкету">
-              <IconButton color="error" onClick={handleDelete}>
+              <IconButton color="error" onClick={handleDelete} loading={deleteQuiz.isPending}>
                 <Delete />
               </IconButton>
             </Tooltip>

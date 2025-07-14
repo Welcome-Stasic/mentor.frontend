@@ -44,6 +44,7 @@ export interface IApplicationUser {
   isEmailConfirmed: boolean;
   phoneNumber: string;
   userName: string;
+  isOnline: boolean;
 }
 
 export interface IUserPhoto{
