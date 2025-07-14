@@ -90,17 +90,15 @@ export const authOptions: NextAuthOptions = {
         return token;
       }
 
-      // Если недавно уже проверяли accessToken → пропускаем проверку
+      // Если недавно уже проверяли → пропускаем проверку
       const now = Date.now();
       const timeSinceLastCheck = now - (token.lastChecked || 0);
 
-      if (timeSinceLastCheck < TOKEN_VALIDITY_CACHE_MS) {
-        return token;
-      }
-
+      if (timeSinceLastCheck < TOKEN_VALIDITY_CACHE_MS) return token;
+      
       // Проверка валидности accessToken через бекенд
       const isValid = await checkAccessToken(token);
-
+      
       if (isValid) {
         token.refreshTokenValid = true;
         token.lastChecked = now;
