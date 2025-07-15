@@ -51,3 +51,8 @@ export interface IUserPhoto{
   key:string;
   url:string;
 }
+
+export interface IUserRefLink{
+  referralUrl:string;
+  qrCodeBase64:string;
+}

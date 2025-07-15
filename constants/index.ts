@@ -3,6 +3,7 @@ import HomeIcon from '@mui/icons-material/Home';
 import { SvgIconTypeMap } from '@mui/material';
 import { OverridableComponent } from '@mui/material/OverridableComponent';
 import ContactsIcon from '@mui/icons-material/Contacts';
+import AddLinkIcon from '@mui/icons-material/AddLink';
 
 export type Question = {
   question: string;
@@ -166,6 +167,12 @@ export const PAGE: Record<KeyPage, IPage> = {
     pathPrefix: '/Request',
     roles: [USER_ROLES.ADMIN.name],
     icon: ContactsIcon
+  },
+  REFERRAL: {
+    name: 'Рефералы',
+    pathPrefix: '/Referral',
+    roles: [],
+    icon: AddLinkIcon
   }
 }
 
@@ -176,4 +183,4 @@ export interface IPage {
   icon: OverridableComponent<SvgIconTypeMap<{}, "svg">>
 }
 
-type KeyPage = "HOME" | "REQUEST"
+type KeyPage = "HOME" | "REQUEST" | "REFERRAL"

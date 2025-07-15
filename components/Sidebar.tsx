@@ -7,7 +7,7 @@ import ListItemText from '@mui/material/ListItemText';
 import { getServerSession } from 'next-auth';
 import Link from 'next/link';
 
-const navItems = [PAGE.HOME, PAGE.REQUEST];
+const navItems = [PAGE.HOME, PAGE.REQUEST, PAGE.REFERRAL];
 
 export default async function Sidebar() {
   const session = await getServerSession(authOptions);
@@ -23,7 +23,7 @@ export default async function Sidebar() {
         width: 100,
         flexShrink: 0,
         [`& .MuiDrawer-paper`]: {
-          width: 'maxContent',
+          width: '100px',
           boxSizing: 'border-box',
           marginTop: '64px', // header height
         },

@@ -2,7 +2,7 @@ import { crmLogin, forgotPassword, getRefreshToken, isEmailConfirmed, isValidRef
 import { me } from './requests/me';
 import { addAnswersToQuestions, getAll, getAllQuizStatues, getAnswersToQuestions, getById, quizDelete, quizDownload, update, updateFirstStage } from './requests/quiz';
 import { getDepartmentAll } from './requests/department';
-import { getCrmUserById, getUserById, getUserPhoto, updatePhotoCurrentUser } from './requests/user';
+import { getCrmUserById, getReferralLink, getUserById, getUserPhoto, updatePhotoCurrentUser } from './requests/user';
 
 export const API = {
   auth: {
@@ -22,7 +22,8 @@ export const API = {
     getCrmUserById,
     getUserById,
     updatePhotoCurrentUser,
-    getUserPhoto
+    getUserPhoto,
+    getReferralLink
   },
   quiz: {
     getById,
