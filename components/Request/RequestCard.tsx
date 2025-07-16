@@ -30,6 +30,7 @@ import { IDepartment } from '@/lib/axios/types/department';
 import { useDeleteQuiz } from '@/hooks/useDeleteQuiz';
 import StatusAvatar from '../StatusAvatar';
 import { useDownloadQuiz } from '@/hooks/useDownloadQuiz';
+import { useUpdateQuiz } from '@/hooks/useUpdateQuiz';
 
 interface IRequestCardProps {
   quiz: IQuiz;
@@ -50,6 +51,7 @@ export const RequestCard = ({ quiz, departments }: IRequestCardProps) => {
 
   const deleteQuiz = useDeleteQuiz();
   const downloadQuiz = useDownloadQuiz();
+  const updateQuiz = useUpdateQuiz();
 
   const fetchAllData = async () => {
     try {
@@ -73,12 +75,12 @@ export const RequestCard = ({ quiz, departments }: IRequestCardProps) => {
     fetchAllData();
   }, []);
 
-  const handleDepartmentChange = (event: SelectChangeEvent) => {
+  const handleDepartmentChange = async (event: SelectChangeEvent) => {
     if (!user) return;
 
-    const newValue = event.target.value;
+    const departmentId = event.target.value;
 
-    console.log(newValue);
+    await updateQuiz.mutateAsync({ quizId: quiz.id, departmentId });
   };
 
   const handleViewResults = async () => {

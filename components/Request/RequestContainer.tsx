@@ -60,10 +60,10 @@ export const RequestContainer = () => {
   const { data: departments } = useDepartments();
   const { data: statues } = useQuizStatues();
 
-  const quizzes = data?.Result?.data || [];
+  const quizzes = data?.data || [];
   const allQuizStatues = statues || [];
 
-  const pageCount = Math.ceil((data?.Result?.totalCount || 0) / ITEMS_PER_PAGE);
+  const pageCount = Math.ceil((data?.totalCount || 0) / ITEMS_PER_PAGE);
 
   const categories = useMemo(() => {
     const totalQuizCount = allQuizStatues

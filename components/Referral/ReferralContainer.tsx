@@ -5,6 +5,7 @@ import { useCurrentUserStore } from '@/providers/current-user-provider';
 import { Typography, Box, IconButton, Snackbar, Tooltip } from '@mui/material';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import { useState } from 'react';
+import BackdropLoader from '../BackdropLoader';
 
 export function ReferralContainer() {
   const currentUserId = useCurrentUserStore((state) => state.id);
@@ -40,7 +41,7 @@ export function ReferralContainer() {
     }
   };
 
-  if (!data?.qrCodeBase64 || !data.referralUrl) return null;
+  if (!data?.qrCodeBase64 || !data.referralUrl) return <BackdropLoader open />;
 
   return (
     <>

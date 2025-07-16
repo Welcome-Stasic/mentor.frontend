@@ -11,7 +11,7 @@ export const useQuizzes = ({
   dateIn,
   dateOut,
   dateTimeColumn,
-  statusId
+  statusId,
 }: {
   pageNumber?: number;
   pageSize?: number;
@@ -37,7 +37,7 @@ export const useQuizzes = ({
       dateIn,
       dateOut,
       dateTimeColumn,
-      statusId
+      statusId,
     ],
     queryFn: () =>
       API.quiz.getAll(accessToken, {
@@ -49,8 +49,9 @@ export const useQuizzes = ({
         dateIn,
         dateOut,
         dateTimeColumn,
-        statusId
+        statusId,
       }),
     enabled: !!accessToken,
+    select: (data) => data?.Result || null,
   });
 };

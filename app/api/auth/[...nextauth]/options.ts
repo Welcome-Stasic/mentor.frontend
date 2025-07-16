@@ -7,7 +7,7 @@ import { refreshAccessToken } from '@/lib/utils/refreshAccessToken';
 import { TokenProvider } from './providers/token';
 import { checkAccessToken } from '@/lib/utils/checkAccessToken';
 
-const TOKEN_VALIDITY_CACHE_MS = 5000;
+const TOKEN_VALIDITY_CACHE_MS = 30_000;
 
 export const authOptions: NextAuthOptions = {
   debug: true,
