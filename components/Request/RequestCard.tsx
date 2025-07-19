@@ -10,7 +10,7 @@ import {
   Dialog,
   DialogContent,
   Divider,
-  IconButton,
+  Link,
   List,
   ListItem,
   ListItemText,
@@ -20,17 +20,18 @@ import {
   Tooltip,
   Typography,
 } from '@mui/material';
-import { Delete, Download, Visibility } from '@mui/icons-material';
-import { useEffect, useState } from 'react';
+import { Visibility } from '@mui/icons-material';
+import { useState } from 'react';
 import { IAnswerOnQuestion, IQuiz } from '@/lib/axios/types/quiz';
-import { IApplicationUser } from '@/lib/axios/types/user';
 import { API } from '@/lib/axios';
 import { useSession } from 'next-auth/react';
 import { IDepartment } from '@/lib/axios/types/department';
-import { useDeleteQuiz } from '@/hooks/useDeleteQuiz';
-import StatusAvatar from '../StatusAvatar';
-import { useDownloadQuiz } from '@/hooks/useDownloadQuiz';
 import { useUpdateQuiz } from '@/hooks/useUpdateQuiz';
+import { UserPhoto } from '../UserPhoto';
+import { DownloadRequestBtn } from './DownloadRequestBtn';
+import { DeleteRequestBtn } from './DeleteRequestBtn';
+import { CmrProcessingBtn } from './CmrProcessingBtn';
+import { userUserById } from '@/hooks/useUserById';
 
 interface IRequestCardProps {
   quiz: IQuiz;
@@ -41,39 +42,14 @@ export const RequestCard = ({ quiz, departments }: IRequestCardProps) => {
   const session = useSession();
   const accessToken = session.data?.user.accessToken || '';
 
-  const [loading, setLoading] = useState(true);
-  const [photoOpen, setPhotoOpen] = useState(false);
-  const [questionListOpen, setQuestionListOpen] = useState(false);
-  const [answersToQuestions, setAnswersToQuestions] = useState<IAnswerOnQuestion[]>([]);
-
-  const [user, setUser] = useState<IApplicationUser | null>(null);
-  const [photoUrl, setPhotoUrl] = useState<string>('');
-
-  const deleteQuiz = useDeleteQuiz();
-  const downloadQuiz = useDownloadQuiz();
   const updateQuiz = useUpdateQuiz();
 
-  const fetchAllData = async () => {
-    try {
-      setLoading(true);
+  const userResult = userUserById(quiz.applicationUserId);
+  const user = userResult?.data ?? null;
+  const isLoading = userResult.isLoading || !user;
 
-      const [userResponse, userPhotoResponse] = await Promise.all([
-        await API.user.getUserById(quiz.applicationUserId, accessToken),
-        await API.user.getUserPhoto(quiz.applicationUserId, accessToken),
-      ]);
-
-      setUser(userResponse?.Result || null);
-      setPhotoUrl(userPhotoResponse?.Result?.url || '');
-    } catch {
-      setUser(null);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchAllData();
-  }, []);
+  const [questionListOpen, setQuestionListOpen] = useState(false);
+  const [answersToQuestions, setAnswersToQuestions] = useState<IAnswerOnQuestion[]>([]);
 
   const handleDepartmentChange = async (event: SelectChangeEvent) => {
     if (!user) return;
@@ -92,55 +68,37 @@ export const RequestCard = ({ quiz, departments }: IRequestCardProps) => {
     setQuestionListOpen(true);
   };
 
-  const handleDownload = async () => {
-    await downloadQuiz.mutateAsync(quiz.id);
-  };
-
-  const handleDelete = async () => {
-    const confirmed = confirm(`Удалить анкету?`);
-    if (confirmed) {
-      await deleteQuiz.mutateAsync(quiz.id);
-    }
-  };
-
-  if (loading || !user) {
-    return (
-      <Card
-        sx={{
-          maxWidth: 500,
-          m: 2,
-          borderRadius: 4,
-          p: 3,
-          display: 'flex',
-          justifyContent: 'center',
-        }}></Card>
-    );
-  }
-
   return (
     <>
       <Card sx={{ maxWidth: 500, borderRadius: 2, boxShadow: 2 }}>
         <CardHeader
-          avatar={
-            <Tooltip title="Нажмите, чтобы увеличить фото">
-              <StatusAvatar
-                photoUrl={photoUrl}
-                online={user.isOnline}
-                onAvatarClick={() => setPhotoOpen(true)}
-              />
-            </Tooltip>
+          avatar={<UserPhoto userId={user?.id ?? ''} isOnline={user?.isOnline ?? false} />}
+          title={<Typography variant="h6">{user?.userName}</Typography>}
+          subheader={
+            <Typography variant="body2">
+              {user?.email}
+              {quiz.crmWorkflowinstance > 0 && (
+                <>
+                  <br />
+                  <Link
+                    href={`https://elma.eriskip.com/Processes/WorkflowInstance/Info/${quiz.crmWorkflowinstance}`}
+                    target="_blank"
+                    rel="noopener">
+                    Заявка отправлена по маршруту
+                  </Link>
+                </>
+              )}
+            </Typography>
           }
-          title={<Typography variant="h6">{user.userName}</Typography>}
-          subheader={<Typography variant="body2">{user.email}</Typography>}
         />
         <Divider />
         <CardContent sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
           <Typography variant="body2">
             <strong>Дата рождения:</strong>{' '}
-            {user.birthDay && new Date(user.birthDay).toLocaleDateString()}
+            {user?.birthDay && new Date(user.birthDay).toLocaleDateString()}
           </Typography>
           <Typography variant="body2">
-            <strong>Телефон:</strong> {user.phoneNumber}
+            <strong>Телефон:</strong> {user?.phoneNumber}
           </Typography>
           <Typography variant="body2">
             <strong>Учебное заведение:</strong> {quiz.institution}
@@ -162,7 +120,8 @@ export const RequestCard = ({ quiz, departments }: IRequestCardProps) => {
               value={quiz.selectedDepartmentId || ''}
               onChange={handleDepartmentChange}
               size="small"
-              fullWidth>
+              fullWidth
+              disabled={quiz.crmWorkflowinstance > 0}>
               {departments?.map((dep) => (
                 <MenuItem key={dep.id} value={dep.id}>
                   {dep.name}
@@ -191,50 +150,12 @@ export const RequestCard = ({ quiz, departments }: IRequestCardProps) => {
             </Button>
           </Tooltip>
           <Box>
-            <Tooltip title="Скачать анкету">
-              <IconButton color="primary" onClick={handleDownload} loading={downloadQuiz.isPending}>
-                <Download />
-              </IconButton>
-            </Tooltip>
-            <Tooltip title="Удалить анкету">
-              <IconButton color="error" onClick={handleDelete} loading={deleteQuiz.isPending}>
-                <Delete />
-              </IconButton>
-            </Tooltip>
+            <DownloadRequestBtn quizId={quiz.id} />
+            <CmrProcessingBtn quizId={quiz.id} crmWorkflowinstance={quiz.crmWorkflowinstance} />
+            <DeleteRequestBtn quizId={quiz.id} />
           </Box>
         </CardActions>
       </Card>
-
-      {/* Модальное окно с изображением */}
-      {photoUrl && (
-        <Dialog
-          open={photoOpen}
-          onClose={() => setPhotoOpen(false)}
-          maxWidth="md"
-          slotProps={{
-            paper: {
-              sx: {
-                backgroundColor: 'transparent',
-                boxShadow: 'none',
-              },
-            },
-          }}>
-          <DialogContent sx={{ p: 0 }}>
-            <img
-              src={photoUrl}
-              alt="Фото пользователя"
-              style={{
-                width: '100%',
-                height: 'auto',
-                display: 'block',
-                maxHeight: '80vh',
-                objectFit: 'contain',
-                borderRadius: '12px',
-              }}
-            />
-          </DialogContent>
-        </Dialog>
-      )}
 
       {/* Модальное окно с вопросами */}
       {quiz.questions.length > 0 && (

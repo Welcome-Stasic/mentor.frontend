@@ -5,7 +5,7 @@ import { Mutex } from 'async-mutex';
 
 const refreshMutex = new Mutex();
 
-export async function checkAccessToken(token: JWT): Promise<boolean> {
+export async function checkRefreshToken(token: JWT): Promise<boolean> {
   return refreshMutex.runExclusive(async () => {
     try {
       const response = await API.auth.isValidRefreshToken(token.accessToken, token.refreshToken);

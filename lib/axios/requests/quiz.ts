@@ -2,6 +2,7 @@ import {
   QUIZ,
   QUIZ_ADD_ANSWERS_TO_QUESTIONS,
   QUIZ_ALL,
+  QUIZ_CRM_PROCESSING,
   QUIZ_DELETE,
   QUIZ_DOWNLOAD,
   QUIZ_GET_ALL_STATUES,
@@ -179,4 +180,17 @@ export async function quizDownload(quizId: string, token: string): Promise<void>
   } catch (error) {
     console.error('Ошибка при скачивании анкеты:', error);
   }
+}
+
+export async function quizCrmProcessing(
+  quizId: string,
+  token: string,
+): Promise<IApiResponse<number> | null> {
+  if (!token) return null;
+
+  const authAxios = await getAuthAxios(token);
+
+  const res = await authAxios.get<IApiResponse<number>>(`${QUIZ_CRM_PROCESSING}/${quizId}`);
+
+  return res.data;
 }

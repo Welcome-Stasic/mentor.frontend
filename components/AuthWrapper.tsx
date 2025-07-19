@@ -7,7 +7,7 @@ export function AuthWrapper({ children }: { children: React.ReactNode }) {
   const { data: session } = useSession();
 
   useEffect(() => {
-    if (session?.error === 'RefreshTokenInvalid') {
+    if (session && session.refreshTokenValid === false) {
       signOut({ callbackUrl: '/Account/Login' });
     }
   }, [session]);

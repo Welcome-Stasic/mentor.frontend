@@ -5,9 +5,10 @@ import { CRMProvider } from './providers/crm';
 import { decodeToken } from '@/lib/utils/decodeToken';
 import { refreshAccessToken } from '@/lib/utils/refreshAccessToken';
 import { TokenProvider } from './providers/token';
-import { checkAccessToken } from '@/lib/utils/checkAccessToken';
+import { checkRefreshToken } from '@/lib/utils/checkRefreshToken';
 
-const TOKEN_VALIDITY_CACHE_MS = 30_000;
+const ONE_MINUTE_MS = 60 * 1000;
+const CHECK_INTERVAL = 2 * ONE_MINUTE_MS;
 
 export const authOptions: NextAuthOptions = {
   debug: true,
@@ -72,40 +73,50 @@ export const authOptions: NextAuthOptions = {
 
   callbacks: {
     async jwt({ token, user }) {
+      const now = Date.now();
+
       if (user) {
         return {
           ...token,
           accessToken: user.accessToken,
           refreshToken: user.refreshToken,
           refreshTokenExpires: user.refreshTokenExpires,
+          refreshTokenValid: true,
           justLoggedIn: true,
-          refreshTokenValid: true, // кэш результата проверки
-          lastChecked: Date.now(), // когда последний раз проверяли
+          lastChecked: now,
         };
       }
 
-      // Пропускаем проверку токена сразу после логина
+      // После логина пропускаем проверку
       if (token.justLoggedIn) {
-        token.justLoggedIn = false;
-        return token;
+        return {
+          ...token,
+          justLoggedIn: false,
+        };
       }
 
-      // Если недавно уже проверяли → пропускаем проверку
-      const now = Date.now();
-      const timeSinceLastCheck = now - (token.lastChecked || 0);
+      // 🔍 ПИНГ НА БЭК — проверка refreshToken
+      if (now - (token.lastChecked ?? 0) > CHECK_INTERVAL) {
+        const stillValid = await checkRefreshToken(token);
 
-      if (timeSinceLastCheck < TOKEN_VALIDITY_CACHE_MS) return token;
-      
-      // Проверка валидности accessToken через бекенд
-      const isValid = await checkAccessToken(token);
-      
-      if (isValid) {
-        token.refreshTokenValid = true;
+        if (!stillValid) {
+          return {
+            ...token,
+            refreshTokenValid: false,
+            error: 'RefreshTokenInvalid',
+          };
+        }
+
         token.lastChecked = now;
-        return token;
       }
 
-      return await refreshAccessToken(token);
+      // Если refreshToken скоро истекает — обновляем
+      const timeLeft = (token.refreshTokenExpires ?? 0) - now;
+      if (timeLeft < ONE_MINUTE_MS) {
+        return await refreshAccessToken(token);
+      }
+
+      return token;
     },
 
     async session({ session, token }) {

@@ -11,6 +11,7 @@ export interface IQuiz  {
   course: string;
   specialty: string;
   status: string;
+  crmWorkflowinstance: number;
 }
 
 export interface IAddAnswersToQuestionsDto {

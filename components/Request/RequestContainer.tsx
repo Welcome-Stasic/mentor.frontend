@@ -14,6 +14,7 @@ import {
   Chip,
   Grid,
   styled,
+  Skeleton,
 } from '@mui/material';
 import { useMemo, useState } from 'react';
 import { RequestCard } from './RequestCard';
@@ -22,6 +23,7 @@ import { useQuizStatues } from '@/hooks/useQuizStatues';
 import { IQuizStatus } from '@/lib/axios/types/quiz';
 
 const ITEMS_PER_PAGE = 10;
+const SPACING = 5;
 
 const formatNumber = (value: number) => new Intl.NumberFormat('ru-RU').format(value);
 
@@ -134,9 +136,17 @@ export const RequestContainer = () => {
       </Box>
 
       {/* Карточки */}
-      <Grid container spacing={3}>
+      <Grid container spacing={SPACING}>
         {isLoading ? (
-          <Typography>Загрузка...</Typography>
+          Array.from({ length: SPACING }).map((_, i) => (
+            <Skeleton
+              key={i}
+              variant="rounded"
+              sx={{ borderRadius: 2, boxShadow: 2 }}
+              width={200}
+              height={200}
+            />
+          ))
         ) : isError ? (
           <Typography color="error">Ошибка загрузки анкет</Typography>
         ) : quizzes.length === 0 ? (

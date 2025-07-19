@@ -14,11 +14,12 @@ import Image from 'next/image';
 import { useCurrentUserStore } from '@/providers/current-user-provider';
 import erisLogo from '@assets/eris_logo.png';
 import { signOut } from 'next-auth/react';
+import { UserPhoto } from './UserPhoto';
 
 const settings = ['Профиль', 'Выход'];
 
 export default function Header() {
-  const { userName, photoUrl } = useCurrentUserStore((state) => state);
+  const { userName, id, photoUrl } = useCurrentUserStore((state) => state);
 
   const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);
 
@@ -65,7 +66,13 @@ export default function Header() {
           <Box sx={{ flexGrow: 0 }}>
             <Tooltip title={userName}>
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                <Avatar alt={userName} src={photoUrl ?? ''} />
+                <UserPhoto
+                  userId={id}
+                  isOnline
+                  elmaPhotoUrl={photoUrl ?? ''}
+                  width={46}
+                  height={46}
+                />
               </IconButton>
             </Tooltip>
             <Menu

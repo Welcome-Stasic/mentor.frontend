@@ -25,5 +25,6 @@ export const QUIZ_GET_ALL_STATUES = 'Quiz/GetAllStatues';
 export const QUIZ_GET_ANSWERS_TO_QUESTIONS = 'Quiz/GetAnswersToQuestions';
 export const QUIZ_DELETE = 'Quiz/Delete';
 export const QUIZ_DOWNLOAD = 'Quiz/Download';
+export const QUIZ_CRM_PROCESSING = 'Quiz/Crm/Processing';
 
 export const DEPARTMENT_GET_ALL = 'Department/GetAll';

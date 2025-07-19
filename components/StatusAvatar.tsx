@@ -1,11 +1,14 @@
 import React from 'react';
-import { Avatar, Badge } from '@mui/material';
+import { Avatar, Badge, Skeleton } from '@mui/material';
 import { CSSObject, styled } from '@mui/material/styles';
 
 interface StatusAvatarProps {
   photoUrl: string;
   online?: boolean;
   onAvatarClick?: () => void;
+  width?: number;
+  height?: number;
+  isLoading?: boolean;
 }
 
 const StyledBadge = styled(Badge, {
@@ -13,7 +16,7 @@ const StyledBadge = styled(Badge, {
 })<{
   online: boolean;
 }>(({ theme, online }) => {
-  const badgeStyles: CSSObject  = {
+  const badgeStyles: CSSObject = {
     backgroundColor: online ? '#44b700' : theme.palette.grey[500],
     color: online ? '#44b700' : theme.palette.grey[500],
     boxShadow: `0 0 0 2px ${theme.palette.background.paper}`,
@@ -48,7 +51,15 @@ const StyledBadge = styled(Badge, {
   };
 });
 
-const StatusAvatar: React.FC<StatusAvatarProps> = ({ photoUrl, online = false, onAvatarClick }) => {
+const StatusAvatar: React.FC<StatusAvatarProps> = ({
+  photoUrl,
+  online = false,
+  onAvatarClick,
+  width = 56,
+  height = 56,
+  isLoading = false,
+}) => {
+  if (isLoading) return <Skeleton variant="circular" width={width} height={height} />;
   return (
     <StyledBadge
       overlap="circular"
@@ -58,11 +69,10 @@ const StatusAvatar: React.FC<StatusAvatarProps> = ({ photoUrl, online = false, o
       <Avatar
         src={photoUrl}
         sx={{
-          width: 56,
-          height: 56,
+          width,
+          height,
           cursor: 'pointer',
           img: {
-            objectFit: 'contain',
             width: '100%',
             height: '100%',
             imageRendering: 'smooth',
