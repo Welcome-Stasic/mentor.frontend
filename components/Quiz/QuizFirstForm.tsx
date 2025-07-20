@@ -11,6 +11,7 @@ import {
   FormControl,
   InputLabel,
   OutlinedInput,
+  Autocomplete,
 } from '@mui/material';
 import { useForm, SubmitHandler, Controller } from 'react-hook-form';
 import { PhoneNumberMaskCustom } from '../PhoneNumberMaskCustom';
@@ -19,8 +20,10 @@ import { API } from '@/lib/axios';
 import { useSession } from 'next-auth/react';
 import { IUpdateFirstStageDto } from '@/lib/axios/types/quiz';
 import { useCurrentUserStore } from '@/providers/current-user-provider';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import BackdropLoader from '../BackdropLoader';
+import { useInstitutions } from '@/hooks/useInstitutions';
+import { IInstitution } from '@/lib/axios/types/institution';
 
 interface IFormData {
   lastName: string;
@@ -32,15 +35,29 @@ interface IFormData {
   photo: File | null;
   isAccepted: boolean;
   specialty: string;
-  institution: string;
-  course: number;
+  institutionId?: number;
+  course?: number;
+}
+
+function getCourseLabel(institutionType: string) {
+  const selectedInstitutionType = institutionType?.toLowerCase().trim();
+  const courseLabel =
+    selectedInstitutionType?.includes('вуз') || selectedInstitutionType?.includes('суз')
+      ? 'Курс'
+      : selectedInstitutionType?.includes('школа')
+      ? 'Класс'
+      : 'Класс/Курс';
+
+  return courseLabel;
 }
 
 export default function QuizFirstForm() {
   const currentQuiz = useCurrentUserStore((i) => i.quiz);
   const setQuiz = useCurrentUserStore((i) => i.setQuiz);
+  const institutionResult = useInstitutions();
 
   const [loading, setLoading] = useState(false);
+  const [selectedInstitution, setSelectedInstitution] = useState<IInstitution | null>(null);
 
   const [errorMessages, setErrorMessages] = useState<string[]>([]);
 
@@ -55,11 +72,30 @@ export default function QuizFirstForm() {
     clearErrors,
     formState: { errors },
     reset,
+    watch,
+    setValue,
   } = useForm<IFormData>({
     defaultValues: {
       photo: null,
     },
   });
+
+  const selectedInstitutionValue = watch('institutionId');
+
+  useEffect(() => {
+    const selectedInstitution =
+      institutionResult?.data?.find((d) => d.id === selectedInstitutionValue) || null;
+
+    setSelectedInstitution(selectedInstitution);
+  }, [selectedInstitutionValue]);
+
+  useEffect(() => {
+    if (!selectedInstitution) {
+      clearErrors(['course', 'specialty']);
+      setValue('course', undefined);
+      setValue('specialty', '');
+    }
+  }, [selectedInstitution]);
 
   const onSubmit: SubmitHandler<IFormData> = async (data) => {
     setErrorMessages([]);
@@ -79,7 +115,7 @@ export default function QuizFirstForm() {
         birthDate: new Date(data.birthDate),
         isAccepted: data.isAccepted,
         specialty: data.specialty,
-        institution: data.institution,
+        institutionId: data.institutionId,
         course: data.course,
       };
 
@@ -177,23 +213,64 @@ export default function QuizFirstForm() {
           error={!!errors.birthDate}
           helperText={errors.birthDate?.message}
         />
-        <TextField
-          {...register('institution', { required: 'Поле обязательно' })}
-          label="Учебно заведение"
-          fullWidth
-          error={!!errors.institution}
-          helperText={errors.institution?.message}
+
+        <Controller
+          name="institutionId"
+          control={control}
+          render={({ field }) => {
+            const selectedInstitution =
+              institutionResult?.data?.find((inst) => inst.id === field.value) ?? null;
+
+            return (
+              <Autocomplete
+                disablePortal
+                options={institutionResult?.data ?? []}
+                getOptionLabel={(option) => option.name || ''}
+                isOptionEqualToValue={(option, value) => option.id === value.id}
+                value={selectedInstitution}
+                onChange={(_, value) => field.onChange(value?.id ?? '')}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    label="Учебное заведение"
+                    error={!!errors.institutionId}
+                    helperText={errors.institutionId?.message}
+                  />
+                )}
+              />
+            );
+          }}
         />
         <TextField
-          {...register('course', { required: 'Поле обязательно' })}
-          label="Класс/Курс"
+          {...register('course', {
+            validate: (value) => {
+              if (selectedInstitution && !value) {
+                return 'Поле обязательно';
+              }
+
+              return true;
+            },
+          })}
+          label={getCourseLabel(selectedInstitution?.type ?? '')}
           type="number"
           fullWidth
-          error={!!errors.institution}
-          helperText={errors.institution?.message}
+          error={!!errors.course}
+          helperText={errors.course?.message}
         />
         <TextField
-          {...register('specialty', { required: 'Поле обязательно' })}
+          {...register('specialty', {
+            validate: (value) => {
+              if (
+                selectedInstitution &&
+                !selectedInstitution?.type.toLocaleLowerCase().trim().includes('школа') &&
+                !value
+              ) {
+                return 'Поле обязательно';
+              }
+
+              return true;
+            },
+          })}
           label="Специальность"
           fullWidth
           error={!!errors.specialty}

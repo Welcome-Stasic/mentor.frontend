@@ -7,7 +7,7 @@ export interface IQuiz  {
   questions: string[];
   applicationUserId: string;
   selectedDepartmentId: string;
-  institution: string;
+  institutionId?: number;
   course: string;
   specialty: string;
   status: string;
@@ -35,8 +35,8 @@ export interface IUpdateFirstStageDto {
   birthDate: Date;
   isAccepted: boolean;
   specialty: string;
-  institution: string;
-  course: number;
+  institutionId?: number;
+  course?: number;
 }
 
 export interface IUpdateQuizDto {

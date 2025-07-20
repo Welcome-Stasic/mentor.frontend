@@ -3,6 +3,7 @@ import { me } from './requests/me';
 import { addAnswersToQuestions, getAll, getAllQuizStatues, getAnswersToQuestions, getById, quizCrmProcessing, quizDelete, quizDownload, update, updateFirstStage } from './requests/quiz';
 import { getDepartmentAll } from './requests/department';
 import { getCrmUserById, getReferralLink, getUserById, getUserPhoto, updatePhotoCurrentUser } from './requests/user';
+import { getAllInstitution, getByIdInstitution } from './requests/institution';
 
 export const API = {
   auth: {
@@ -39,5 +40,9 @@ export const API = {
   },
   department: {
     getAll: getDepartmentAll
+  },
+  institution: {
+    getAllInstitution,
+    getByIdInstitution
   }
 };

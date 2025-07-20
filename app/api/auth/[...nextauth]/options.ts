@@ -96,19 +96,19 @@ export const authOptions: NextAuthOptions = {
       }
 
       // 🔍 ПИНГ НА БЭК — проверка refreshToken
-      if (now - (token.lastChecked ?? 0) > CHECK_INTERVAL) {
-        const stillValid = await checkRefreshToken(token);
+      // if (now - (token.lastChecked ?? 0) > CHECK_INTERVAL) {
+      //   const stillValid = await checkRefreshToken(token);
 
-        if (!stillValid) {
-          return {
-            ...token,
-            refreshTokenValid: false,
-            error: 'RefreshTokenInvalid',
-          };
-        }
+      //   if (!stillValid) {
+      //     return {
+      //       ...token,
+      //       refreshTokenValid: false,
+      //       error: 'RefreshTokenInvalid',
+      //     };
+      //   }
 
-        token.lastChecked = now;
-      }
+      //   token.lastChecked = now;
+      // }
 
       // Если refreshToken скоро истекает — обновляем
       const timeLeft = (token.refreshTokenExpires ?? 0) - now;

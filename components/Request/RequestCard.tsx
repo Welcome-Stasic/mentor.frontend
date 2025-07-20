@@ -32,6 +32,7 @@ import { DownloadRequestBtn } from './DownloadRequestBtn';
 import { DeleteRequestBtn } from './DeleteRequestBtn';
 import { CmrProcessingBtn } from './CmrProcessingBtn';
 import { userUserById } from '@/hooks/useUserById';
+import { useInstitution } from '@/hooks/useInstitutions';
 
 interface IRequestCardProps {
   quiz: IQuiz;
@@ -43,6 +44,7 @@ export const RequestCard = ({ quiz, departments }: IRequestCardProps) => {
   const accessToken = session.data?.user.accessToken || '';
 
   const updateQuiz = useUpdateQuiz();
+  const institutionResult = useInstitution(quiz.institutionId);
 
   const userResult = userUserById(quiz.applicationUserId);
   const user = userResult?.data ?? null;
@@ -70,7 +72,7 @@ export const RequestCard = ({ quiz, departments }: IRequestCardProps) => {
 
   return (
     <>
-      <Card sx={{ maxWidth: 500, borderRadius: 2, boxShadow: 2 }}>
+      <Card sx={{ width: 350, borderRadius: 2, boxShadow: 2 }}>
         <CardHeader
           avatar={<UserPhoto userId={user?.id ?? ''} isOnline={user?.isOnline ?? false} />}
           title={<Typography variant="h6">{user?.userName}</Typography>}
@@ -101,16 +103,13 @@ export const RequestCard = ({ quiz, departments }: IRequestCardProps) => {
             <strong>Телефон:</strong> {user?.phoneNumber}
           </Typography>
           <Typography variant="body2">
-            <strong>Учебное заведение:</strong> {quiz.institution}
+            <strong>Учебное заведение:</strong> {institutionResult?.data?.name}
           </Typography>
           <Typography variant="body2">
             <strong>Класс/Курс:</strong> {quiz.course}
           </Typography>
           <Typography variant="body2">
             <strong>Специальность:</strong> {quiz.specialty}
-          </Typography>
-          <Typography variant="body2">
-            <strong>Статус тестирования:</strong> {quiz.stage}
           </Typography>
           <Box>
             <Typography variant="body2" sx={{ mb: 0.5 }}>

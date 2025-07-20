@@ -28,3 +28,6 @@ export const QUIZ_DOWNLOAD = 'Quiz/Download';
 export const QUIZ_CRM_PROCESSING = 'Quiz/Crm/Processing';
 
 export const DEPARTMENT_GET_ALL = 'Department/GetAll';
+
+export const INSTITUTION_GET_ALL = 'Institution/GetAll';
+export const INSTITUTION = 'Institution';
