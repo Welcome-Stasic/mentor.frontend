@@ -106,17 +106,27 @@ export const authOptions: NextAuthOptions = {
             error: 'RefreshTokenInvalid',
           };
         }
+      }
 
-        token.lastChecked = now;
+      if (!token.refreshToken || !token.refreshTokenExpires) {
+        return {
+          ...token,
+          refreshTokenValid: false,
+          error: 'MissingRefreshToken',
+        };
       }
 
       // Если refreshToken скоро истекает — обновляем
-      const timeLeft = (token.refreshTokenExpires ?? 0) - now;
+      const timeLeft = token.refreshTokenExpires - now;
+
       if (timeLeft < ONE_MINUTE_MS) {
         return await refreshAccessToken(token);
       }
 
-      return token;
+      return {
+        ...token,
+        lastChecked: now,
+      };
     },
 
     async session({ session, token }) {

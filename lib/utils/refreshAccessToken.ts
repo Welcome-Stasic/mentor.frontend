@@ -2,8 +2,6 @@ import { JWT } from 'next-auth/jwt';
 import { API } from '../axios';
 import { Mutex } from 'async-mutex';
 
-export const GRACE_SEC = 30;
-
 const refreshMutex = new Mutex();
 
 export async function refreshAccessToken(token: JWT): Promise<JWT> {
