@@ -1,4 +1,4 @@
-import { crmLogin, forgotPassword, getRefreshToken, isEmailConfirmed, isValidRefreshToken, login, logOut, refreshToken, register, resetPassword } from './requests/auth';
+import { crmLogin, forgotPassword, getRefreshToken, isEmailConfirmed, isValidAccessToken, login, logOut, refreshToken, register, resetPassword } from './requests/auth';
 import { me } from './requests/me';
 import { addAnswersToQuestions, getAll, getAllQuizStatues, getAnswersToQuestions, getById, quizCrmProcessing, quizDelete, quizDownload, update, updateFirstStage } from './requests/quiz';
 import { getDepartmentAll } from './requests/department';
@@ -16,7 +16,7 @@ export const API = {
     isEmailConfirmed,
     getRefreshToken,
     logOut,
-    isValidRefreshToken
+    isValidAccessToken
   },
   user: {
     me,

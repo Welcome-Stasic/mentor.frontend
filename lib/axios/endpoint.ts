@@ -7,7 +7,7 @@ export const AUTH_FORGOT_PASSWORD = 'Auth/ForgotPassword';
 export const AUTH_RESET_PASSWORD = 'Auth/ResetPassword';
 export const AUTH_IS_EMAIL_CONFIRMED = 'Auth/IsEmailConfirmed';
 export const AUTH_GET_REFRESH_TOKEN = 'Auth/GetRefreshToken';
-export const AUTH_IS_VALID_REFRESH_TOKEN = 'Auth/IsValidRefreshToken';
+export const AUTH_IS_VALID_ACCESS_TOKEN = 'Auth/Ping';
 
 export const USER = 'User';
 export const USER_ME = 'User/Me';

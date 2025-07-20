@@ -1,7 +1,7 @@
 import {
   AUTH_GET_REFRESH_TOKEN,
   AUTH_IS_EMAIL_CONFIRMED,
-  AUTH_IS_VALID_REFRESH_TOKEN,
+  AUTH_IS_VALID_ACCESS_TOKEN,
   AUTH_LOG_OUT,
   AUTH_REFRESH_TOKEN,
   AUTH_RESET_PASSWORD,
@@ -114,12 +114,12 @@ export async function logOut(token: string, refreshToken: string): Promise<IApiR
   return res.data;
 }
 
-export async function isValidRefreshToken(token: string, refreshToken: string): Promise<IApiResponse<boolean> | null> {
-  if (!token || !refreshToken) return null;
+export async function isValidAccessToken(token: string): Promise<IApiResponse<boolean> | null> {
+  if (!token) return null;
 
   const authAxios = await getAuthAxios(token);
   
-  const res = await authAxios.get<IApiResponse<boolean>>(`${AUTH_IS_VALID_REFRESH_TOKEN}?refreshToken=${refreshToken}`);
+  const res = await authAxios.get<IApiResponse<boolean>>(AUTH_IS_VALID_ACCESS_TOKEN);
 
   return res.data;
 }

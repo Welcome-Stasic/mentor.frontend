@@ -5,10 +5,10 @@ import { CRMProvider } from './providers/crm';
 import { decodeToken } from '@/lib/utils/decodeToken';
 import { refreshAccessToken } from '@/lib/utils/refreshAccessToken';
 import { TokenProvider } from './providers/token';
-import { checkRefreshToken } from '@/lib/utils/checkRefreshToken';
+import { checkAccessToken } from '@/lib/utils/checkAccessToken';
 
 const ONE_MINUTE_MS = 60 * 1000;
-const CHECK_INTERVAL = 2 * ONE_MINUTE_MS;
+const CHECK_INTERVAL = 30 * 1000; // 30 секунд
 
 export const authOptions: NextAuthOptions = {
   debug: true,
@@ -95,20 +95,20 @@ export const authOptions: NextAuthOptions = {
         };
       }
 
-      // 🔍 ПИНГ НА БЭК — проверка refreshToken
-      // if (now - (token.lastChecked ?? 0) > CHECK_INTERVAL) {
-      //   const stillValid = await checkRefreshToken(token);
+      // проверка accessToken
+      if (now - (token.lastChecked ?? 0) > CHECK_INTERVAL) {
+        const stillValid = await checkAccessToken(token);
 
-      //   if (!stillValid) {
-      //     return {
-      //       ...token,
-      //       refreshTokenValid: false,
-      //       error: 'RefreshTokenInvalid',
-      //     };
-      //   }
+        if (!stillValid) {
+          return {
+            ...token,
+            refreshTokenValid: false,
+            error: 'RefreshTokenInvalid',
+          };
+        }
 
-      //   token.lastChecked = now;
-      // }
+        token.lastChecked = now;
+      }
 
       // Если refreshToken скоро истекает — обновляем
       const timeLeft = (token.refreshTokenExpires ?? 0) - now;
