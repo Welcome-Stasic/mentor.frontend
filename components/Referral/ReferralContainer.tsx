@@ -2,14 +2,13 @@
 
 import { useReferralLink } from '@/hooks/useReferralLink';
 import { useCurrentUserStore } from '@/providers/current-user-provider';
-import { Typography, Box, IconButton, Snackbar, Tooltip } from '@mui/material';
+import { Typography, Box, IconButton, Snackbar, Tooltip, Skeleton } from '@mui/material';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import { useState } from 'react';
-import BackdropLoader from '../BackdropLoader';
 
 export function ReferralContainer() {
   const currentUserId = useCurrentUserStore((state) => state.id);
-  const { data } = useReferralLink(currentUserId);
+  const { data, isLoading } = useReferralLink(currentUserId);
 
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
@@ -41,8 +40,6 @@ export function ReferralContainer() {
     }
   };
 
-  if (!data?.qrCodeBase64 || !data.referralUrl) return <BackdropLoader open />;
-
   return (
     <>
       <Typography variant="subtitle2" gutterBottom>
@@ -57,54 +54,60 @@ export function ReferralContainer() {
           gap: 1,
           maxWidth: 360,
         }}>
-        {/* QR IMAGE – click copies IMAGE to clipboard */}
-        <Tooltip title="Нажмите, чтобы скопировать QR‑код" arrow>
-          <Box
-            component="img"
-            src={data.qrCodeBase64}
-            alt="Referral QR code"
-            sx={{
-              width: 192,
-              height: 192,
-              cursor: 'pointer',
-              transition: 'transform .2s',
-              '&:hover': { transform: 'scale(1.05)' },
-            }}
-            onClick={() => copyImage(data.qrCodeBase64)}
-          />
-        </Tooltip>
-
-        {/* REFERRAL URL – click copies TEXT url */}
-        <Box
-          sx={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: 1,
-            bgcolor: 'grey.100',
-            borderRadius: 2,
-            px: 2,
-            py: 1,
-            width: '100%',
-          }}>
-          <Tooltip title="Нажмите, чтобы скопировать" arrow>
-            <Typography
-              variant="body2"
+        {isLoading || !data?.referralUrl ? (
+          <Skeleton variant="rounded" width={192} height={192} />
+        ) : (
+          <Tooltip title="Нажмите, чтобы скопировать QR‑код" arrow>
+            <Box
+              component="img"
+              src={data.qrCodeBase64}
+              alt="Referral QR code"
               sx={{
-                flexGrow: 1,
-                whiteSpace: 'nowrap',
-                overflow: 'hidden',
-                textOverflow: 'ellipsis',
+                width: 192,
+                height: 192,
                 cursor: 'pointer',
+                transition: 'transform .2s',
+                '&:hover': { transform: 'scale(1.05)' },
               }}
-              onClick={() => copyText(data.referralUrl)}>
-              {data.referralUrl}
-            </Typography>
+              onClick={() => copyImage(data.qrCodeBase64)}
+            />
           </Tooltip>
+        )}
 
-          <IconButton size="small" onClick={() => copyText(data.referralUrl)}>
-            <ContentCopyIcon fontSize="small" />
-          </IconButton>
-        </Box>
+        {isLoading || !data?.referralUrl ? (
+          <Skeleton variant="rounded" width={250} />
+        ) : (
+          <Box
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 1,
+              bgcolor: 'grey.100',
+              borderRadius: 2,
+              px: 2,
+              py: 1,
+              width: '100%',
+            }}>
+            <Tooltip title="Нажмите, чтобы скопировать" arrow>
+              <Typography
+                variant="body2"
+                sx={{
+                  flexGrow: 1,
+                  whiteSpace: 'nowrap',
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  cursor: 'pointer',
+                }}
+                onClick={() => copyText(data.referralUrl)}>
+                {data.referralUrl}
+              </Typography>
+            </Tooltip>
+
+            <IconButton size="small" onClick={() => copyText(data.referralUrl)}>
+              <ContentCopyIcon fontSize="small" />
+            </IconButton>
+          </Box>
+        )}
 
         <Typography variant="caption" color="text.secondary">
           Нажмите на QR‑код, чтобы скопировать изображение, или на ссылку, чтобы скопировать URL

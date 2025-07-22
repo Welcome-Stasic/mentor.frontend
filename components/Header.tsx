@@ -72,6 +72,7 @@ export default function Header() {
                   elmaPhotoUrl={photoUrl ?? ''}
                   width={46}
                   height={46}
+                  isNeedOpenPhoto={false}
                 />
               </IconButton>
             </Tooltip>

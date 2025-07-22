@@ -9,9 +9,10 @@ interface IUserPhotoProps {
   elmaPhotoUrl?: string;
   width?: number;
   height?: number;
+  isNeedOpenPhoto?: boolean;
 }
 
-export const UserPhoto = ({ userId, isOnline, elmaPhotoUrl, ...props }: IUserPhotoProps) => {
+export const UserPhoto = ({ userId, isOnline, elmaPhotoUrl, isNeedOpenPhoto = true, ...props }: IUserPhotoProps) => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const photoResult = useUserPhoto(userId, elmaPhotoUrl);
 
@@ -39,7 +40,7 @@ export const UserPhoto = ({ userId, isOnline, elmaPhotoUrl, ...props }: IUserPho
         />
       </Tooltip>
 
-      {hasPhoto && (
+      {isNeedOpenPhoto && hasPhoto && (
         <Dialog
           open={isDialogOpen}
           onClose={closeDialog}
