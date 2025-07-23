@@ -12,7 +12,7 @@ import { useSession } from 'next-auth/react';
 import { USER_ROLES } from '@/constants';
 import OverlayMessage from '../OverlayMessage';
 import ManageSearchOutlinedIcon from '@mui/icons-material/ManageSearchOutlined';
-import SideBar from '../SideBar';
+import SideBar from '../Sidebar';
 
 export default function DashboardContainer({ children }: { children: React.ReactNode }) {
   const session =  useSession();

@@ -1,10 +1,16 @@
-import { DashboardClientPageTitle } from './DashboardClientPageTitle';
-import { Suspense } from 'react';
+'use client';
+
+import { getTitleFromPath } from '@/lib/utils/getTitleFromPath';
+import { Typography } from '@mui/material';
+import { usePathname } from 'next/navigation';
 
 export function DashboardPageTitle() {
+  const pathname = usePathname();
+  const title = getTitleFromPath(pathname);
+
   return (
-    <Suspense fallback="...">
-      <DashboardClientPageTitle />
-    </Suspense>
+    <Typography variant="h4" sx={{ mb: 2 }}>
+      {title}
+    </Typography>
   );
 }
