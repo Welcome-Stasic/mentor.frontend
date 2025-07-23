@@ -45,6 +45,7 @@ const OverlayMessage: React.FC<OverlayMessageProps> = ({
       alignItems="center"
       bgcolor="rgba(0, 0, 0, 0.3)"
       sx={{
+        p: 2,
         backdropFilter: blurBackground ? `blur(${blurPx})` : 'none',
         backgroundColor: 'rgba(0, 0, 0, 0.3)',
       }}>

@@ -1,19 +1,35 @@
-import { authOptions } from '@/app/api/auth/[...nextauth]/options';
-import Footer from '@/components/Footer';
-import Header from '@/components/Header';
-import OverlayMessage from '@/components/OverlayMessage';
-import Sidebar from '@/components/Sidebar';
-import ManageSearchOutlinedIcon from '@mui/icons-material/ManageSearchOutlined';
-import { getServerSession } from 'next-auth';
-import { DashboardPageTitle } from './DashboardPageTitle';
-import { USER_ROLES } from '@/constants';
+'use client';
 
-export default async function DashboardContainer({ children }: { children: React.ReactNode }) {
-  const session = await getServerSession(authOptions);
-  const currentUserRoles = session?.user.roles || [];
+import { DashboardPageTitle } from './DashboardPageTitle';
+import {
+  Box,
+} from '@mui/material';
+import { DrawerHeader } from '../ui/DrawerHeader';
+import { useState } from 'react';
+
+import Header from '../Header';
+import SideBar from '../SideBar';
+import { useSession } from 'next-auth/react';
+import { USER_ROLES } from '@/constants';
+import OverlayMessage from '../OverlayMessage';
+import ManageSearchOutlinedIcon from '@mui/icons-material/ManageSearchOutlined';
+
+export default function DashboardContainer({ children }: { children: React.ReactNode }) {
+  const session =  useSession();
+  const currentUserRoles = session?.data?.user?.roles || [];
+
+  const [open, setOpen] = useState(false);
+
+  const handleDrawerOpen = () => {
+    setOpen(true);
+  };
+
+  const handleDrawerClose = () => {
+    setOpen(false);
+  };
 
   return (
-    <div className="container" style={{ position: 'relative', zIndex: 1 }}>
+    <Box sx={{ display: 'flex' }}>
       {currentUserRoles.includes(USER_ROLES.PENDING_APPROVAL.name) && (
         <OverlayMessage
           title="Спасибо за прохождение опроса!"
@@ -24,17 +40,13 @@ export default async function DashboardContainer({ children }: { children: React
           icon={<ManageSearchOutlinedIcon color="info" sx={{ fontSize: 60 }} />}
         />
       )}
-      <Header />
-      <div style={{ display: 'flex', minHeight: '100vh', flexDirection: 'column' }}>
-        <div style={{ display: 'flex', flexGrow: 1 }}>
-          <Sidebar />
-          <main style={{ position: 'relative', flexGrow: 1, padding: '14px', marginTop: '64px' }}>
-            <DashboardPageTitle />
-            {children}
-          </main>
-        </div>
-        <Footer />
-      </div>
-    </div>
+      <Header open={open} handleDrawerOpen={handleDrawerOpen} />
+      <SideBar open={open} handleDrawerClose={handleDrawerClose} roles={currentUserRoles}/>
+      <Box component="main" sx={{ flexGrow: 1, p: 3, width: '100%', overflow: 'auto' }}>
+        <DrawerHeader />
+        <DashboardPageTitle />
+        {children}
+      </Box>
+    </Box>
   );
 }

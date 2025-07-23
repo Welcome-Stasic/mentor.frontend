@@ -12,7 +12,7 @@ export default function Footer() {
         textAlign: 'center',
       }}>
       <Typography variant="body2" color="text.secondary">
-        © {new Date().getFullYear()} {SITE_BASE_NAME}. Все права защищены.
+        {/* © {new Date().getFullYear()} {SITE_BASE_NAME}. Все права защищены. */}
       </Typography>
     </Box>
   );
