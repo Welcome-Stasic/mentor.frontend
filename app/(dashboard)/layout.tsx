@@ -1,4 +1,4 @@
-import DashboardContainerNew from '@/components/Dashboard/DashboardContainer';
+import DashboardContainer from '@/components/Dashboard/DashboardContainer';
 import { CurrentUserStoreProvider } from '@/providers/current-user-provider';
 import { QuizzesStoreProvider } from '@/providers/quizzes-provider';
 
@@ -6,7 +6,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   return (
     <CurrentUserStoreProvider>
       <QuizzesStoreProvider>
-        <DashboardContainerNew>{children}</DashboardContainerNew>
+        <DashboardContainer>{children}</DashboardContainer>
       </QuizzesStoreProvider>
     </CurrentUserStoreProvider>
   );

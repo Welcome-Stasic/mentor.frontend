@@ -8,11 +8,11 @@ import { DrawerHeader } from '../ui/DrawerHeader';
 import { useState } from 'react';
 
 import Header from '../Header';
-import SideBar from '../SideBar';
 import { useSession } from 'next-auth/react';
 import { USER_ROLES } from '@/constants';
 import OverlayMessage from '../OverlayMessage';
 import ManageSearchOutlinedIcon from '@mui/icons-material/ManageSearchOutlined';
+import SideBar from '../SideBar';
 
 export default function DashboardContainer({ children }: { children: React.ReactNode }) {
   const session =  useSession();
