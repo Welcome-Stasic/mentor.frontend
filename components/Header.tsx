@@ -8,13 +8,12 @@ import Typography from '@mui/material/Typography';
 import Tooltip from '@mui/material/Tooltip';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
-import Image from 'next/image';
 import { useCurrentUserStore } from '@/providers/current-user-provider';
-import erisLogo from '@assets/eris_logo.png';
 import { signOut } from 'next-auth/react';
 import { UserPhoto } from './UserPhoto';
 import { AppBar } from './ui/AppBar';
 import MenuIcon from '@mui/icons-material/Menu';
+import { useMediaQuery } from '@mui/material';
 
 const settings = ['Профиль', 'Выход'];
 
@@ -24,6 +23,8 @@ interface IHeaderProps {
 }
 
 export default function Header({ handleDrawerOpen, open }: IHeaderProps) {
+  const isMobile = useMediaQuery('(max-width:768px)');
+
   const { userName, id, photoUrl } = useCurrentUserStore((state) => state);
 
   const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);
@@ -52,21 +53,20 @@ export default function Header({ handleDrawerOpen, open }: IHeaderProps) {
           edge="start"
           sx={[
             {
-              marginRight: 5,
+              marginRight: isMobile ? 1.5 : 3,
             },
             open && { display: 'none' },
           ]}>
           <MenuIcon />
         </IconButton>
         <>
-          <Image src={erisLogo} alt="eris_logo" width={40} style={{ marginRight: '16px' }} />
           <Typography
             variant="h6"
             noWrap
             component="a"
             href="/"
             sx={{
-              display: { xs: 'none', md: 'flex' },
+              display: 'flex',
               fontFamily: 'monospace',
               fontWeight: 700,
               letterSpacing: '.3rem',

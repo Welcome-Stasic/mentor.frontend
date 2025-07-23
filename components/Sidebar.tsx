@@ -11,6 +11,8 @@ import { DrawerHeader } from './ui/DrawerHeader';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import { Divider, ListItemButton, useTheme } from '@mui/material';
+import erisLogo from '@assets/eris_logo.png';
+import Image from 'next/image';
 
 interface ISideBarProps {
   roles: string[];
@@ -28,6 +30,7 @@ export default function SideBar({ roles, open, handleDrawerClose }: ISideBarProp
   return (
     <Drawer variant="permanent" open={open}>
       <DrawerHeader>
+        <Image style={{ marginLeft: '5px' }} src={erisLogo} alt="eris_logo" width={52} />
         <IconButton onClick={handleDrawerClose}>
           {theme.direction === 'rtl' ? <ChevronRightIcon /> : <ChevronLeftIcon />}
         </IconButton>
@@ -43,7 +46,7 @@ export default function SideBar({ roles, open, handleDrawerClose }: ISideBarProp
                 href={page.pathPrefix}
                 sx={[
                   {
-                    minHeight: 48,
+                    minHeight: 52,
                     px: 2.5,
                   },
                   open
@@ -57,6 +60,7 @@ export default function SideBar({ roles, open, handleDrawerClose }: ISideBarProp
                 <Icon
                   sx={[
                     {
+                      fontSize: 32,
                       minWidth: 0,
                       justifyContent: 'center',
                     },
