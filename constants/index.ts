@@ -4,6 +4,7 @@ import { SvgIconTypeMap } from '@mui/material';
 import { OverridableComponent } from '@mui/material/OverridableComponent';
 import ContactsIcon from '@mui/icons-material/Contacts';
 import AddLinkIcon from '@mui/icons-material/AddLink';
+import AccessTimeIcon from '@mui/icons-material/AccessTime';
 
 export type Question = {
   question: string;
@@ -168,6 +169,12 @@ export const PAGE: Record<KeyPage, IPage> = {
     roles: [USER_ROLES.ADMIN.name],
     icon: ContactsIcon
   },
+  TIME_TRACKING: {
+    name: 'Учет времени',
+    pathPrefix: '/TimeTracking',
+    roles: [],
+    icon: AccessTimeIcon
+  },
   REFERRAL: {
     name: 'Рефералы',
     pathPrefix: '/Referral',
@@ -183,4 +190,4 @@ export interface IPage {
   icon: OverridableComponent<SvgIconTypeMap<{}, "svg">>
 }
 
-type KeyPage = "HOME" | "REQUEST" | "REFERRAL"
+type KeyPage = "HOME" | "REQUEST" | "TIME_TRACKING" | "REFERRAL"
