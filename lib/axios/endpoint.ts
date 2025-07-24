@@ -15,6 +15,7 @@ export const USER_CRM = 'User/Crm';
 export const USER_ME_UPDATE_PHOTO = 'User/Me/PhotoUpdate';
 export const USER_PHOTO_INFO = 'User/Photo/Info';
 export const USER_GET_REFERRAL_LINK = 'User/GetReferralLink';
+export const USER_GET_TIME_REPORT = 'User/Time/Report';
 
 export const QUIZ = 'Quiz';
 export const QUIZ_ALL = 'Quiz/GetAll';
