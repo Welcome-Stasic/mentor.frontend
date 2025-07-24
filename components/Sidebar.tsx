@@ -94,4 +94,4 @@ export default function SideBar({ roles, open, handleDrawerClose }: ISideBarProp
   );
 }
 
-const PAGE_LIST = [PAGE.HOME, PAGE.REQUEST, PAGE.TIME_TRACKING, PAGE.REFERRAL];
+const PAGE_LIST = [PAGE.HOME, PAGE.REQUEST, PAGE.TIME_TRACKING, PAGE.MY_JUNIORS, PAGE.REFERRAL];

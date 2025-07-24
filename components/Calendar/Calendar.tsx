@@ -26,7 +26,6 @@ const dummyDays: DayData[] = [
   { date: 8, percentage: 89.11, time: '08:25' },
   { date: 9, percentage: 91.85, time: '08:11' },
   { date: 10, percentage: 96.31, time: '08:08' },
-  // добавь другие дни при необходимости
 ];
 
 const Calendar = ({ year, month }: Props) => {

@@ -26,6 +26,8 @@ export interface ICrmUser {
       file: string
     }
   }
+  isMentor: boolean;
+  juniorIds: number[];
 }
 
 export interface IApplicationUser {

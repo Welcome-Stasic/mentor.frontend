@@ -8,8 +8,10 @@ export type CurrentUserState = {
   elmaId?: string | null;
   userName: string;
   photoUrl?: string | null;
-  quiz?: IQuiz| null;
+  quiz?: IQuiz | null;
   isAdmin: boolean;
+  isMentor: boolean;
+  juniorIds: number[];
 };
 
 export type CurrentUserActions = {
@@ -24,10 +26,15 @@ export const defaultInitState: CurrentUserState = {
   userName: '',
   photoUrl: null,
   quiz: null,
-  isAdmin: false
+  isAdmin: false,
+  isMentor: false,
+  juniorIds: [],
 };
 
-export const initCurrentUserState = async (accessToken: string, isAdmin: boolean): Promise<CurrentUserState> => {
+export const initCurrentUserState = async (
+  accessToken: string,
+  isAdmin: boolean,
+): Promise<CurrentUserState> => {
   try {
     const meResponse = await API.user.me(accessToken);
 
@@ -43,21 +50,26 @@ export const initCurrentUserState = async (accessToken: string, isAdmin: boolean
       userName: me.userName,
       photoUrl: null,
       quiz: null,
-      isAdmin
+      isAdmin,
+      isMentor: false,
+      juniorIds: [],
     };
 
     // CRM: фото пользователя
-    if(me.elmaUserId){
+    if (me.elmaUserId) {
       const crmResponse = await API.user.getCrmUserById(me.elmaUserId, accessToken);
 
       const photoFile = crmResponse?.Result?.userInfo?.photo?.file;
-  
+
       if (photoFile) {
         state.photoUrl = `https://phone.eriskip.com/files/maximize/${photoFile}.jpg`;
       }
+
+      state.isMentor = crmResponse?.Result?.isMentor ?? false;
+      state.juniorIds = crmResponse?.Result?.juniorIds ?? [];
     }
 
-    if(!state.photoUrl){
+    if (!state.photoUrl) {
       const photoResponse = await API.user.getUserPhoto(me.id, accessToken);
       const photoUrl = photoResponse?.Result?.url || '';
 
@@ -91,6 +103,6 @@ export const createCurrentUserStore = (initState: CurrentUserState = defaultInit
         },
       }),
       { name: 'CurrentUserStore' },
-    )
+    ),
   );
 };
