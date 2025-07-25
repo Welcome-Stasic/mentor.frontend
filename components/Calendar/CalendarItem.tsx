@@ -1,5 +1,6 @@
 'use client';
 
+import { getColorByPercentage } from '@/lib/utils/getColorByPercentage';
 import { Box, Typography, LinearProgress, useMediaQuery } from '@mui/material';
 import Link from 'next/link';
 
@@ -9,14 +10,6 @@ interface ICalendarItemProps {
   percentage?: number;
   time?: number;
 }
-
-const getColorByPercentage = (percentage: number): string => {
-  if (percentage > 100) return '#b44577'; // яркий розово-фиолетовый
-  if (percentage > 80) return '#39b881'; // яркий зелёный
-  if (percentage > 50) return '#b6c53d'; // ярко-жёлто-зелёный
-  if (percentage > 30) return '#e1862c'; // оранжевый
-  return '#c0392b'; // насыщенно-красный
-};
 
 const CalendarItem = ({ day, href, percentage = 0, time = 0 }: ICalendarItemProps) => {
   const reportHours = Math.floor(time / 60);

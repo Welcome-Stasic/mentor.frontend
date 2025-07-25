@@ -5,6 +5,8 @@ import CalendarItem from './CalendarItem';
 import dayjs from 'dayjs';
 import { IReportTimeItem, IWorkTime } from '@/lib/axios/types/time';
 import { useMemo } from 'react';
+import { useCurrentUserStore } from '@/providers/current-user-provider';
+import { PAGE } from '@/constants';
 
 interface ICalendarProps {
   year: number;
@@ -14,6 +16,8 @@ interface ICalendarProps {
 }
 
 const Calendar = ({ year, month, timeItems, workItems }: ICalendarProps) => {
+  const crmId = useCurrentUserStore((store) => store.elmaId) ?? '';
+
   const firstDay = dayjs(new Date(year, month, 1));
   const startDayIndex = (firstDay.day() + 6) % 7; // Пн = 0, Вс = 6
   const daysInMonth = firstDay.daysInMonth();
@@ -61,7 +65,7 @@ const Calendar = ({ year, month, timeItems, workItems }: ICalendarProps) => {
         return (
           <CalendarItem
             key={date}
-            href="#"
+            href={`${PAGE.TIME_TRACKING.pathPrefix}/${crmId}?dateIn=${date}`}
             day={dayNumber}
             time={minutes}
             percentage={percentage}
