@@ -1,63 +1,98 @@
-// components/CalendarItem.tsx
-import { useReportTime } from '@/hooks/useReportTime';
-import { useCurrentUserStore } from '@/providers/current-user-provider';
+'use client';
+
 import { Box, Typography, LinearProgress, useMediaQuery } from '@mui/material';
-import dayjs from 'dayjs';
+import Link from 'next/link';
 
 interface ICalendarItemProps {
   day: number;
-  date: Date;
+  href: string;
   percentage?: number;
-  time?: string;
+  time?: number;
+}
+
+const getColorByPercentage = (percentage: number): string => {
+  if (percentage > 100) return '#b44577'; // яркий розово-фиолетовый
+  if (percentage > 80) return '#39b881'; // яркий зелёный
+  if (percentage > 50) return '#b6c53d'; // ярко-жёлто-зелёный
+  if (percentage > 30) return '#e1862c'; // оранжевый
+  return '#c0392b'; // насыщенно-красный
 };
 
-const CalendarItem = ({ day, date, percentage = 0, time = '0' }: ICalendarItemProps) => {
-  const crmId = useCurrentUserStore((store) => store.elmaId) ?? '';
-  
-  const startOfDayStr = dayjs(date).startOf('day').format('YYYY-MM-DD HH:mm:ss');
-  const endOfDayStr = dayjs(date).endOf('day').format('YYYY-MM-DD HH:mm:ss');
-
-  const reportTime = useReportTime(crmId, startOfDayStr, endOfDayStr);
-
-  const reportTotalMinutes = reportTime?.data?.minutes ?? 0;
-  const reportHours = Math.floor(reportTotalMinutes / 60);
-  const reportMinutes = reportTotalMinutes % 60;
+const CalendarItem = ({ day, href, percentage = 0, time = 0 }: ICalendarItemProps) => {
+  const reportHours = Math.floor(time / 60);
+  const reportMinutes = time % 60;
   const formattedReportTime = `${reportHours}:${reportMinutes.toString().padStart(2, '0')}`;
-
-  const isZero = percentage === 0;
   const isMobile = useMediaQuery('(max-width:768px)');
 
+  const color = getColorByPercentage(percentage);
+
   return (
-    <Box
-      sx={{
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        border: '1px solid #ccc',
-        padding: 1,
-        height: isMobile ? 100 : 150,
-        position: 'relative',
-        borderRadius: '6px',
-        overflow: 'hidden'
-      }}
-    >
-      {startOfDayStr}
-      {endOfDayStr}
-      <Typography variant="subtitle1" sx={{ position: 'absolute', top: '5px', right: '5px' }}>{day}</Typography>
-      <Typography variant={isMobile ? 'body2' : 'body1'} sx={{ color: isZero ? 'brown' : 'black', textAlign: 'center', alignItems: 'center' }}>
-        {percentage.toFixed(2)}%
-      </Typography>
-      <Typography variant="body2" sx={{ color: isZero ? 'brown' : 'green', position: 'absolute', bottom: '5px', left: '5px' }}>
-        {formattedReportTime}
-      </Typography>
-      {!isZero && (
-        <LinearProgress
-          variant="determinate"
-          value={percentage}
-          sx={{ position: 'absolute', bottom: 0, left: 0, width: '100%', height: 5 }}
-        />
-      )}
-    </Box>
+    <Link href={href} style={{ textDecoration: 'none' }}>
+      <Box
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          border: '1px solid #ccc',
+          padding: 1,
+          height: isMobile ? 100 : 150,
+          position: 'relative',
+          borderRadius: '6px',
+          overflow: 'hidden',
+          backgroundColor: '#fafafa',
+          textDecoration: 'none',
+          transition: 'all 0.2s ease-in-out',
+          '&:hover': {
+            cursor: 'pointer',
+            boxShadow: 3,
+            backgroundColor: '#f0f0f0',
+          },
+        }}>
+        <Typography variant="subtitle1" sx={{ position: 'absolute', top: '5px', right: '5px' }}>
+          {day}
+        </Typography>
+
+        <Typography
+          variant={isMobile ? 'body2' : 'body1'}
+          sx={{
+            color,
+            textAlign: 'center',
+            fontWeight: 600,
+          }}>
+          {percentage.toFixed(2)}%
+        </Typography>
+
+        <Typography
+          variant="body2"
+          sx={{
+            color,
+            position: 'absolute',
+            bottom: '5px',
+            left: '5px',
+            fontWeight: 500,
+          }}>
+          {formattedReportTime}
+        </Typography>
+
+        {percentage > 0 && (
+          <LinearProgress
+            variant="determinate"
+            value={Math.min(percentage, 100)}
+            sx={{
+              position: 'absolute',
+              bottom: 0,
+              left: 0,
+              width: '100%',
+              height: 5,
+              backgroundColor: '#eee',
+              '& .MuiLinearProgress-bar': {
+                backgroundColor: color,
+              },
+            }}
+          />
+        )}
+      </Box>
+    </Link>
   );
 };
 

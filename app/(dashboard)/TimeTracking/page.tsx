@@ -18,7 +18,8 @@ export default function TimeTrackingPage() {
 
   const reportTime = useReportTime(crmId, firstDayOfMonthStr, lastDayOfMonthStr);
   const workTimes = useWorkTime(crmId, firstDayOfMonthStr, lastDayOfMonthStr);
-  const totalWorkMinutes = workTimes?.data?.map(i => i.minutes ?? 0).reduce((sum, value) => sum + value, 0) ?? 0;
+  const totalWorkMinutes =
+    workTimes?.data?.map((i) => i.minutes ?? 0).reduce((sum, value) => sum + value, 0) ?? 0;
   const workHours = Math.floor(totalWorkMinutes / 60);
   const workMinutes = totalWorkMinutes % 60;
 
@@ -43,7 +44,12 @@ export default function TimeTrackingPage() {
           Заполнено часов: <span>{formattedWorkTime}</span>
         </Typography>
       </Box>
-      <Calendar year={currentDate.year()} month={currentDate.month()} />
+      <Calendar
+        year={currentDate.year()}
+        month={currentDate.month()}
+        timeItems={reportTime?.data?.timeItems ?? []}
+        workItems={workTimes?.data ?? []}
+      />
     </>
   );
 }

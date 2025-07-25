@@ -3,41 +3,42 @@
 import { Box, useMediaQuery } from '@mui/material';
 import CalendarItem from './CalendarItem';
 import dayjs from 'dayjs';
-import { IWorkTime } from '@/lib/axios/types/time';
+import { IReportTimeItem, IWorkTime } from '@/lib/axios/types/time';
+import { useMemo } from 'react';
 
-type Props = {
+interface ICalendarProps {
   year: number;
   month: number;
-};
+  timeItems: IReportTimeItem[];
+  workItems: IWorkTime[];
+}
 
-type DayData = {
-  date: number;
-  percentage: number;
-  time: string;
-};
-
-const dummyDays: DayData[] = [
-  { date: 1, percentage: 94.74, time: '07:55' },
-  { date: 2, percentage: 96.49, time: '05:42' },
-  { date: 3, percentage: 95.85, time: '06:26' },
-  { date: 4, percentage: 95.24, time: '06:18' },
-  { date: 5, percentage: 0, time: '0' },
-  { date: 6, percentage: 0, time: '0' },
-  { date: 7, percentage: 88.11, time: '07:34' },
-  { date: 8, percentage: 89.11, time: '08:25' },
-  { date: 9, percentage: 91.85, time: '08:11' },
-  { date: 10, percentage: 96.31, time: '08:08' },
-];
-
-const Calendar = ({ year, month }: Props) => {
+const Calendar = ({ year, month, timeItems, workItems }: ICalendarProps) => {
   const firstDay = dayjs(new Date(year, month, 1));
   const startDayIndex = (firstDay.day() + 6) % 7; // Пн = 0, Вс = 6
   const daysInMonth = firstDay.daysInMonth();
-
   const totalSlots = startDayIndex + daysInMonth;
   const totalCells = Math.ceil(totalSlots / 7) * 7;
-
   const isMobile = useMediaQuery('(max-width:768px)');
+
+  // Группируем тайм-данные по дате
+  const timeMap = useMemo(() => {
+    const map = new Map<string, number>();
+    timeItems.forEach((item) => {
+      const key = dayjs(item.timeIn).format('YYYY-MM-DD');
+      map.set(key, (map.get(key) || 0) + item.fullTime);
+    });
+    return map;
+  }, [timeItems]);
+
+  const workMap = useMemo(() => {
+    const map = new Map<string, number>();
+    workItems.forEach((item) => {
+      const key = dayjs(item.dateTime).format('YYYY-MM-DD');
+      map.set(key, (map.get(key) || 0) + (item.minutes ?? 0));
+    });
+    return map;
+  }, [workItems]);
 
   return (
     <Box
@@ -48,20 +49,22 @@ const Calendar = ({ year, month }: Props) => {
       }}>
       {Array.from({ length: totalCells }).map((_, index) => {
         const dayNumber = index - startDayIndex + 1;
+        if (index < startDayIndex || dayNumber > daysInMonth) return null;
 
-        const isEmpty = index < startDayIndex || dayNumber > daysInMonth;
+        const date = dayjs(new Date(year, month, dayNumber)).format('YYYY-MM-DD');
+        const minutes = timeMap.get(date) ?? 0;
+        const workMinutes = workMap.get(date) ?? 0;
 
-        if(isEmpty) return;
-
-        const dayData = dummyDays.find((d) => d.date === dayNumber);
+        // Расчёт процента (0–100), защита от деления на 0
+        const percentage = minutes > 0 ? Math.round((workMinutes / minutes) * 100) : 0;
 
         return (
           <CalendarItem
-            key={dayNumber}
+            key={date}
+            href="#"
             day={dayNumber}
-            date={new Date(year, month, dayNumber)}
-            percentage={dayData?.percentage ?? 0}
-            time={dayData?.time ?? '0'}
+            time={minutes}
+            percentage={percentage}
           />
         );
       })}

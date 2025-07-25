@@ -16,4 +16,11 @@ export interface IReportTime {
   fullWorkHours: number;
   workHours: number;
   etcHours: number;
+  timeItems: IReportTimeItem[]
+}
+
+export  interface IReportTimeItem {
+  timeIn: string;
+  timeOut: string;
+  fullTime: number;
 }
