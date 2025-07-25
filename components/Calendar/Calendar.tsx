@@ -3,6 +3,7 @@
 import { Box, useMediaQuery } from '@mui/material';
 import CalendarItem from './CalendarItem';
 import dayjs from 'dayjs';
+import { IWorkTime } from '@/lib/axios/types/time';
 
 type Props = {
   year: number;
@@ -58,6 +59,7 @@ const Calendar = ({ year, month }: Props) => {
           <CalendarItem
             key={dayNumber}
             day={dayNumber}
+            date={new Date(year, month, dayNumber)}
             percentage={dayData?.percentage ?? 0}
             time={dayData?.time ?? '0'}
           />

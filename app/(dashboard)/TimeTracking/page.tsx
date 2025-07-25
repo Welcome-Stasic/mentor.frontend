@@ -3,6 +3,7 @@
 import Calendar from '@/components/Calendar/Calendar';
 import MonthSwitcher from '@/components/Calendar/MonthSwitcher';
 import { useReportTime } from '@/hooks/useReportTime';
+import { useWorkTime } from '@/hooks/useWorkTime';
 import { useCurrentUserStore } from '@/providers/current-user-provider';
 import { Box, Typography } from '@mui/material';
 import dayjs from 'dayjs';
@@ -12,20 +13,24 @@ export default function TimeTrackingPage() {
   const crmId = useCurrentUserStore((store) => store.elmaId) ?? '';
 
   const [currentDate, setCurrentDate] = useState(dayjs());
-  const firstDayOfMonth: Date = currentDate.startOf('month').startOf('day').toDate();
-  const lastDayOfMonth: Date = currentDate.endOf('month').startOf('day').toDate();
+  const firstDayOfMonthStr: string = currentDate.startOf('month').format('YYYY-MM-DD');
+  const lastDayOfMonthStr: string = currentDate.endOf('month').format('YYYY-MM-DD');
 
-  const reportTime = useReportTime(crmId, firstDayOfMonth, lastDayOfMonth);
+  const reportTime = useReportTime(crmId, firstDayOfMonthStr, lastDayOfMonthStr);
+  const workTimes = useWorkTime(crmId, firstDayOfMonthStr, lastDayOfMonthStr);
+  const totalWorkMinutes = workTimes?.data?.map(i => i.minutes ?? 0).reduce((sum, value) => sum + value, 0) ?? 0;
+  const workHours = Math.floor(totalWorkMinutes / 60);
+  const workMinutes = totalWorkMinutes % 60;
+
   const totalMinutes = reportTime?.data?.minutes ?? 0;
   const hours = Math.floor(totalMinutes / 60);
   const minutes = totalMinutes % 60;
 
   const formattedTime = `${hours}:${minutes.toString().padStart(2, '0')}`;
+  const formattedWorkTime = `${workHours}:${workMinutes.toString().padStart(2, '0')}`;
 
   return (
-    <div>
-      {firstDayOfMonth.toJSON()}
-      {lastDayOfMonth.toJSON()}
+    <>
       <MonthSwitcher currentDate={currentDate} onChange={setCurrentDate} />
       <Box sx={{ display: 'flex', gap: 2 }}>
         <Typography variant="overline">
@@ -35,10 +40,10 @@ export default function TimeTrackingPage() {
           Отработано часов: <span>{formattedTime}</span>
         </Typography>
         <Typography variant="overline">
-          Заполнено часов: <span>1</span>
+          Заполнено часов: <span>{formattedWorkTime}</span>
         </Typography>
       </Box>
       <Calendar year={currentDate.year()} month={currentDate.month()} />
-    </div>
+    </>
   );
 }

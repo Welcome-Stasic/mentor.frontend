@@ -4,15 +4,15 @@ import { API } from "@/lib/axios";
 import { useSession } from "next-auth/react";
 import { useQuery } from '@tanstack/react-query';
 
-export const useReportTime = (id: string, dateIn?: string, dateOut?: string) => {
+export const useWorkTime = (id: string, dateIn?: string, dateOut?: string) => {
   const session = useSession();
   const accessToken = session.data?.user.accessToken || '';
   const enabled = Boolean(id);
 
   return useQuery({
-    queryKey: ['reportTime', id, dateIn, dateOut],
-    queryFn: () => API.user.getReportTime(id, accessToken, dateIn, dateOut),
+    queryKey: ['workTime', id, dateIn, dateOut],
+    queryFn: () => API.user.getWorkTime(id, accessToken, dateIn, dateOut),
     enabled,
-    select: (data) => data?.Result ?? null,
+    select: (data) => data?.Result ?? [],
   });
 };
