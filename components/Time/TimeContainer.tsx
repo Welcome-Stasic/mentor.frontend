@@ -22,6 +22,8 @@ import 'dayjs/locale/ru';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import AddIcon from '@mui/icons-material/Add';
+import { useUpdateWorkTime } from '@/hooks/useUpdateWorkTime';
+import { IWorkTime } from '@/lib/axios/types/time';
 
 interface ITimeContainer {
   userId: string;
@@ -59,6 +61,12 @@ const TimeContainer = ({ userId, dateIn, dateOut }: ITimeContainer) => {
     totalReportMinutes > 0 ? Math.round((totalWorkMinutes / totalReportMinutes) * 100) : 0;
 
   const color = getColorByPercentage(percentage);
+
+  const updateWorkTime = useUpdateWorkTime();
+
+  const handleEditOnClick = (time: IWorkTime) => {
+    
+  }
 
   return (
     <>
@@ -144,7 +152,7 @@ const TimeContainer = ({ userId, dateIn, dateOut }: ITimeContainer) => {
                   <TableCell>{time.comment}</TableCell>
                   <TableCell>{formattedTime}</TableCell>
                   <TableCell>
-                    <IconButton color="primary">
+                    <IconButton color="primary" onClick={() => handleEditOnClick(time)}>
                       <EditIcon />
                     </IconButton>
                     <IconButton color="error">

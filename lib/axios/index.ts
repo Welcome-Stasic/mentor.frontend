@@ -4,6 +4,7 @@ import { addAnswersToQuestions, getAll, getAllQuizStatues, getAnswersToQuestions
 import { getDepartmentAll } from './requests/department';
 import { getCrmUserById, getReferralLink, getReportTime, getUserById, getUserPhoto, getWorkTime, updatePhotoCurrentUser } from './requests/user';
 import { getAllInstitution, getByIdInstitution } from './requests/institution';
+import { updateTime } from './requests/time';
 
 export const API = {
   auth: {
@@ -46,5 +47,8 @@ export const API = {
   institution: {
     getAllInstitution,
     getByIdInstitution
+  },
+  time: {
+    updateTime
   }
 };

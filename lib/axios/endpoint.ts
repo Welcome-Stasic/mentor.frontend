@@ -33,3 +33,6 @@ export const DEPARTMENT_GET_ALL = 'Department/GetAll';
 
 export const INSTITUTION_GET_ALL = 'Institution/GetAll';
 export const INSTITUTION = 'Institution';
+
+export const TIME_UPDATE = 'Time/Update'
+export const TIME_DELETE = 'Time/Delete'

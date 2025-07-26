@@ -24,3 +24,11 @@ export  interface IReportTimeItem {
   timeOut: string;
   fullTime: number;
 }
+
+export interface IUpdateTimeDto {
+  entityId: number;
+  type: number;
+  minutes?: number
+  task: string;
+  comment: string;
+}
