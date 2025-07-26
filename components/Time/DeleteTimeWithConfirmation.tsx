@@ -10,12 +10,13 @@ import {
 } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { IWorkTime } from '@/lib/axios/types/time';
+import { useDeleteWorkTime } from '@/hooks/useDeleteWorkTime';
 
 interface Props {
   time: IWorkTime;
 }
 
-const DeleteTimeWithConfirmation = ({ time }: Props) => {
+const DeleteTimeBtnWithConfirmation = ({ time }: Props) => {
   const totalWorkMinutes = time.minutes ?? 0;
 
   const workHours = Math.floor(totalWorkMinutes / 60);
@@ -27,7 +28,10 @@ const DeleteTimeWithConfirmation = ({ time }: Props) => {
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
-  const handleConfirm = () => {
+  const deleteWorkTime = useDeleteWorkTime();
+
+  const handleConfirm = async () => {
+    await deleteWorkTime.mutateAsync({ entityId: time.entityId, type: time.type });
     handleClose();
   };
 
@@ -49,7 +53,7 @@ const DeleteTimeWithConfirmation = ({ time }: Props) => {
           <Button onClick={handleClose} variant="outlined">
             Отмена
           </Button>
-          <Button onClick={handleConfirm} color="error" variant="contained" autoFocus>
+          <Button onClick={handleConfirm} color="error" variant="contained" autoFocus loading={deleteWorkTime.isPending}>
             Удалить
           </Button>
         </DialogActions>
@@ -58,4 +62,4 @@ const DeleteTimeWithConfirmation = ({ time }: Props) => {
   );
 };
 
-export default DeleteTimeWithConfirmation;
+export default DeleteTimeBtnWithConfirmation;

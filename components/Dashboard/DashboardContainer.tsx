@@ -1,9 +1,7 @@
 'use client';
 
 import { DashboardPageTitle } from './DashboardPageTitle';
-import {
-  Box,
-} from '@mui/material';
+import { Box } from '@mui/material';
 import { DrawerHeader } from '../ui/DrawerHeader';
 import { useState } from 'react';
 
@@ -15,7 +13,7 @@ import ManageSearchOutlinedIcon from '@mui/icons-material/ManageSearchOutlined';
 import SideBar from '../Sidebar';
 
 export default function DashboardContainer({ children }: { children: React.ReactNode }) {
-  const session =  useSession();
+  const session = useSession();
   const currentUserRoles = session?.data?.user?.roles || [];
 
   const [open, setOpen] = useState(false);
@@ -41,7 +39,7 @@ export default function DashboardContainer({ children }: { children: React.React
         />
       )}
       <Header open={open} handleDrawerOpen={handleDrawerOpen} />
-      <SideBar open={open} handleDrawerClose={handleDrawerClose} roles={currentUserRoles}/>
+      <SideBar open={open} handleDrawerClose={handleDrawerClose} roles={currentUserRoles} />
       <Box component="main" sx={{ flexGrow: 1, p: 3, width: '100%', overflow: 'auto' }}>
         <DrawerHeader />
         <DashboardPageTitle />

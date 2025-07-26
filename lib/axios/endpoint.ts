@@ -36,3 +36,4 @@ export const INSTITUTION = 'Institution';
 
 export const TIME_UPDATE = 'Time/Update'
 export const TIME_DELETE = 'Time/Delete'
+export const TIME_CREATE = 'Time/CREATE'

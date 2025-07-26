@@ -12,24 +12,33 @@ import {
   FormLabel,
   TextField,
 } from '@mui/material';
+import { useEffect, useMemo } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 
 interface ITimeDialog {
-  time: IWorkTime;
+  time?: IWorkTime | null;
   type: 'update' | 'create';
   open: boolean;
   handleClose: () => void;
+  handleMutate: (dto: ITimeDialogFormData) => void;
+  isLoading: boolean;
 }
-
-interface IFormData {
+export interface ITimeDialogFormData {
   task: string;
   description: string;
   minutes: number | null;
   project?: string;
 }
 
-const TimeDialog = ({ time, type, open, handleClose }: ITimeDialog) => {
-  const appTimeType = time.type === 2;
+const TimeDialog = ({
+  type,
+  open,
+  handleClose,
+  handleMutate,
+  isLoading,
+  time = null,
+}: ITimeDialog) => {
+  const isEditable = type === 'create' || time?.type === 2;
 
   const title = type === 'create' ? 'Добавить задачу' : 'Редактирование задачи';
   const btnName = type === 'create' ? 'Создать' : 'Изменить';
@@ -37,28 +46,30 @@ const TimeDialog = ({ time, type, open, handleClose }: ITimeDialog) => {
   const {
     register,
     handleSubmit,
+    reset,
     formState: { errors },
-  } = useForm<IFormData>({
+  } = useForm<ITimeDialogFormData>({
     defaultValues: {
-      minutes: time.minutes,
-      task: time.task,
-      description: time.comment,
+      minutes: time?.minutes ?? null,
+      task: time?.task ?? '',
+      description: time?.comment ?? '',
     },
   });
 
-  const updateWorkTime = useUpdateWorkTime();
+  useEffect(() => {
+    if (time) {
+      reset({
+        minutes: time.minutes ?? null,
+        task: time.task ?? '',
+        description: time.comment ?? '',
+      });
+    }
+  }, [time, reset]);
 
-  const onSubmit: SubmitHandler<IFormData> = async (data) => {
-    const body: IUpdateTimeDto = {
-      entityId: time.entityId,
-      type: time.type,
-      minutes: data.minutes ?? null,
-      comment: data.description,
-      task: data.task,
-    };
-
-    await updateWorkTime.mutateAsync(body);
+  const onSubmit: SubmitHandler<ITimeDialogFormData> = async (data) => {
+    handleMutate(data);
     handleClose();
+    reset();
   };
 
   return (
@@ -80,7 +91,7 @@ const TimeDialog = ({ time, type, open, handleClose }: ITimeDialog) => {
               minRows={2}
               {...register('task', {
                 validate: (value) => {
-                  if (appTimeType && !value) {
+                  if (isEditable && !value) {
                     return 'Поле обязательно';
                   }
 
@@ -88,7 +99,7 @@ const TimeDialog = ({ time, type, open, handleClose }: ITimeDialog) => {
                 },
               })}
               error={!!errors.task}
-              disabled={!appTimeType}
+              disabled={!isEditable}
             />
             <FormHelperText>{errors.task?.message}</FormHelperText>
           </FormControl>
@@ -100,7 +111,7 @@ const TimeDialog = ({ time, type, open, handleClose }: ITimeDialog) => {
               minRows={2}
               {...register('description', {
                 validate: (value) => {
-                  if (appTimeType && !value) {
+                  if (isEditable && !value) {
                     return 'Поле обязательно';
                   }
 
@@ -108,7 +119,7 @@ const TimeDialog = ({ time, type, open, handleClose }: ITimeDialog) => {
                 },
               })}
               error={!!errors.description}
-              disabled={!appTimeType}
+              disabled={!isEditable}
             />
             <FormHelperText>{errors.description?.message}</FormHelperText>
           </FormControl>
@@ -123,7 +134,7 @@ const TimeDialog = ({ time, type, open, handleClose }: ITimeDialog) => {
             <Button onClick={handleClose} variant="outlined" color="error">
               Отмена
             </Button>
-            <Button type="submit" autoFocus variant="contained" color="success">
+            <Button type="submit" autoFocus variant="contained" color="success" loading={isLoading}>
               {btnName}
             </Button>
           </DialogActions>

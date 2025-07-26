@@ -25,10 +25,24 @@ export  interface IReportTimeItem {
   fullTime: number;
 }
 
+export interface ICreateTimeDto {
+  crmUserId: number;
+  project: string;
+  task: string;
+  comment: string;
+  minutes: number;
+  date: string;
+}
+
 export interface IUpdateTimeDto {
   entityId: number;
   type: number;
   minutes: number | null
   task: string;
   comment: string;
+}
+
+export interface IDeleteTimeDto {
+  entityId: number;
+  type: number;
 }

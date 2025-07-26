@@ -5,7 +5,6 @@ import { useWorkTime } from '@/hooks/useWorkTime';
 import { getColorByPercentage } from '@/lib/utils/getColorByPercentage';
 import {
   Box,
-  IconButton,
   LinearProgress,
   Paper,
   Table,
@@ -17,15 +16,12 @@ import {
   Typography,
 } from '@mui/material';
 import dayjs from 'dayjs';
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import 'dayjs/locale/ru';
-import EditIcon from '@mui/icons-material/Edit';
-import DeleteIcon from '@mui/icons-material/Delete';
-import AddIcon from '@mui/icons-material/Add';
-import { useUpdateWorkTime } from '@/hooks/useUpdateWorkTime';
-import { IWorkTime } from '@/lib/axios/types/time';
-import TimeDialog from './TimeDialog';
-import DeleteTimeWithConfirmation from './DeleteTimeWithConfirmation';
+import DeleteTimeBtnWithConfirmation from './DeleteTimeWithConfirmation';
+import UpdateTimeBtn from './UpdateTime';
+import CreateTimeBtn from './CreateTime';
+import BackdropLoader from '../BackdropLoader';
 
 interface ITimeContainer {
   userId: string;
@@ -46,6 +42,9 @@ const TimeContainer = ({ userId, dateIn, dateOut }: ITimeContainer) => {
   const workTime = useWorkTime(userId, firstDayOfMonthStr, lastDayOfMonthStr);
   const workTimes = workTime?.data ?? [];
 
+  const isLoading =
+    reportTime.isLoading || workTime.isLoading || !reportTime.data || !workTime?.data;
+
   const workMap = useMemo(() => {
     const map = new Map<string, number>();
     workTimes.forEach((item) => {
@@ -63,20 +62,6 @@ const TimeContainer = ({ userId, dateIn, dateOut }: ITimeContainer) => {
     totalReportMinutes > 0 ? Math.round((totalWorkMinutes / totalReportMinutes) * 100) : 0;
 
   const color = getColorByPercentage(percentage);
-
-  const [open, setOpen] = useState(false);
-  const [selectedTime, setSelectedTime] = useState<IWorkTime | null>(null);
-
-  const handleClose = () => {
-    setOpen(false);
-  };
-
-  const handleEditOnClick = (time: IWorkTime) => {
-    setSelectedTime(time);
-    setOpen(true);
-  };
-
-  const handleDeleteOnClick = (time: IWorkTime) => {};
 
   return (
     <>
@@ -131,9 +116,7 @@ const TimeContainer = ({ userId, dateIn, dateOut }: ITimeContainer) => {
           mb: '4px',
         }}>
         <Typography variant="caption">Занести трудозатраты</Typography>
-        <IconButton color="primary">
-          <AddIcon />
-        </IconButton>
+        <CreateTimeBtn userId={userId} date={dateIn} />
       </Box>
       <TableContainer component={Paper}>
         <Table sx={{ minWidth: 650 }} aria-label="simple table">
@@ -162,10 +145,8 @@ const TimeContainer = ({ userId, dateIn, dateOut }: ITimeContainer) => {
                   <TableCell>{time.comment}</TableCell>
                   <TableCell>{formattedTime}</TableCell>
                   <TableCell>
-                    <IconButton color="primary" onClick={() => handleEditOnClick(time)}>
-                      <EditIcon />
-                    </IconButton>
-                    <DeleteTimeWithConfirmation time={time} />
+                    <UpdateTimeBtn time={time} />
+                    <DeleteTimeBtnWithConfirmation time={time} />
                   </TableCell>
                 </TableRow>
               );
@@ -173,9 +154,6 @@ const TimeContainer = ({ userId, dateIn, dateOut }: ITimeContainer) => {
           </TableBody>
         </Table>
       </TableContainer>
-      {selectedTime && (
-        <TimeDialog open={open} time={selectedTime} type="update" handleClose={handleClose} />
-      )}
     </>
   );
 };

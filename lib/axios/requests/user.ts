@@ -62,11 +62,13 @@ export async function getReferralLink(userId: string, token: string): Promise<IA
 }
 
 export async function getReportTime(userId: string, token: string, dateIn?: string, dateOut?: string): Promise<IApiResponse<IReportTime> | null> {
+  console.log(userId, token);
+
   if(!token || !userId) return null;
   
   const authAxios = await getAuthAxios(token);
   const res = await authAxios.get<IApiResponse<IReportTime>>(`${USER_GET_TIME_REPORT}/${userId}?dateIn=${dateIn}&dateOut=${dateOut}`);
-
+  
   return res.data;
 }
 
