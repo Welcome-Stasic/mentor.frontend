@@ -17,13 +17,15 @@ import {
   Typography,
 } from '@mui/material';
 import dayjs from 'dayjs';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import 'dayjs/locale/ru';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import AddIcon from '@mui/icons-material/Add';
 import { useUpdateWorkTime } from '@/hooks/useUpdateWorkTime';
 import { IWorkTime } from '@/lib/axios/types/time';
+import TimeDialog from './TimeDialog';
+import DeleteTimeWithConfirmation from './DeleteTimeWithConfirmation';
 
 interface ITimeContainer {
   userId: string;
@@ -62,11 +64,19 @@ const TimeContainer = ({ userId, dateIn, dateOut }: ITimeContainer) => {
 
   const color = getColorByPercentage(percentage);
 
-  const updateWorkTime = useUpdateWorkTime();
+  const [open, setOpen] = useState(false);
+  const [selectedTime, setSelectedTime] = useState<IWorkTime | null>(null);
+
+  const handleClose = () => {
+    setOpen(false);
+  };
 
   const handleEditOnClick = (time: IWorkTime) => {
-    
-  }
+    setSelectedTime(time);
+    setOpen(true);
+  };
+
+  const handleDeleteOnClick = (time: IWorkTime) => {};
 
   return (
     <>
@@ -155,9 +165,7 @@ const TimeContainer = ({ userId, dateIn, dateOut }: ITimeContainer) => {
                     <IconButton color="primary" onClick={() => handleEditOnClick(time)}>
                       <EditIcon />
                     </IconButton>
-                    <IconButton color="error">
-                      <DeleteIcon />
-                    </IconButton>
+                    <DeleteTimeWithConfirmation time={time} />
                   </TableCell>
                 </TableRow>
               );
@@ -165,6 +173,9 @@ const TimeContainer = ({ userId, dateIn, dateOut }: ITimeContainer) => {
           </TableBody>
         </Table>
       </TableContainer>
+      {selectedTime && (
+        <TimeDialog open={open} time={selectedTime} type="update" handleClose={handleClose} />
+      )}
     </>
   );
 };

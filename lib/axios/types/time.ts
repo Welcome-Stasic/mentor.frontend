@@ -1,7 +1,7 @@
 export interface IWorkTime {
   entityId: number;
-  workedTimeType: number;
-  minutes?: number
+  type: number;
+  minutes: number | null;
   dateTime: string;
   task: string;
   comment: string;
@@ -28,7 +28,7 @@ export  interface IReportTimeItem {
 export interface IUpdateTimeDto {
   entityId: number;
   type: number;
-  minutes?: number
+  minutes: number | null
   task: string;
   comment: string;
 }

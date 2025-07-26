@@ -18,6 +18,9 @@ export default function TimeTrackingPage() {
 
   const reportTime = useReportTime(crmId, firstDayOfMonthStr, lastDayOfMonthStr);
   const workTimes = useWorkTime(crmId, firstDayOfMonthStr, lastDayOfMonthStr);
+
+  const isLoading = reportTime.isLoading || workTimes.isLoading;
+
   const totalWorkMinutes =
     workTimes?.data?.map((i) => i.minutes ?? 0).reduce((sum, value) => sum + value, 0) ?? 0;
   const workHours = Math.floor(totalWorkMinutes / 60);
@@ -49,6 +52,7 @@ export default function TimeTrackingPage() {
         month={currentDate.month()}
         timeItems={reportTime?.data?.timeItems ?? []}
         workItems={workTimes?.data ?? []}
+        isLoading={isLoading}
       />
     </>
   );

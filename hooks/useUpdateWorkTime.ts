@@ -11,8 +11,8 @@ export const useUpdateWorkTime = () => {
   return useMutation({
     mutationFn: (dto: IUpdateTimeDto) => API.time.updateTime(dto, accessToken),
 
-    onSuccess: (data, dto) => {
-      queryClient.invalidateQueries({ queryKey: ['workTime', data?.Result?.entityId] });
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['workTime'] });
     },
   });
 };

@@ -1,6 +1,6 @@
 'use client';
 
-import { Box, useMediaQuery } from '@mui/material';
+import { Box, Skeleton, useMediaQuery } from '@mui/material';
 import CalendarItem from './CalendarItem';
 import dayjs from 'dayjs';
 import { IReportTimeItem, IWorkTime } from '@/lib/axios/types/time';
@@ -13,9 +13,10 @@ interface ICalendarProps {
   month: number;
   timeItems: IReportTimeItem[];
   workItems: IWorkTime[];
+  isLoading: boolean;
 }
 
-const Calendar = ({ year, month, timeItems, workItems }: ICalendarProps) => {
+const Calendar = ({ year, month, timeItems, workItems, isLoading }: ICalendarProps) => {
   const crmId = useCurrentUserStore((store) => store.elmaId) ?? '';
 
   const firstDay = dayjs(new Date(year, month, 1));
@@ -51,27 +52,32 @@ const Calendar = ({ year, month, timeItems, workItems }: ICalendarProps) => {
         gridTemplateColumns: `repeat(${isMobile ? '3' : '7'}, 1fr)`,
         gap: 1,
       }}>
-      {Array.from({ length: totalCells }).map((_, index) => {
-        const dayNumber = index - startDayIndex + 1;
-        if (index < startDayIndex || dayNumber > daysInMonth) return null;
+      {isLoading &&
+        Array.from({ length: totalCells }).map((_, index) => (
+          <Skeleton key={index} variant="rounded" height={isMobile ? 100 : 150} />
+        ))}
+      {!isLoading &&
+        Array.from({ length: totalCells }).map((_, index) => {
+          const dayNumber = index - startDayIndex + 1;
+          if (index < startDayIndex || dayNumber > daysInMonth) return null;
 
-        const date = dayjs(new Date(year, month, dayNumber)).format('YYYY-MM-DD');
-        const minutes = timeMap.get(date) ?? 0;
-        const workMinutes = workMap.get(date) ?? 0;
+          const date = dayjs(new Date(year, month, dayNumber)).format('YYYY-MM-DD');
+          const minutes = timeMap.get(date) ?? 0;
+          const workMinutes = workMap.get(date) ?? 0;
 
-        // Расчёт процента (0–100), защита от деления на 0
-        const percentage = minutes > 0 ? Math.round((workMinutes / minutes) * 100) : 0;
+          // Расчёт процента (0–100), защита от деления на 0
+          const percentage = minutes > 0 ? Math.round((workMinutes / minutes) * 100) : 0;
 
-        return (
-          <CalendarItem
-            key={date}
-            href={`${PAGE.TIME_TRACKING.pathPrefix}/${crmId}?dateIn=${date}`}
-            day={dayNumber}
-            time={minutes}
-            percentage={percentage}
-          />
-        );
-      })}
+          return (
+            <CalendarItem
+              key={date}
+              href={`${PAGE.TIME_TRACKING.pathPrefix}/${crmId}?dateIn=${date}`}
+              day={dayNumber}
+              time={minutes}
+              percentage={percentage}
+            />
+          );
+        })}
     </Box>
   );
 };
