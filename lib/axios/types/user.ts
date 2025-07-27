@@ -58,3 +58,14 @@ export interface IUserRefLink{
   referralUrl:string;
   qrCodeBase64:string;
 }
+
+export interface IJunior{
+  id: number;
+  name: string;
+  mentorId: number | null;
+  photoUrl: string;
+  email: string;
+  phone: string;
+  departmentId: number | null;
+  departmentName: string;
+}
