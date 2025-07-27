@@ -5,10 +5,10 @@ import CalendarItem from './CalendarItem';
 import dayjs from 'dayjs';
 import { IReportTimeItem, IWorkTime } from '@/lib/axios/types/time';
 import { useMemo } from 'react';
-import { useCurrentUserStore } from '@/providers/current-user-provider';
 import { PAGE } from '@/constants';
 
 interface ICalendarProps {
+  crmId: string;
   year: number;
   month: number;
   timeItems: IReportTimeItem[];
@@ -16,9 +16,7 @@ interface ICalendarProps {
   isLoading: boolean;
 }
 
-const Calendar = ({ year, month, timeItems, workItems, isLoading }: ICalendarProps) => {
-  const crmId = useCurrentUserStore((store) => store.elmaId) ?? '';
-
+const Calendar = ({ crmId, year, month, timeItems, workItems, isLoading }: ICalendarProps) => {
   const firstDay = dayjs(new Date(year, month, 1));
   const startDayIndex = (firstDay.day() + 6) % 7; // Пн = 0, Вс = 6
   const daysInMonth = firstDay.daysInMonth();

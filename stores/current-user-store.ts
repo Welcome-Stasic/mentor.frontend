@@ -12,10 +12,12 @@ export type CurrentUserState = {
   isAdmin: boolean;
   isMentor: boolean;
   juniorIds: number[];
+  selectedTimeUserId?: string | null;
 };
 
 export type CurrentUserActions = {
   setQuiz: (quiz: IQuiz | null) => void;
+  setSelectedTimeUser: (id: string) => void;
 };
 
 export type CurrentUserStore = CurrentUserState & CurrentUserActions;
@@ -29,6 +31,7 @@ export const defaultInitState: CurrentUserState = {
   isAdmin: false,
   isMentor: false,
   juniorIds: [],
+  selectedTimeUserId: null
 };
 
 export const initCurrentUserState = async (
@@ -101,6 +104,7 @@ export const createCurrentUserStore = (initState: CurrentUserState = defaultInit
         setQuiz: (quiz: IQuiz | null) => {
           set((state) => ({ ...state.quiz, quiz }));
         },
+        setSelectedTimeUser: (id: string) => set({ selectedTimeUserId: id })
       }),
       { name: 'CurrentUserStore' },
     ),
