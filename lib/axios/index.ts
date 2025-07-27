@@ -2,7 +2,7 @@ import { crmLogin, forgotPassword, getRefreshToken, isEmailConfirmed, isValidAcc
 import { me } from './requests/me';
 import { addAnswersToQuestions, getAll, getAllQuizStatues, getAnswersToQuestions, getById, quizCrmProcessing, quizDelete, quizDownload, update, updateFirstStage } from './requests/quiz';
 import { getDepartmentAll } from './requests/department';
-import { getCrmUserById, getJuniors, getReferralLink, getReportTime, getUserById, getUserPhoto, getWorkTime, updatePhotoCurrentUser } from './requests/user';
+import { getCrmUserById, getJuniors, getMentor, getReferralLink, getReportTime, getUserById, getUserPhoto, getWorkTime, updatePhotoCurrentUser } from './requests/user';
 import { getAllInstitution, getByIdInstitution } from './requests/institution';
 import { createTime, deleteTime, updateTime } from './requests/time';
 
@@ -28,7 +28,8 @@ export const API = {
     getReferralLink,
     getReportTime,
     getWorkTime,
-    getJuniors
+    getJuniors,
+    getMentor
   },
   quiz: {
     getById,

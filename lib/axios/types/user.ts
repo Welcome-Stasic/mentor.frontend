@@ -69,3 +69,13 @@ export interface IJunior{
   departmentId: number | null;
   departmentName: string;
 }
+
+export interface IMentor{
+  id: number;
+  name: string;
+  photoUrl: string;
+  emails: string[];
+  phones: string[];
+  departmentId: number | null;
+  departmentName: string;
+}

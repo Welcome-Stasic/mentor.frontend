@@ -21,6 +21,7 @@ const MonthSwitcher = ({
   onChangeUser,
 }: IMonthSwitcherProps) => {
   const crmId = useCurrentUserStore((store) => store.elmaId) ?? '';
+  const isMentor = useCurrentUserStore((store) => store.isMentor);
 
   const handlePrev = () => onChange(currentDate.subtract(1, 'month'));
   const handleNext = () => onChange(currentDate.add(1, 'month'));
@@ -57,7 +58,7 @@ const MonthSwitcher = ({
       <IconButton color="primary" onClick={handleNext}>
         <ChevronRight />
       </IconButton>
-      <RenderGroup options={options} value={selectedOption} onChange={onChangeUser} />
+      {isMentor && <RenderGroup options={options} value={selectedOption} onChange={onChangeUser} />}
     </Box>
   );
 };
