@@ -7,7 +7,6 @@ const BASE_URL = 'https://developmentmentor.eriskip.com:4443';
 
 const axiosInstance = axios.create({
   baseURL: `${BASE_URL}/api/${API_VERSION}`,
-  withCredentials: true,
   headers: {
     'Content-Type': 'application/json',
   },
