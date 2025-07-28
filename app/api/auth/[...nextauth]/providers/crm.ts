@@ -18,7 +18,6 @@ export const CRMProvider = CredentialsProvider({
         login: credentials.login,
         password: credentials.password,
       });
-
       const accessToken = response?.Result?.accessToken || null;
       const refreshToken = response?.Result?.refreshToken || null;
       const refreshTokenExpires = response?.Result?.refreshTokenExpires || null;;

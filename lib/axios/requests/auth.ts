@@ -32,7 +32,7 @@ export async function login(payload: IAppLoginDto): Promise<IApiResponse<ITokens
 
 export async function crmLogin(payload: ICrmLoginDto): Promise<IApiResponse<ITokens> | null> {
   const res = await axiosInstance.post<IApiResponse<ITokens>>(AUTH_CRM_LOGIN, payload);
-
+        console.log(res);
   return res.data;
 }
 
