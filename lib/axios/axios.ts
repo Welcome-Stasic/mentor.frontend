@@ -2,7 +2,7 @@ import axios, { AxiosError } from 'axios';
 import { IApiResponse } from './types/base';
 
 const API_VERSION = 'v1';
-const BASE_URL = 'https://developmentmentor.eriskip.com:4443';
+const BASE_URL = 'https://newmentor.eriskip.com/backend';
 //const BASE_URL = 'https://localhost:44330';
 
 const axiosInstance = axios.create({
