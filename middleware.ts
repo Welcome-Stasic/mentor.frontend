@@ -24,6 +24,6 @@ export default withAuth(middleware, {
 // 🔐 Указываем исключения: разрешён доступ к этим маршрутам без авторизации
 export const config = {
   matcher: [
-    '/((?!_next/static|favicon.ico|api|Account/Login|Account/Register|Account/ResetPassword|EmailConfirmed|not-found|privacy-policy).*)',
+    '/((?!_next/static|favicon.ico|api|backend|Account/Login|Account/Register|Account/ResetPassword|EmailConfirmed|not-found|privacy-policy).*)',
   ],
 };
