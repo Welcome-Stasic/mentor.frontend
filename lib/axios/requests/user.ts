@@ -94,7 +94,7 @@ export async function getMentor(userId: string, token: string): Promise<IApiResp
   if(!token || !userId) return null;
   
   const authAxios = await getAuthAxios(token);
-  const res = await authAxios.get<IApiResponse<IMentor>>(`${USER_GET_MENTOR}?id=${userId}`);
-  console.log(res);
+  const res = await authAxios.get<IApiResponse<IMentor>>(`${USER_GET_MENTOR}/${userId}`);
+
   return res.data;
 }
