@@ -1,16 +1,17 @@
 import { useDownloadQuiz } from '@/hooks/useDownloadQuiz';
+import { IQuiz } from '@/lib/axios/types/quiz';
 import { Download } from '@mui/icons-material';
 import { IconButton, Tooltip } from '@mui/material';
 
 interface IDownloadRequestBtnProps {
-  quizId: string;
+  quiz: IQuiz;
 }
 
-export const DownloadRequestBtn = ({ quizId }: IDownloadRequestBtnProps) => {
+export const DownloadRequestBtn = ({ quiz }: IDownloadRequestBtnProps) => {
   const downloadQuiz = useDownloadQuiz();
 
   const handleDownload = async () => {
-    await downloadQuiz.mutateAsync(quizId);
+    await downloadQuiz.mutateAsync(quiz.id);
   };
 
   return (

@@ -75,7 +75,7 @@ export const RequestCard = ({ quiz, departments }: IRequestCardProps) => {
       <Card sx={{ width: 350, borderRadius: 2, boxShadow: 2 }}>
         <CardHeader
           avatar={<UserPhoto userId={user?.id ?? ''} isOnline={user?.isOnline ?? false} />}
-          title={<Typography variant="h6">{user?.userName}</Typography>}
+          title={<Typography variant="subtitle1">{user?.fullName}</Typography>}
           subheader={
             <Typography variant="body2">
               {user?.email}
@@ -149,9 +149,9 @@ export const RequestCard = ({ quiz, departments }: IRequestCardProps) => {
             </Button>
           </Tooltip>
           <Box>
-            <DownloadRequestBtn quizId={quiz.id} />
-            <CmrProcessingBtn quizId={quiz.id} crmWorkflowinstance={quiz.crmWorkflowinstance} />
-            <DeleteRequestBtn quizId={quiz.id} />
+            <DownloadRequestBtn quiz={quiz} />
+            <CmrProcessingBtn quiz={quiz} crmWorkflowinstance={quiz.crmWorkflowinstance} />
+            <DeleteRequestBtn quiz={quiz} />
           </Box>
         </CardActions>
       </Card>

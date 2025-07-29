@@ -20,6 +20,7 @@ import { useState } from 'react';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import BackdropLoader from '../BackdropLoader';
 import { useQuestions } from '@/hooks/useQuestions';
+import { redirect } from 'next/navigation';
 
 interface IFormData {
   [key: string]: string;
@@ -91,13 +92,14 @@ export default function QuizSecondForm() {
 
       const newErrors: string[] = [];
 
-      const [questionResponse] = await Promise.all([
-        API.quiz.addAnswersToQuestions(body, accessToken),
-        API.quiz.update(
-          { quizId: currentQuiz?.id, departmentId: selectedDepartment?.value || '' },
+      if (selectedDepartment?.value) {
+        await API.quiz.update(
+          { quizId: currentQuiz?.id, departmentId: selectedDepartment?.value },
           accessToken,
-        ),
-      ]);
+        );
+      }
+
+      const questionResponse = await API.quiz.addAnswersToQuestions(body, accessToken);
 
       if (questionResponse?.Errors?.length) {
         newErrors.push(
@@ -109,7 +111,10 @@ export default function QuizSecondForm() {
 
       if (newErrors.length) setErrorMessages((prev) => [...prev, ...newErrors]);
 
-      if (!newErrors.length && questionResponse?.Result) setQuiz(questionResponse?.Result);
+      if (!newErrors.length && questionResponse?.Result) {
+        setQuiz(questionResponse?.Result);
+        redirect('/')
+      }
     } catch (error) {
       setErrorMessages((prev) => [
         ...prev,

@@ -1,18 +1,19 @@
 import { useDeleteQuiz } from '@/hooks/useDeleteQuiz';
+import { IQuiz } from '@/lib/axios/types/quiz';
 import { Delete } from '@mui/icons-material';
 import { IconButton, Tooltip } from '@mui/material';
 
 interface IDeleteRequestBtnProps {
-  quizId: string;
+  quiz: IQuiz;
 }
 
-export const DeleteRequestBtn = ({ quizId }: IDeleteRequestBtnProps) => {
+export const DeleteRequestBtn = ({ quiz }: IDeleteRequestBtnProps) => {
   const deleteQuiz = useDeleteQuiz();
 
   const handleDelete = async () => {
     const confirmed = confirm(`Удалить анкету?`);
     if (confirmed) {
-      await deleteQuiz.mutateAsync(quizId);
+      await deleteQuiz.mutateAsync(quiz.id);
     }
   };
 
