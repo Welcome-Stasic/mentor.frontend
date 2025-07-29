@@ -16,7 +16,7 @@ interface IFormData {
 export default function RegisterClientForm() {
   const [isLoading, setIsLoading] = useState(false);
   const [emailSent, setEmailSent] = useState(false);
-  const [errorMessage, setErrorMessage] = useState('');
+  const [errorMessages, setErrorMessages] = useState<string[]>([]);
 
   const {
     register,
@@ -31,7 +31,7 @@ export default function RegisterClientForm() {
   const onSubmit: SubmitHandler<IFormData> = async (data) => {
     setIsLoading(true);
     setEmailSent(false);
-    setErrorMessage('');
+    setErrorMessages([]);
 
     const body: IRegisterDto = {
       email: data.email,
@@ -42,13 +42,19 @@ export default function RegisterClientForm() {
     try {
       const registerResult = await API.auth.register(body);
 
-      if (registerResult?.Result) {
+      if (registerResult?.Errors?.length) {
+        setErrorMessages((prev) => [
+          ...prev,
+          `${registerResult.Message ?? 'Register error'} (${registerResult?.Errors?.join(', ')})`,
+        ]);
+      }
+
+      if (!registerResult?.Errors?.length && registerResult?.Result) {
         setEmailSent(true);
         reset();
-      } else {
       }
     } catch {
-      setErrorMessage('Ошибка регистрации');
+      setErrorMessages(['Ошибка регистрации']);
     } finally {
       setIsLoading(false);
     }
@@ -113,9 +119,9 @@ export default function RegisterClientForm() {
           </Typography>
         )}
 
-        {errorMessage && (
+        {errorMessages.length > 0 && (
           <Typography color="error" variant="body2">
-            {errorMessage}
+            {errorMessages.join(', ')}
           </Typography>
         )}
 
