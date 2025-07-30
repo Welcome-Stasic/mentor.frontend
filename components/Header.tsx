@@ -15,7 +15,7 @@ import { AppBar } from './ui/AppBar';
 import MenuIcon from '@mui/icons-material/Menu';
 import { useMediaQuery } from '@mui/material';
 
-const settings = ['Профиль', 'Выход'];
+const settings = ['Выход'];
 
 interface IHeaderProps {
   handleDrawerOpen: () => void;
