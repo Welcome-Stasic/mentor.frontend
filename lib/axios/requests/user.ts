@@ -62,8 +62,6 @@ export async function getReferralLink(userId: string, token: string): Promise<IA
 }
 
 export async function getReportTime(userId: string, token: string, dateIn?: string, dateOut?: string): Promise<IApiResponse<IReportTime> | null> {
-  console.log(userId, token);
-
   if(!token || !userId) return null;
   
   const authAxios = await getAuthAxios(token);
