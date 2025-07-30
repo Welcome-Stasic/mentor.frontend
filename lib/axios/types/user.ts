@@ -47,6 +47,7 @@ export interface IApplicationUser {
   phoneNumber: string;
   userName: string;
   isOnline: boolean;
+  fullName: string;
 }
 
 export interface IUserPhoto{

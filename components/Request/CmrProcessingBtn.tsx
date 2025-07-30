@@ -1,17 +1,18 @@
 import { useQuizCrmProcessing } from '@/hooks/useQuizCrmProcessing';
+import { IQuiz } from '@/lib/axios/types/quiz';
 import ForkRightIcon from '@mui/icons-material/ForkRight';
 import { IconButton, Tooltip } from '@mui/material';
 
 interface ICmrProcessingBtnProps {
-  quizId: string;
+  quiz: IQuiz;
   crmWorkflowinstance: number;
 }
 
-export const CmrProcessingBtn = ({ quizId, crmWorkflowinstance }: ICmrProcessingBtnProps) => {
+export const CmrProcessingBtn = ({ quiz, crmWorkflowinstance }: ICmrProcessingBtnProps) => {
   const crmProcessing = useQuizCrmProcessing();
 
   const handleCmrProcessing = async () => {
-    await crmProcessing.mutateAsync(quizId);
+    await crmProcessing.mutateAsync(quiz.id);
   };
 
   return (
@@ -19,7 +20,7 @@ export const CmrProcessingBtn = ({ quizId, crmWorkflowinstance }: ICmrProcessing
       <IconButton
         onClick={handleCmrProcessing}
         loading={crmProcessing.isPending}
-        disabled={crmWorkflowinstance > 0}>
+        disabled={!quiz.selectedDepartmentId || crmWorkflowinstance > 0}>
         <ForkRightIcon />
       </IconButton>
     </Tooltip>
