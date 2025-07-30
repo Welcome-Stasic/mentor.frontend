@@ -43,7 +43,7 @@ export default function RenderGroup({ options, onChange, value = null }: RenderG
       onChange={(_, value) => {
         if (value) onChange(value.value);
       }}
-      sx={{ width: 300 }}
+      sx={{ width: { sm: 300 } }}
       renderInput={(params) => <TextField {...params} label="Мои стажеры" />}
       renderGroup={(params) => (
         <li key={params.key}>

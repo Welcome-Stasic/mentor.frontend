@@ -66,7 +66,7 @@ export default function Header({ handleDrawerOpen, open }: IHeaderProps) {
             component="a"
             href="/"
             sx={{
-              display: 'flex',
+              display: { sm: 'flex' },
               fontFamily: 'monospace',
               fontWeight: 700,
               letterSpacing: '.3rem',

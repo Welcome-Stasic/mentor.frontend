@@ -28,7 +28,12 @@ export default function SideBar({ roles, open, handleDrawerClose }: ISideBarProp
   );
 
   return (
-    <Drawer variant="permanent" open={open}>
+    <Drawer
+      variant="permanent"
+      open={open}
+      ModalProps={{
+        keepMounted: true,
+      }}>
       <DrawerHeader>
         <Image style={{ marginLeft: '5px' }} src={erisLogo} alt="eris_logo" width={52} />
         <IconButton onClick={handleDrawerClose}>
@@ -94,4 +99,11 @@ export default function SideBar({ roles, open, handleDrawerClose }: ISideBarProp
   );
 }
 
-const PAGE_LIST = [PAGE.HOME, PAGE.REQUEST, PAGE.TIME_TRACKING, PAGE.MY_MENTOR, PAGE.MY_JUNIORS, PAGE.REFERRAL];
+const PAGE_LIST = [
+  PAGE.HOME,
+  PAGE.REQUEST,
+  PAGE.TIME_TRACKING,
+  PAGE.MY_MENTOR,
+  PAGE.MY_JUNIORS,
+  PAGE.REFERRAL,
+];

@@ -47,17 +47,27 @@ const MonthSwitcher = ({
   );
 
   return (
-    <Box display="flex" alignItems="center" mb={1} gap={1.5}>
+    <Box
+      display="flex"
+      alignItems={{ xs: 'flex-start', sm: 'center' }}
+      justifyContent="flex-start"
+      gap={1}
+      flexDirection={{ xs: 'column', sm: 'row' }} // xs: вертикально, sm и выше — горизонтально
+    >
       <Typography variant="h6">Наряд за</Typography>
-      <IconButton color="primary" onClick={handlePrev}>
-        <ChevronLeft />
-      </IconButton>
-      <Typography variant="h6">
-        {currentDate.locale('ru').format('MMMM YYYY').toUpperCase()}
-      </Typography>
-      <IconButton color="primary" onClick={handleNext}>
-        <ChevronRight />
-      </IconButton>
+
+      <Box display="flex" alignItems="center" justifyContent="flex-start">
+        <IconButton color="primary" onClick={handlePrev}>
+          <ChevronLeft />
+        </IconButton>
+        <Typography variant="h6">
+          {currentDate.locale('ru').format('MMMM YYYY').toUpperCase()}
+        </Typography>
+        <IconButton color="primary" onClick={handleNext}>
+          <ChevronRight />
+        </IconButton>
+      </Box>
+
       {isMentor && <RenderGroup options={options} value={selectedOption} onChange={onChangeUser} />}
     </Box>
   );

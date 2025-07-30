@@ -77,7 +77,7 @@ const TimeDialog = ({
       <DialogTitle>{title}</DialogTitle>
       <DialogContent>
         <Box
-          width={300}
+          width={{ sm: 300 }}
           component="form"
           display="flex"
           flexDirection="column"

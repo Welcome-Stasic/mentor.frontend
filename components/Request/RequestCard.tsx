@@ -129,7 +129,13 @@ export const RequestCard = ({ quiz, departments }: IRequestCardProps) => {
             </Select>
           </Box>
         </CardContent>
-        <CardActions sx={{ justifyContent: 'space-between', px: 2, pb: 2 }}>
+        <CardActions
+          sx={{
+            justifyContent: 'space-between',
+            px: 2,
+            pb: 2,
+            flexDirection: { xs: 'column', sm: 'row' },
+          }}>
           <Tooltip title="Открыть результаты тестирования">
             <Button
               variant="contained"
