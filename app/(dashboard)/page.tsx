@@ -12,11 +12,16 @@ import {
   DialogContent,
   DialogTitle,
   Button,
+  useMediaQuery,
+  useTheme,
 } from '@mui/material';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import QrCodeIcon from '@mui/icons-material/QrCode2';
 import { useState } from 'react';
 import { QRCodeSVG } from 'qrcode.react';
+import { JuniorStatistics } from '@/components/JuniorStatistics/JuniorStatistics';
+import { MyWorkStats } from '@/components/MyWorkStats';
+import { useCurrentUserStore } from '@/providers/current-user-provider';
 
 type LinkItem = {
   title: string;
@@ -24,43 +29,24 @@ type LinkItem = {
 };
 
 const links: LinkItem[] = [
-  {
-    title: 'Корпоративная страница',
-    url: 'https://home.eriskip.com',
-  },
-  {
-    title: 'Телефонный справочник',
-    url: 'https://phone.eriskip.com/',
-  },
-  {
-    title: 'Учет рабочего времени',
-    url: 'https://t.me/EriskipTimeControlBot',
-  },
-  {
-    title: 'Инструкции',
-    url: 'http://drexplain.eriskip.com',
-  },
-  {
-    title: 'Азбука',
-    url: 'https://t.me/Eris_Guide_Bot',
-  },
-  {
-    title: 'Библиотекарь',
-    url: 'https://t.me/eris_library_bot',
-  },
-  {
-    title: 'Музей',
-    url: 'https://museum.eriskip.com',
-  },
-  {
-    title: 'ELMA',
-    url: 'https://elma.eriskip.com',
-  },
+  { title: 'Корпоративная страница', url: 'https://home.eriskip.com' },
+  { title: 'Телефонный справочник', url: 'https://phone.eriskip.com/' },
+  { title: 'Учет рабочего времени', url: 'https://t.me/EriskipTimeControlBot' },
+  { title: 'Инструкции', url: 'http://drexplain.eriskip.com' },
+  { title: 'Азбука', url: 'https://t.me/Eris_Guide_Bot' },
+  { title: 'Библиотекарь', url: 'https://t.me/eris_library_bot' },
+  { title: 'Музей', url: 'https://museum.eriskip.com' },
+  { title: 'ELMA', url: 'https://elma.eriskip.com' },
 ];
 
 export default function HomePage() {
+  const isMentor = useCurrentUserStore((s) => s.isMentor);
+
   const [qrOpen, setQrOpen] = useState(false);
   const [currentQr, setCurrentQr] = useState<{ title: string; url: string } | null>(null);
+
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('lg'));
 
   const handleCopy = (url: string) => {
     navigator.clipboard.writeText(url);
@@ -77,12 +63,8 @@ export default function HomePage() {
   };
 
   return (
-    <Box>
-      <Typography variant="subtitle1" gutterBottom>
-        Ниже представлены полезные ссылки, которые можно скопировать или отсканировать по QR.
-      </Typography>
-
-      <Grid container spacing={3} mt={2}>
+    <Box display="flex" gap={3} flexDirection={isMobile ? 'column' : 'row'}>
+      <Grid container spacing={3} order={isMobile ? 2 : 1}>
         {links.map((link, index) => (
           <Grid size={{ xs: 12, sm: 6, md: 4 }} key={index}>
             <Card variant="outlined">
@@ -114,7 +96,15 @@ export default function HomePage() {
           </Grid>
         ))}
       </Grid>
-
+      <Box
+        width={isMobile ? '100%' : 800}
+        display="flex"
+        flexDirection="column"
+        gap={2}
+        order={isMobile ? 1 : 2}>
+        <MyWorkStats />
+        {isMentor && <JuniorStatistics />}
+      </Box>
       {/* Диалоговое окно с QR-кодом */}
       <Dialog open={qrOpen} onClose={handleCloseQr}>
         <DialogTitle>QR-код: {currentQr?.title}</DialogTitle>

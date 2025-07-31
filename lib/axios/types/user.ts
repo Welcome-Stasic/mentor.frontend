@@ -6,6 +6,7 @@ export interface ICurrentUser {
   juniorId?: string;
   quizId?: string;
   phoneNumber?: string
+  fullName: string
 }
 
 export interface ICrmUser {

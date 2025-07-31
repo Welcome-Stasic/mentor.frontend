@@ -13,6 +13,7 @@ export type CurrentUserState = {
   isMentor: boolean;
   juniorIds: number[];
   selectedTimeUserId?: string | null;
+  fullName: string;
 };
 
 export type CurrentUserActions = {
@@ -31,7 +32,8 @@ export const defaultInitState: CurrentUserState = {
   isAdmin: false,
   isMentor: false,
   juniorIds: [],
-  selectedTimeUserId: null
+  selectedTimeUserId: null,
+  fullName: ''
 };
 
 export const initCurrentUserState = async (
@@ -56,6 +58,7 @@ export const initCurrentUserState = async (
       isAdmin,
       isMentor: false,
       juniorIds: [],
+      fullName: me.fullName ?? ''
     };
 
     // CRM: фото пользователя
