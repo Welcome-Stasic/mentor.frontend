@@ -8,9 +8,10 @@ import { useCreateWorkTime } from '@/hooks/useCreateWorkTime';
 interface Props {
   userId: string;
   date: string;
+  disable?: boolean;
 }
 
-const CreateTimeBtn = ({ userId, date }: Props) => {
+const CreateTimeBtn = ({ userId, date, disable = false }: Props) => {
   const [open, setOpen] = useState(false);
 
   const handleOpen = () => setOpen(true);
@@ -33,7 +34,7 @@ const CreateTimeBtn = ({ userId, date }: Props) => {
 
   return (
     <>
-      <IconButton color="primary" onClick={handleOpen}>
+      <IconButton color="primary" onClick={handleOpen} disabled={disable}>
         <AddIcon />
       </IconButton>
 

@@ -22,6 +22,7 @@ import 'dayjs/locale/ru';
 import DeleteTimeBtnWithConfirmation from './DeleteTimeWithConfirmation';
 import UpdateTimeBtn from './UpdateTime';
 import CreateTimeBtn from './CreateTime';
+import { useApproveTimeInfo } from '@/hooks/time/useApproveTimeInfo';
 
 interface ITimeContainer {
   userId: string;
@@ -64,11 +65,17 @@ const TimeContainer = ({ userId, dateIn, dateOut }: ITimeContainer) => {
 
   const color = getColorByPercentage(percentage);
 
+  const approveInfo = useApproveTimeInfo({
+    crmUserId: userId,
+    month: dayjs(dateIn).month(),
+    year: dayjs(dateIn).year(),
+  });
+
+  const approved = approveInfo?.data !== null;
+
   return (
     <>
-      <Typography variant="h6">
-        {dayjs(dateIn).locale('ru').format('DD MMMM YYYY')}
-      </Typography>
+      <Typography variant="h6">{dayjs(dateIn).locale('ru').format('DD MMMM YYYY')}</Typography>
 
       <Box
         sx={{
@@ -138,7 +145,7 @@ const TimeContainer = ({ userId, dateIn, dateOut }: ITimeContainer) => {
           mb: '4px',
         }}>
         <Typography variant="caption">Занести трудозатраты</Typography>
-        <CreateTimeBtn userId={userId} date={dateIn} />
+        <CreateTimeBtn userId={userId} date={dateIn} disable={approved} />
       </Box>
 
       <TableContainer component={Paper}>
@@ -173,9 +180,7 @@ const TimeContainer = ({ userId, dateIn, dateOut }: ITimeContainer) => {
                   const totalMinutes = time.minutes ?? 0;
                   const hours = Math.floor(totalMinutes / 60);
                   const minutes = totalMinutes % 60;
-                  const formattedTime = `${hours}:${minutes
-                    .toString()
-                    .padStart(2, '0')}`;
+                  const formattedTime = `${hours}:${minutes.toString().padStart(2, '0')}`;
 
                   return (
                     <TableRow key={time.entityId}>
@@ -183,8 +188,8 @@ const TimeContainer = ({ userId, dateIn, dateOut }: ITimeContainer) => {
                       <TableCell>{time.comment}</TableCell>
                       <TableCell>{formattedTime}</TableCell>
                       <TableCell>
-                        <UpdateTimeBtn time={time} />
-                        <DeleteTimeBtnWithConfirmation time={time} />
+                        <UpdateTimeBtn time={time} disable={approved}/>
+                        <DeleteTimeBtnWithConfirmation time={time} disable={approved}/>
                       </TableCell>
                     </TableRow>
                   );

@@ -4,7 +4,7 @@ import { addAnswersToQuestions, getAll, getAllQuizStatues, getAnswersToQuestions
 import { getDepartmentAll } from './requests/department';
 import { getCrmUserById, getJuniors, getMentor, getReferralLink, getReportTime, getUserById, getUserPhoto, getWorkTime, updatePhotoCurrentUser } from './requests/user';
 import { getAllInstitution, getByIdInstitution } from './requests/institution';
-import { createTime, deleteTime, updateTime } from './requests/time';
+import { approveTime, cancelApproveTime, createTime, deleteTime, getApproveTimeInfo, updateTime } from './requests/time';
 
 export const API = {
   auth: {
@@ -53,6 +53,9 @@ export const API = {
   time: {
     updateTime,
     createTime,
-    deleteTime
+    deleteTime,
+    cancelApproveTime,
+    approveTime,
+    getApproveTimeInfo
   }
 };

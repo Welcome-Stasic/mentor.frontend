@@ -46,3 +46,31 @@ export interface IDeleteTimeDto {
   entityId: number;
   type: number;
 }
+
+export interface IGetApproveTimeDto {
+  crmUserId: string;
+  year: number;
+  month: number;
+}
+
+export interface ICancelApproveTimeDto {
+  id: string;
+}
+
+export interface IApproveTimeDto {
+  crmUserId: string;
+  year: number;
+  month: number;
+  approveCrmUserId: string;
+  comment: string;
+}
+
+export interface IApproveTime {
+  id: string;
+  userId: string;
+  year: number;
+  month: number;
+  approveUser: string;
+  comment: string;
+  date: string;
+}

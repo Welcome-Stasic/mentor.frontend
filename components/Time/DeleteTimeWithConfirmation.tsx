@@ -14,9 +14,10 @@ import { useDeleteWorkTime } from '@/hooks/useDeleteWorkTime';
 
 interface Props {
   time: IWorkTime;
+  disable?: boolean;
 }
 
-const DeleteTimeBtnWithConfirmation = ({ time }: Props) => {
+const DeleteTimeBtnWithConfirmation = ({ time, disable = false }: Props) => {
   const totalWorkMinutes = time.minutes ?? 0;
 
   const workHours = Math.floor(totalWorkMinutes / 60);
@@ -37,7 +38,11 @@ const DeleteTimeBtnWithConfirmation = ({ time }: Props) => {
 
   return (
     <>
-      <IconButton color="error" onClick={handleOpen} aria-label={`Удалить элемент ${time}`}>
+      <IconButton
+        color="error"
+        onClick={handleOpen}
+        aria-label={`Удалить элемент ${time}`}
+        disabled={disable}>
         <DeleteIcon />
       </IconButton>
 
@@ -53,7 +58,12 @@ const DeleteTimeBtnWithConfirmation = ({ time }: Props) => {
           <Button onClick={handleClose} variant="outlined">
             Отмена
           </Button>
-          <Button onClick={handleConfirm} color="error" variant="contained" autoFocus loading={deleteWorkTime.isPending}>
+          <Button
+            onClick={handleConfirm}
+            color="error"
+            variant="contained"
+            autoFocus
+            loading={deleteWorkTime.isPending}>
             Удалить
           </Button>
         </DialogActions>

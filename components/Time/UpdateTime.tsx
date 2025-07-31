@@ -7,9 +7,10 @@ import { useUpdateWorkTime } from '@/hooks/useUpdateWorkTime';
 
 interface Props {
   time: IWorkTime;
+  disable?: boolean;
 }
 
-const UpdateTimeBtn = ({ time }: Props) => {
+const UpdateTimeBtn = ({ time, disable = false }: Props) => {
   const [open, setOpen] = useState(false);
 
   const handleOpen = () => setOpen(true);
@@ -31,7 +32,7 @@ const UpdateTimeBtn = ({ time }: Props) => {
 
   return (
     <>
-      <IconButton color="primary" onClick={handleOpen}>
+      <IconButton color="primary" onClick={handleOpen} disabled={disable}>
         <EditIcon />
       </IconButton>
 

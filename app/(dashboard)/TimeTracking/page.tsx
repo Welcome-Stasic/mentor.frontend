@@ -5,16 +5,11 @@ import MonthSwitcher from '@/components/Calendar/MonthSwitcher';
 import TimeApprovalForm from '@/components/Time/TimeApprovalForm';
 import { useReportTime } from '@/hooks/useReportTime';
 import { useWorkTime } from '@/hooks/useWorkTime';
+import { formatMinutesToTimeString } from '@/lib/utils/formatMinutesToTimeString';
 import { useCurrentUserStore } from '@/providers/current-user-provider';
-import { Box, Typography } from '@mui/material';
+import { Box, Skeleton, Typography } from '@mui/material';
 import dayjs, { Dayjs } from 'dayjs';
 import { useMemo, useState } from 'react';
-
-function formatMinutesToTimeString(totalMinutes: number): string {
-  const hours = Math.floor(totalMinutes / 60);
-  const minutes = totalMinutes % 60;
-  return `${hours}:${minutes.toString().padStart(2, '0')}`;
-}
 
 export default function TimeTrackingPage() {
   const crmId = useCurrentUserStore((store) => store.elmaId) ?? '';
@@ -57,16 +52,27 @@ export default function TimeTrackingPage() {
         />
         {isPermission && <TimeApprovalForm crmUserId={selectedTimeUserId} date={currentDate} />}
       </Box>
-      <Box display="flex" gap={1} flexWrap="wrap">
-        <Typography variant="overline">
-          Рабочих часов: <strong>{reportTime?.data?.fullWorkHours}</strong>
-        </Typography>
-        <Typography variant="overline">
-          Отработано: <strong>{formattedReported}</strong>
-        </Typography>
-        <Typography variant="overline">
-          Заполнено: <strong>{formattedWorked}</strong>
-        </Typography>
+
+      <Box display="flex" gap={2} flexWrap="wrap">
+        {isLoading ? (
+          <>
+            <Skeleton variant="text" width={120} height={24} />
+            <Skeleton variant="text" width={100} height={24} />
+            <Skeleton variant="text" width={100} height={24} />
+          </>
+        ) : (
+          <>
+            <Typography variant="overline">
+              Рабочих часов: <strong>{reportTime?.data?.fullWorkHours}</strong>
+            </Typography>
+            <Typography variant="overline">
+              Отработано: <strong>{formattedReported}</strong>
+            </Typography>
+            <Typography variant="overline">
+              Заполнено: <strong>{formattedWorked}</strong>
+            </Typography>
+          </>
+        )}
       </Box>
       <Calendar
         crmId={selectedTimeUserId}
