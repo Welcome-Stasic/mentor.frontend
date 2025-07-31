@@ -13,6 +13,7 @@ import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import { Divider, ListItemButton, useTheme } from '@mui/material';
 import erisLogo from '@assets/eris_logo.png';
 import Image from 'next/image';
+import { useCurrentUserStore } from '@/providers/current-user-provider';
 
 interface ISideBarProps {
   roles: string[];
@@ -22,11 +23,16 @@ interface ISideBarProps {
 
 export default function SideBar({ roles, open, handleDrawerClose }: ISideBarProps) {
   const theme = useTheme();
+  const isMentor = useCurrentUserStore(store => store.isMentor);
 
-  const filteredNavItems = PAGE_LIST.filter(
+  let filteredNavItems = PAGE_LIST.filter(
     (i) => !i.roles || i.roles.length === 0 || i.roles.some((role) => roles.includes(role)),
   );
 
+  if (!isMentor) {
+    filteredNavItems = filteredNavItems.filter(i => i !== PAGE.MY_JUNIORS);
+  }
+  
   return (
     <Drawer
       variant="permanent"

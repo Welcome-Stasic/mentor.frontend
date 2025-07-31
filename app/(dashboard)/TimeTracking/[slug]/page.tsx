@@ -1,6 +1,8 @@
+import BackdropLoader from '@/components/BackdropLoader';
 import TimeContainer from '@/components/Time/TimeContainer';
 import { createLoader, parseAsString } from 'nuqs/server';
 import type { SearchParams } from 'nuqs/server';
+import { Suspense } from 'react';
 
 interface IPageProps {
   params: Promise<{ slug: string }>;
@@ -18,5 +20,9 @@ export default async function TimePage({ params, searchParams }: IPageProps) {
   const { slug: userId } = await params;
   const { dateIn, dateOut } = await loadSearchParams(searchParams);
 
-  return <TimeContainer userId={userId} dateIn={dateIn} dateOut={dateOut || dateIn} />;
+  return (
+    <Suspense fallback={<BackdropLoader open />}>
+      <TimeContainer userId={userId} dateIn={dateIn} dateOut={dateOut || dateIn} />
+    </Suspense>
+  );
 }
