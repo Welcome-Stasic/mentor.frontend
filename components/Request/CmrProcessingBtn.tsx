@@ -6,9 +6,14 @@ import { IconButton, Tooltip } from '@mui/material';
 interface ICmrProcessingBtnProps {
   quiz: IQuiz;
   crmWorkflowinstance: number;
+  disable?: boolean;
 }
 
-export const CmrProcessingBtn = ({ quiz, crmWorkflowinstance }: ICmrProcessingBtnProps) => {
+export const CmrProcessingBtn = ({
+  quiz,
+  crmWorkflowinstance,
+  disable = false,
+}: ICmrProcessingBtnProps) => {
   const crmProcessing = useQuizCrmProcessing();
 
   const handleCmrProcessing = async () => {
@@ -20,7 +25,7 @@ export const CmrProcessingBtn = ({ quiz, crmWorkflowinstance }: ICmrProcessingBt
       <IconButton
         onClick={handleCmrProcessing}
         loading={crmProcessing.isPending}
-        disabled={!quiz.selectedDepartmentId || crmWorkflowinstance > 0}>
+        disabled={!quiz.selectedDepartmentId || crmWorkflowinstance > 0 || disable}>
         <ForkRightIcon />
       </IconButton>
     </Tooltip>

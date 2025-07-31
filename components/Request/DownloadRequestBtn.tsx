@@ -5,9 +5,10 @@ import { IconButton, Tooltip } from '@mui/material';
 
 interface IDownloadRequestBtnProps {
   quiz: IQuiz;
+  disable?: boolean;
 }
 
-export const DownloadRequestBtn = ({ quiz }: IDownloadRequestBtnProps) => {
+export const DownloadRequestBtn = ({ quiz, disable = false }: IDownloadRequestBtnProps) => {
   const downloadQuiz = useDownloadQuiz();
 
   const handleDownload = async () => {
@@ -16,7 +17,11 @@ export const DownloadRequestBtn = ({ quiz }: IDownloadRequestBtnProps) => {
 
   return (
     <Tooltip title="Скачать анкету">
-      <IconButton color="primary" onClick={handleDownload} loading={downloadQuiz.isPending}>
+      <IconButton
+        color="primary"
+        onClick={handleDownload}
+        loading={downloadQuiz.isPending}
+        disabled={disable}>
         <Download />
       </IconButton>
     </Tooltip>

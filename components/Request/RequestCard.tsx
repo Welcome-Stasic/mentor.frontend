@@ -33,6 +33,7 @@ import { DeleteRequestBtn } from './DeleteRequestBtn';
 import { CmrProcessingBtn } from './CmrProcessingBtn';
 import { userUserById } from '@/hooks/useUserById';
 import { useInstitution } from '@/hooks/useInstitutions';
+import { useCurrentUserStore } from '@/providers/current-user-provider';
 
 interface IRequestCardProps {
   quiz: IQuiz;
@@ -40,8 +41,11 @@ interface IRequestCardProps {
 }
 
 export const RequestCard = ({ quiz, departments }: IRequestCardProps) => {
+  const isAdmin = useCurrentUserStore((store) => store.isAdmin);
   const session = useSession();
   const accessToken = session.data?.user.accessToken || '';
+
+  const isPermission = isAdmin || session.data?.user?.roles?.includes('Moderator');
 
   const updateQuiz = useUpdateQuiz();
   const institutionResult = useInstitution(quiz.institutionId);
@@ -120,7 +124,7 @@ export const RequestCard = ({ quiz, departments }: IRequestCardProps) => {
               onChange={handleDepartmentChange}
               size="small"
               fullWidth
-              disabled={quiz.crmWorkflowinstance > 0}>
+              disabled={quiz.crmWorkflowinstance > 0 || !isPermission}>
               {departments?.map((dep) => (
                 <MenuItem key={dep.id} value={dep.id}>
                   {dep.name}
@@ -156,8 +160,12 @@ export const RequestCard = ({ quiz, departments }: IRequestCardProps) => {
           </Tooltip>
           <Box>
             <DownloadRequestBtn quiz={quiz} />
-            <CmrProcessingBtn quiz={quiz} crmWorkflowinstance={quiz.crmWorkflowinstance} />
-            <DeleteRequestBtn quiz={quiz} />
+            <CmrProcessingBtn
+              quiz={quiz}
+              disable={!isPermission}
+              crmWorkflowinstance={quiz.crmWorkflowinstance}
+            />
+            <DeleteRequestBtn quiz={quiz} disable={!isPermission} />
           </Box>
         </CardActions>
       </Card>
