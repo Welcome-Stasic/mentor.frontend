@@ -6,6 +6,7 @@ import { useCurrentUserStore } from '@/providers/current-user-provider';
 import { Box, Typography, LinearProgress, Skeleton } from '@mui/material';
 import dayjs from 'dayjs';
 import { formatMinutesToTimeString } from '@/lib/utils/formatMinutesToTimeString';
+import { getColorByPercentage } from '@/lib/utils/getColorByPercentage';
 
 export const MyWorkStats = () => {
   const userId = useCurrentUserStore((s) => s.elmaId) ?? '';
@@ -31,6 +32,8 @@ export const MyWorkStats = () => {
     totalReportedMinutes > 0
       ? Math.min(100, Math.round((totalWorkMinutes / totalReportedMinutes) * 100))
       : 0;
+
+  const color = getColorByPercentage(progress);
 
   return (
     <Box>
@@ -58,7 +61,13 @@ export const MyWorkStats = () => {
             <LinearProgress
               variant="determinate"
               value={progress}
-              sx={{ height: 8, borderRadius: 4 }}
+              sx={{
+                height: 8,
+                borderRadius: 4,
+                '& .MuiLinearProgress-bar': {
+                  backgroundColor: color,
+                },
+              }}
             />
           )}
         </Box>
