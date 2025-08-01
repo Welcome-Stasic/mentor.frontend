@@ -9,9 +9,9 @@ import { formatMinutesToTimeString } from '@/lib/utils/formatMinutesToTimeString
 
 export const MyWorkStats = () => {
   const userId = useCurrentUserStore((s) => s.elmaId) ?? '';
-  const name = useCurrentUserStore((s) => s.userName) ?? 'Вы';
+  const name = useCurrentUserStore((s) => s.fullName) ?? 'Вы';
 
-  const currentDate = dayjs(new Date('2025-07-01'));
+  const currentDate = dayjs();
   const firstDay = currentDate.startOf('month').format('YYYY-MM-DD');
   const lastDay = currentDate.endOf('month').format('YYYY-MM-DD');
 

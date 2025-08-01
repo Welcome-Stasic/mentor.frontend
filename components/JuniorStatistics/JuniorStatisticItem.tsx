@@ -12,7 +12,7 @@ interface IJuniorStatisticItem {
 }
 
 export const JuniorStatisticItem = ({ userId, name }: IJuniorStatisticItem) => {
-  const currentDate = dayjs(new Date('2025-07-01'));
+  const currentDate = dayjs();
   const firstDay = currentDate.startOf('month').format('YYYY-MM-DD');
   const lastDay = currentDate.endOf('month').format('YYYY-MM-DD');
 
