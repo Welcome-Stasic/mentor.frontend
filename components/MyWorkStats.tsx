@@ -28,10 +28,7 @@ export const MyWorkStats = () => {
   const formattedReported = formatMinutesToTimeString(totalReportedMinutes);
   const formattedWorked = formatMinutesToTimeString(totalWorkMinutes);
 
-  const progress =
-    totalReportedMinutes > 0
-      ? Math.min(100, Math.round((totalWorkMinutes / totalReportedMinutes) * 100))
-      : 0;
+  const progress = Math.min(100, Math.round((totalWorkMinutes / (totalReportedMinutes === 0 ? 480 : totalReportedMinutes)) * 100));
 
   const color = getColorByPercentage(progress);
 

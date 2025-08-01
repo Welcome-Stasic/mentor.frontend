@@ -60,8 +60,7 @@ const TimeContainer = ({ userId, dateIn, dateOut }: ITimeContainer) => {
   const workMinutes = totalWorkMinutes % 60;
   const formattedWorkTime = `${workHours}:${workMinutes.toString().padStart(2, '0')}`;
 
-  const percentage =
-    totalReportMinutes > 0 ? Math.round((totalWorkMinutes / totalReportMinutes) * 100) : 0;
+  const percentage = Math.round((totalWorkMinutes / (totalReportMinutes === 0 ? 480 : totalReportMinutes)) * 100);
 
   const color = getColorByPercentage(percentage);
 
@@ -145,7 +144,7 @@ const TimeContainer = ({ userId, dateIn, dateOut }: ITimeContainer) => {
           mb: '4px',
         }}>
         <Typography variant="caption">Занести трудозатраты</Typography>
-        <CreateTimeBtn userId={userId} date={dateIn} disable={approved} />
+        <CreateTimeBtn userId={userId} date={dateIn} disable={!approved} />
       </Box>
 
       <TableContainer component={Paper}>
@@ -188,8 +187,8 @@ const TimeContainer = ({ userId, dateIn, dateOut }: ITimeContainer) => {
                       <TableCell>{time.comment}</TableCell>
                       <TableCell>{formattedTime}</TableCell>
                       <TableCell>
-                        <UpdateTimeBtn time={time} disable={approved}/>
-                        <DeleteTimeBtnWithConfirmation time={time} disable={approved}/>
+                        <UpdateTimeBtn time={time} disable={!approved}/>
+                        <DeleteTimeBtnWithConfirmation time={time} disable={!approved}/>
                       </TableCell>
                     </TableRow>
                   );

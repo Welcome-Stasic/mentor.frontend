@@ -64,7 +64,7 @@ const Calendar = ({ crmId, year, month, timeItems, workItems, isLoading }: ICale
           const workMinutes = workMap.get(date) ?? 0;
 
           // Расчёт процента (0–100), защита от деления на 0
-          const percentage = minutes > 0 ? Math.round((workMinutes / minutes) * 100) : 0;
+          const percentage = Math.round((workMinutes / (minutes === 0 ? 480 : minutes)) * 100);
 
           return (
             <CalendarItem
