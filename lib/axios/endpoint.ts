@@ -42,3 +42,5 @@ export const TIME_CREATE = 'Time/Create'
 export const TIME_GET_APPROVE_TIME_INFO = 'Time/GetApproveTimeInfo'
 export const TIME_CANCEL_APPROVE_TIME = 'Time/CancelApproveTime'
 export const TIME_APPROVE_TIME = 'Time/ApproveTime'
+
+export const PROJECT_GET_ALL = 'Project/GetAll'

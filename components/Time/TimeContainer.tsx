@@ -1,5 +1,5 @@
 'use client';
-
+import React from 'react';
 import { useReportTime } from '@/hooks/useReportTime';
 import { useWorkTime } from '@/hooks/useWorkTime';
 import { getColorByPercentage } from '@/lib/utils/getColorByPercentage';
@@ -46,6 +46,7 @@ const TimeContainer = ({ userId, dateIn, dateOut }: ITimeContainer) => {
   const formattedTime = `${reportHours}:${reportMinutes.toString().padStart(2, '0')}`;
 
   const workTimes = workTime?.data ?? [];
+
   const workMap = useMemo(() => {
     const map = new Map<string, number>();
     workTimes.forEach((item) => {
@@ -60,7 +61,9 @@ const TimeContainer = ({ userId, dateIn, dateOut }: ITimeContainer) => {
   const workMinutes = totalWorkMinutes % 60;
   const formattedWorkTime = `${workHours}:${workMinutes.toString().padStart(2, '0')}`;
 
-  const percentage = Math.round((totalWorkMinutes / (totalReportMinutes === 0 ? 480 : totalReportMinutes)) * 100);
+  const percentage = Math.round(
+    (totalWorkMinutes / (totalReportMinutes === 0 ? 480 : totalReportMinutes)) * 100,
+  );
 
   const color = getColorByPercentage(percentage);
 
@@ -71,6 +74,19 @@ const TimeContainer = ({ userId, dateIn, dateOut }: ITimeContainer) => {
   });
 
   const approved = approveInfo?.data !== null;
+
+  const groupedByProject = useMemo(() => {
+    const groups = new Map<string, typeof workTimes>();
+    workTimes.forEach((time) => {
+      const project = time.project?.trim() || 'Без проекта';
+
+      if (!groups.has(project)) {
+        groups.set(project, []);
+      }
+      groups.get(project)?.push(time);
+    });
+    return Array.from(groups.entries());
+  }, [workTimes]);
 
   return (
     <>
@@ -144,11 +160,11 @@ const TimeContainer = ({ userId, dateIn, dateOut }: ITimeContainer) => {
           mb: '4px',
         }}>
         <Typography variant="caption">Занести трудозатраты</Typography>
-        <CreateTimeBtn userId={userId} date={dateIn} disable={!approved} />
+        <CreateTimeBtn userId={userId} date={dateIn} disable={approved} />
       </Box>
 
       <TableContainer component={Paper}>
-        <Table sx={{ minWidth: 650 }} aria-label="simple table">
+        <Table sx={{ minWidth: 650 }} aria-label="grouped project table">
           <TableHead>
             <TableRow>
               <TableCell>Задача</TableCell>
@@ -175,24 +191,33 @@ const TimeContainer = ({ userId, dateIn, dateOut }: ITimeContainer) => {
                     </TableCell>
                   </TableRow>
                 ))
-              : workTimes.map((time) => {
-                  const totalMinutes = time.minutes ?? 0;
-                  const hours = Math.floor(totalMinutes / 60);
-                  const minutes = totalMinutes % 60;
-                  const formattedTime = `${hours}:${minutes.toString().padStart(2, '0')}`;
-
-                  return (
-                    <TableRow key={time.entityId}>
-                      <TableCell>{time.task}</TableCell>
-                      <TableCell>{time.comment}</TableCell>
-                      <TableCell>{formattedTime}</TableCell>
-                      <TableCell>
-                        <UpdateTimeBtn time={time} disable={!approved}/>
-                        <DeleteTimeBtnWithConfirmation time={time} disable={!approved}/>
+              : groupedByProject.map(([project, times]) => (
+                  <React.Fragment key={project}>
+                    <TableRow sx={{ backgroundColor: '#f5f5f5' }}>
+                      <TableCell colSpan={5}>
+                        <Typography variant="subtitle2">{project}</Typography>
                       </TableCell>
                     </TableRow>
-                  );
-                })}
+                    {times.map((time) => {
+                      const totalMinutes = time.minutes ?? 0;
+                      const hours = Math.floor(totalMinutes / 60);
+                      const minutes = totalMinutes % 60;
+                      const formattedTime = `${hours}:${minutes.toString().padStart(2, '0')}`;
+
+                      return (
+                        <TableRow key={time.entityId}>
+                          <TableCell sx={{ maxWidth: 500 }}>{time.task}</TableCell>
+                          <TableCell>{time.comment}</TableCell>
+                          <TableCell>{formattedTime}</TableCell>
+                          <TableCell>
+                            <UpdateTimeBtn time={time} disable={approved} />
+                            <DeleteTimeBtnWithConfirmation time={time} disable={approved} />
+                          </TableCell>
+                        </TableRow>
+                      );
+                    })}
+                  </React.Fragment>
+                ))}
           </TableBody>
         </Table>
       </TableContainer>

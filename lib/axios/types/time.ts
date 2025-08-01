@@ -3,6 +3,7 @@ export interface IWorkTime {
   type: number;
   minutes: number | null;
   dateTime: string;
+  project: string;
   task: string;
   comment: string;
 }

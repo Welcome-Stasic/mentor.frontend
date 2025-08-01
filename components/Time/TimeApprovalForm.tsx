@@ -27,7 +27,7 @@ export default function TimeApprovalForm({ crmUserId, date }: IApprovalProps) {
 
   const approved = approveInfo?.data !== null;
 
-  const { register, handleSubmit, reset, setValue } = useForm<FormData>({
+  const { register, handleSubmit, setValue } = useForm<FormData>({
     defaultValues: { comment: '' },
   });
 

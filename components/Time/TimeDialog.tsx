@@ -1,4 +1,6 @@
+import { useProjects } from '@/hooks/project/useProjects';
 import { useUpdateWorkTime } from '@/hooks/useUpdateWorkTime';
+import { IProjectVm } from '@/lib/axios/types/project';
 import { IUpdateTimeDto, IWorkTime } from '@/lib/axios/types/time';
 import {
   Box,
@@ -10,9 +12,11 @@ import {
   FormControl,
   FormHelperText,
   FormLabel,
+  MenuItem,
+  Select,
   TextField,
 } from '@mui/material';
-import { useEffect, useMemo } from 'react';
+import { useEffect } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 
 interface ITimeDialog {
@@ -22,10 +26,11 @@ interface ITimeDialog {
   handleClose: () => void;
   handleMutate: (dto: ITimeDialogFormData) => void;
   isLoading: boolean;
+  projects: IProjectVm[];
 }
 export interface ITimeDialogFormData {
   task: string;
-  description: string;
+  description?: string;
   minutes: number | null;
   project?: string;
 }
@@ -37,6 +42,7 @@ const TimeDialog = ({
   handleMutate,
   isLoading,
   time = null,
+  projects,
 }: ITimeDialog) => {
   const isEditable = type === 'create' || time?.type === 2;
 
@@ -50,6 +56,7 @@ const TimeDialog = ({
     formState: { errors },
   } = useForm<ITimeDialogFormData>({
     defaultValues: {
+      project: time?.project ?? '',
       minutes: time?.minutes ?? null,
       task: time?.task ?? '',
       description: time?.comment ?? '',
@@ -62,6 +69,7 @@ const TimeDialog = ({
         minutes: time.minutes ?? null,
         task: time.task ?? '',
         description: time.comment ?? '',
+        project: time?.project ?? '',
       });
     }
   }, [time, reset]);
@@ -84,7 +92,7 @@ const TimeDialog = ({
           gap={2}
           onSubmit={handleSubmit(onSubmit)}>
           <FormControl fullWidth error={!!errors.task}>
-            <FormLabel sx={{ mb: 1 }}>{'Задача'}</FormLabel>
+            <FormLabel sx={{ mb: 1 }}>Задача</FormLabel>
             <TextField
               multiline
               placeholder="Введите задачу"
@@ -94,7 +102,6 @@ const TimeDialog = ({
                   if (isEditable && !value) {
                     return 'Поле обязательно';
                   }
-
                   return true;
                 },
               })}
@@ -103,26 +110,34 @@ const TimeDialog = ({
             />
             <FormHelperText>{errors.task?.message}</FormHelperText>
           </FormControl>
-          <FormControl fullWidth error={!!errors.task}>
-            <FormLabel sx={{ mb: 1 }}>{'Описание задачи'}</FormLabel>
+
+          <FormControl fullWidth>
+            <FormLabel sx={{ mb: 1 }}>Проект</FormLabel>
+            <Select defaultValue="" {...register('project')} disabled={!isEditable} displayEmpty>
+              <MenuItem value="">
+                <em>Без проекта</em>
+              </MenuItem>
+              {projects?.map((project) => (
+                <MenuItem key={project.id} value={project.id}>
+                  {project.name}
+                </MenuItem>
+              ))}
+            </Select>
+            <FormHelperText>{errors.project?.message}</FormHelperText>
+          </FormControl>
+
+          <FormControl fullWidth>
+            <FormLabel sx={{ mb: 1 }}>Описание задачи</FormLabel>
             <TextField
               multiline
               placeholder="Введите описание задачи"
               minRows={2}
-              {...register('description', {
-                validate: (value) => {
-                  if (isEditable && !value) {
-                    return 'Поле обязательно';
-                  }
-
-                  return true;
-                },
-              })}
-              error={!!errors.description}
+              {...register('description')}
               disabled={!isEditable}
             />
             <FormHelperText>{errors.description?.message}</FormHelperText>
           </FormControl>
+
           <TextField
             label="Затраченное время, мин"
             type="number"
@@ -130,11 +145,17 @@ const TimeDialog = ({
             error={!!errors.minutes}
             helperText={errors.minutes?.message}
           />
+
           <DialogActions>
             <Button onClick={handleClose} variant="outlined" color="error">
               Отмена
             </Button>
-            <Button type="submit" autoFocus variant="contained" color="success" loading={isLoading}>
+            <Button
+              type="submit"
+              autoFocus
+              variant="contained"
+              color="success"
+              disabled={isLoading}>
               {btnName}
             </Button>
           </DialogActions>

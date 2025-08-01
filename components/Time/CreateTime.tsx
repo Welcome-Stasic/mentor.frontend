@@ -4,6 +4,7 @@ import AddIcon from '@mui/icons-material/Add';
 import { ICreateTimeDto } from '@/lib/axios/types/time';
 import TimeDialog, { ITimeDialogFormData } from './TimeDialog';
 import { useCreateWorkTime } from '@/hooks/useCreateWorkTime';
+import { useProjects } from '@/hooks/project/useProjects';
 
 interface Props {
   userId: string;
@@ -12,6 +13,10 @@ interface Props {
 }
 
 const CreateTimeBtn = ({ userId, date, disable = false }: Props) => {
+  const projectsResult = useProjects(userId);
+
+  const projects = projectsResult?.data ?? [];
+
   const [open, setOpen] = useState(false);
 
   const handleOpen = () => setOpen(true);
@@ -24,7 +29,7 @@ const CreateTimeBtn = ({ userId, date, disable = false }: Props) => {
       crmUserId: Number(userId),
       project: data.project ?? '',
       minutes: data.minutes ?? 0,
-      comment: data.description,
+      comment: data.description ?? '',
       task: data.task,
       date,
     };
@@ -44,6 +49,7 @@ const CreateTimeBtn = ({ userId, date, disable = false }: Props) => {
         handleClose={handleClose}
         handleMutate={mutateAsync}
         isLoading={createWorkTime.isPending}
+        projects={projects}
       />
     </>
   );
