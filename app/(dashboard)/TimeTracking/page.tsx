@@ -9,9 +9,17 @@ import { formatMinutesToTimeString } from '@/lib/utils/formatMinutesToTimeString
 import { useCurrentUserStore } from '@/providers/current-user-provider';
 import { Box, Skeleton, Typography } from '@mui/material';
 import dayjs, { Dayjs } from 'dayjs';
-import { useMemo, useState } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { useQueryState } from 'nuqs';
+import { useEffect, useMemo, useState } from 'react';
 
 export default function TimeTrackingPage() {
+  const [dateParam, setDateParam] = useQueryState('date', {
+    history: 'replace',
+    parse: (v) => (v ? dayjs(v) : dayjs()),       
+    serialize: (v) => v.format('YYYY-MM-DD'),       
+  });
+
   const crmId = useCurrentUserStore((store) => store.elmaId) ?? '';
   const isAdmin = useCurrentUserStore((store) => store.isAdmin);
 
@@ -21,7 +29,11 @@ export default function TimeTrackingPage() {
 
   const setSelectedTimeUser = useCurrentUserStore((store) => store.setSelectedTimeUser);
 
-  const [currentDate, setCurrentDate] = useState<Dayjs>(dayjs());
+  const [currentDate, setCurrentDate] = useState<Dayjs>(dateParam ?? dayjs());
+
+  useEffect(() => {
+    setDateParam(currentDate);
+  }, [currentDate]);
 
   const { firstDay, lastDay } = useMemo(() => {
     const firstDay = currentDate.startOf('month').format('YYYY-MM-DD');

@@ -69,11 +69,11 @@ const TimeContainer = ({ userId, dateIn, dateOut }: ITimeContainer) => {
 
   const approveInfo = useApproveTimeInfo({
     crmUserId: userId,
-    month: dayjs(dateIn).month(),
+    month: dayjs(dateIn).month() + 1,
     year: dayjs(dateIn).year(),
   });
 
-  const approved = approveInfo?.data !== null;
+  const approved = !!approveInfo?.data;
 
   const groupedByProject = useMemo(() => {
     const groups = new Map<string, typeof workTimes>();

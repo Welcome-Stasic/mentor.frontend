@@ -10,7 +10,7 @@ export const useApproveTimeInfo = (params: IGetApproveTimeDto) => {
   return useQuery({
     queryKey: ['approveTimeInfo', {...params}],
     queryFn: () => API.time.getApproveTimeInfo(params, accessToken),
-    enabled: !!accessToken,
+    enabled: !!accessToken && !!params.crmUserId,
     select: (data) => data?.Result || null,
   });
 };
