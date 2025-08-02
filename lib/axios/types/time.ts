@@ -41,6 +41,7 @@ export interface IUpdateTimeDto {
   minutes: number | null
   task: string;
   comment: string;
+  project?: string;
 }
 
 export interface IDeleteTimeDto {

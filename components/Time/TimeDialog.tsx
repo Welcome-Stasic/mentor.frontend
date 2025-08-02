@@ -54,14 +54,7 @@ const TimeDialog = ({
     handleSubmit,
     reset,
     formState: { errors },
-  } = useForm<ITimeDialogFormData>({
-    defaultValues: {
-      project: time?.project ?? '',
-      minutes: time?.minutes ?? null,
-      task: time?.task ?? '',
-      description: time?.comment ?? '',
-    },
-  });
+  } = useForm<ITimeDialogFormData>();
 
   useEffect(() => {
     if (time) {
@@ -113,12 +106,12 @@ const TimeDialog = ({
 
           <FormControl fullWidth>
             <FormLabel sx={{ mb: 1 }}>Проект</FormLabel>
-            <Select defaultValue="" {...register('project')} disabled={!isEditable} displayEmpty>
+            <Select defaultValue={time?.project ?? ''} {...register('project')} disabled={!isEditable} displayEmpty>
               <MenuItem value="">
                 <em>Без проекта</em>
               </MenuItem>
               {projects?.map((project) => (
-                <MenuItem key={project.id} value={project.id}>
+                <MenuItem key={project.id} value={project.name}>
                   {project.name}
                 </MenuItem>
               ))}

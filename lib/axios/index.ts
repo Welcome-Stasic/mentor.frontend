@@ -5,7 +5,7 @@ import { getDepartmentAll } from './requests/department';
 import { getCrmUserById, getJuniors, getMentor, getReferralLink, getReportTime, getUserById, getUserPhoto, getWorkTime, updatePhotoCurrentUser } from './requests/user';
 import { getAllInstitution, getByIdInstitution } from './requests/institution';
 import { approveTime, cancelApproveTime, createTime, deleteTime, getApproveTimeInfo, updateTime } from './requests/time';
-import { getAllProjects } from './requests/project';
+import { deleteProject, getAllProjects, getCreateProject, getUpdateProject } from './requests/project';
 
 export const API = {
   auth: {
@@ -60,6 +60,9 @@ export const API = {
     getApproveTimeInfo
   },
   project: {
-    getAllProjects
+    getAllProjects,
+    getCreateProject,
+    getUpdateProject,
+    deleteProject
   }
 };

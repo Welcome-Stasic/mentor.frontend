@@ -10,7 +10,7 @@ export const useProjects = (userId: string) => {
     queryKey: ['projects', userId],
 
     queryFn: () => API.project.getAllProjects(userId, accessToken),
-    enabled: !!accessToken || !!userId,
+    enabled: !!accessToken && !!userId,
     select: (data) => data?.Result || [],
   });
 };

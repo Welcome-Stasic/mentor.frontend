@@ -4,13 +4,18 @@ import EditIcon from '@mui/icons-material/Edit';
 import { IUpdateTimeDto, IWorkTime } from '@/lib/axios/types/time';
 import TimeDialog, { ITimeDialogFormData } from './TimeDialog';
 import { useUpdateWorkTime } from '@/hooks/useUpdateWorkTime';
+import { useProjects } from '@/hooks/project/useProjects';
 
 interface Props {
+  userId: string;
   time: IWorkTime;
   disable?: boolean;
 }
 
-const UpdateTimeBtn = ({ time, disable = false }: Props) => {
+const UpdateTimeBtn = ({ userId, time, disable = false }: Props) => {
+  const projectsResult = useProjects(userId);
+  const projects = projectsResult?.data ?? [];
+
   const [open, setOpen] = useState(false);
 
   const handleOpen = () => setOpen(true);
@@ -23,8 +28,9 @@ const UpdateTimeBtn = ({ time, disable = false }: Props) => {
       entityId: time.entityId,
       type: time.type,
       minutes: data.minutes ?? null,
-      comment: data.description,
+      comment: data.description ?? '',
       task: data.task,
+      project: data.project
     };
 
     await updateWorkTime.mutateAsync(body);
@@ -43,6 +49,7 @@ const UpdateTimeBtn = ({ time, disable = false }: Props) => {
         handleClose={handleClose}
         handleMutate={mutateAsync}
         isLoading={updateWorkTime.isPending}
+        projects={projects}
       />
     </>
   );

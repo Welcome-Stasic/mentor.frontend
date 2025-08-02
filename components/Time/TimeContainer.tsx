@@ -210,7 +210,7 @@ const TimeContainer = ({ userId, dateIn, dateOut }: ITimeContainer) => {
                           <TableCell>{time.comment}</TableCell>
                           <TableCell>{formattedTime}</TableCell>
                           <TableCell>
-                            <UpdateTimeBtn time={time} disable={approved} />
+                            <UpdateTimeBtn userId={userId} time={time} disable={approved} />
                             <DeleteTimeBtnWithConfirmation time={time} disable={approved} />
                           </TableCell>
                         </TableRow>
