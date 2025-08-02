@@ -9,7 +9,6 @@ import { formatMinutesToTimeString } from '@/lib/utils/formatMinutesToTimeString
 import { useCurrentUserStore } from '@/providers/current-user-provider';
 import { Box, Skeleton, Typography } from '@mui/material';
 import dayjs, { Dayjs } from 'dayjs';
-import { useRouter, useSearchParams } from 'next/navigation';
 import { useQueryState } from 'nuqs';
 import { useEffect, useMemo, useState } from 'react';
 
