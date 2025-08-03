@@ -47,7 +47,7 @@ export const RequestCard = ({ quiz, departments, statues }: IRequestCardProps) =
   const session = useSession();
   const accessToken = session.data?.user.accessToken || '';
 
-  const isPermission = isAdmin || session.data?.user?.roles?.includes('Moderator');
+  const isPermission = isAdmin || session.data?.user?.roles?.includes('QuizModerator');
 
   const updateQuiz = useUpdateQuiz();
   const institutionResult = useInstitution(quiz.institutionId);

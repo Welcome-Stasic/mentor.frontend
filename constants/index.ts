@@ -149,10 +149,18 @@ export const USER_ROLES: Record<KeyUserRole, IUserRole> = {
   PENDING_APPROVAL: {
     name: 'PendingApproval',
     description: 'Пользователь ожидающий подтверждения'
+  },
+  MODERATOR: {
+    name: 'Moderator',
+    description: 'Модератор'
+  },
+  QUIZ_MODERATOR: {
+    name: 'QuizModerator',
+    description: 'Модератор анкет'
   }
 }
 
-type KeyUserRole = "ADMIN" | "JUNIOR" | "PENDING_APPROVAL"
+type KeyUserRole = "ADMIN" | "JUNIOR" | "PENDING_APPROVAL" | "MODERATOR" | "QUIZ_MODERATOR"
 
 export interface IUserRole {
   name: string,
@@ -169,7 +177,7 @@ export const PAGE: Record<KeyPage, IPage> = {
   REQUEST: {
     name: 'Анкеты',
     pathPrefix: '/Request',
-    roles: [USER_ROLES.ADMIN.name],
+    roles: [USER_ROLES.ADMIN.name,],
     icon: ContactsIcon
   },
   TIME_TRACKING: {
