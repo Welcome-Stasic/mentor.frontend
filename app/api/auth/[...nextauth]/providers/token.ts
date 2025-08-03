@@ -15,7 +15,8 @@ export const TokenProvider = CredentialsProvider({
 
     try {
       const decoded = decodeToken(accessToken);
-
+      const roles = decoded.roles;
+      
       if (!decoded?.id) return null;
 
       const response = await API.auth.getRefreshToken(accessToken);
@@ -31,9 +32,9 @@ export const TokenProvider = CredentialsProvider({
         accessToken,
         refreshToken,
         refreshTokenExpires: new Date(refreshTokenExpires).getTime(),
+        roles
       };
     } catch (error) {
-      console.error('TokenProvider Error:', error);
       return null;
     }
   },

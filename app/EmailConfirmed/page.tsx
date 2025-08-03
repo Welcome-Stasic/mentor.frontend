@@ -10,10 +10,11 @@ import { authOptions } from '../api/auth/[...nextauth]/options';
 import { decodeToken } from '@/lib/utils/decodeToken';
 import BackGroundImageWrapper from '@/components/BackGroundImageWrapper';
 import { redirect } from 'next/navigation';
+import { signInWithProvider } from '../api/auth/[...nextauth]/signInWithProvider';
 
 interface IPageProps {
   searchParams: Promise<SearchParams>;
-};
+}
 
 const pageSearchParams = {
   userId: parseAsString.withDefault(''),
@@ -33,6 +34,7 @@ export default async function EmailConfirmed({ searchParams }: IPageProps) {
   if (!accessToken) handleRedirect();
 
   const decoded = decodeToken(accessToken);
+
   if (!decoded?.email) handleRedirect();
 
   const response = await API.auth.isEmailConfirmed(decoded.email);
@@ -49,6 +51,11 @@ export default async function EmailConfirmed({ searchParams }: IPageProps) {
   ) : (
     <ErrorOutlineIcon color="error" sx={{ fontSize: 60 }} />
   );
+
+  await signInWithProvider('token', {
+    token: accessToken,
+    redirect: false,
+  });
 
   return (
     <BackGroundImageWrapper>

@@ -43,8 +43,6 @@ export default function ResetPasswordClientForm() {
       token: token,
     } as IResetPasswordDto;
 
-    console.log(traffic);
-
     const result = await API.auth.resetPassword(body);
 
     const isSuccess = result?.Result ?? false;
