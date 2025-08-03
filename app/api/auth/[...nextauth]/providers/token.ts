@@ -10,7 +10,6 @@ export const TokenProvider = CredentialsProvider({
   },
   async authorize(credentials) {
     const accessToken = credentials?.token;
-
     if (!accessToken) return null;
 
     try {
@@ -18,7 +17,7 @@ export const TokenProvider = CredentialsProvider({
       const roles = decoded.roles;
       
       if (!decoded?.id) return null;
-
+      
       const response = await API.auth.getRefreshToken(accessToken);
 
       const refreshToken = response?.Result?.token || null;

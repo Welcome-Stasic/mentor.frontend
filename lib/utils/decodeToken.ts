@@ -5,6 +5,7 @@ export interface DecodedToken {
   id: string; // will be replaced with the value from the name‑identifier claim
   email: string;
   isWithOutQuiz: string;
+  sessionId: string;
   [claim: string]: unknown;
 }
 
