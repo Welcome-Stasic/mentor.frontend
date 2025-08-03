@@ -27,15 +27,17 @@ export default async function DashboardLayout({ children }: { children: React.Re
   const isWithoutQuiz = decoded?.isWithOutQuiz === 'True';
 
   const currentUser = await getCurrentUser(accessToken);
-  
-  if (!currentUser || !currentUser.quizId) {
+
+  if (!currentUser) {
     redirect('/Information');
   }
 
-  const quiz = await getQuiz(currentUser.quizId, accessToken);
+  if (!isWithoutQuiz && currentUser.quizId) {
+    const quiz = await getQuiz(currentUser.quizId, accessToken);
 
-  if (!quiz || (!isWithoutQuiz && !quiz.isCompleted)) {
-    redirect('/Quiz');
+    if (!quiz || !quiz.isCompleted) {
+      redirect('/Quiz');
+    }
   }
 
   if (!currentUser.elmaUserId) {
