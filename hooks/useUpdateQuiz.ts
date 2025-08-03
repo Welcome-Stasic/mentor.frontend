@@ -1,6 +1,5 @@
 import { API } from '@/lib/axios';
-import { IApiResponse, IPaginationResponse } from '@/lib/axios/types/base';
-import { IQuiz, IUpdateQuizDto } from '@/lib/axios/types/quiz';
+import { IUpdateQuizDto } from '@/lib/axios/types/quiz';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useSession } from 'next-auth/react';
 
@@ -14,6 +13,7 @@ export const useUpdateQuiz = () => {
 
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['quizzes'] });
+      queryClient.invalidateQueries({ queryKey: ['quizStatues'] });
     },
   });
 };

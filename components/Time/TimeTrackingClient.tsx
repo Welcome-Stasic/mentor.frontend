@@ -11,17 +11,24 @@ import { Box, Skeleton, Typography } from '@mui/material';
 import dayjs, { Dayjs } from 'dayjs';
 import { useQueryState } from 'nuqs';
 import { useEffect, useMemo, useState } from 'react';
+import JuniorList from '../JuniorList';
+import { useUserJuniors } from '@/hooks/user/useUserJuniors';
 
 export default function TimeTrackingClient() {
   const [dateParam, setDateParam] = useQueryState('date', {
     history: 'replace',
-    parse: (v) => (v ? dayjs(v) : dayjs()),       
-    serialize: (v) => v.format('YYYY-MM-DD'),       
+    parse: (v) => (v ? dayjs(v) : dayjs()),
+    serialize: (v) => v.format('YYYY-MM-DD'),
   });
 
   const crmId = useCurrentUserStore((store) => store.elmaId) ?? '';
   const isAdmin = useCurrentUserStore((store) => store.isAdmin);
-  const selectedTimeUserId = useCurrentUserStore((store) => store.selectedTimeUserId) ?? crmId;
+  const selectedTimeUserIdFromStore = useCurrentUserStore((store) => store.selectedTimeUserId);
+
+  const juniorResult = useUserJuniors(crmId);
+  const juniors = juniorResult.data ?? [];
+  const selectedTimeUserId = selectedTimeUserIdFromStore || juniors[0]?.id.toString() || crmId;
+
   const setSelectedTimeUser = useCurrentUserStore((store) => store.setSelectedTimeUser);
 
   const isPermission = crmId !== selectedTimeUserId || isAdmin;
@@ -53,12 +60,19 @@ export default function TimeTrackingClient() {
   return (
     <Box display="flex" gap={1} flexDirection="column">
       <Box display="flex" gap={1} justifyContent="space-between" flexDirection="column">
-        <MonthSwitcher
-          selectedUserId={selectedTimeUserId}
-          currentDate={currentDate}
-          onChange={setCurrentDate}
-          onChangeUser={setSelectedTimeUser}
-        />
+        <Box
+          display="flex"
+          alignItems={{ xs: 'flex-start', sm: 'center' }}
+          justifyContent="flex-start"
+          gap={1}
+          flexDirection={{ xs: 'column', sm: 'row' }}>
+          <MonthSwitcher currentDate={currentDate} onChange={setCurrentDate} />
+          <JuniorList
+            selectedUserId={selectedTimeUserId}
+            juniors={juniors}
+            onChangeUser={setSelectedTimeUser}
+          />
+        </Box>
         {isPermission && <TimeApprovalForm crmUserId={selectedTimeUserId} date={currentDate} />}
       </Box>
 

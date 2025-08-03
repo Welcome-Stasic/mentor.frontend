@@ -10,7 +10,7 @@ export interface IQuiz  {
   institutionId?: number;
   course: string;
   specialty: string;
-  status: string;
+  statusId: string;
   crmWorkflowinstance: number;
 }
 
@@ -45,6 +45,7 @@ export interface IUpdateQuizDto {
   IsCompleted?: boolean;
   finishDate?: Date
   departmentId?: string;
+  statusId?: string;
 }
 
 export interface IQuizStatus {

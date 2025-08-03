@@ -22,7 +22,7 @@ import {
 } from '@mui/material';
 import { Visibility } from '@mui/icons-material';
 import { useState } from 'react';
-import { IAnswerOnQuestion, IQuiz } from '@/lib/axios/types/quiz';
+import { IAnswerOnQuestion, IQuiz, IQuizStatus } from '@/lib/axios/types/quiz';
 import { API } from '@/lib/axios';
 import { useSession } from 'next-auth/react';
 import { IDepartment } from '@/lib/axios/types/department';
@@ -34,13 +34,15 @@ import { CmrProcessingBtn } from './CmrProcessingBtn';
 import { userUserById } from '@/hooks/useUserById';
 import { useInstitution } from '@/hooks/useInstitutions';
 import { useCurrentUserStore } from '@/providers/current-user-provider';
+import UpdateStatusRequest from './UpdateStatusRequest';
 
 interface IRequestCardProps {
   quiz: IQuiz;
   departments: IDepartment[];
+  statues: IQuizStatus[];
 }
 
-export const RequestCard = ({ quiz, departments }: IRequestCardProps) => {
+export const RequestCard = ({ quiz, departments, statues }: IRequestCardProps) => {
   const isAdmin = useCurrentUserStore((store) => store.isAdmin);
   const session = useSession();
   const accessToken = session.data?.user.accessToken || '';
@@ -52,7 +54,6 @@ export const RequestCard = ({ quiz, departments }: IRequestCardProps) => {
 
   const userResult = userUserById(quiz.applicationUserId);
   const user = userResult?.data ?? null;
-  const isLoading = userResult.isLoading || !user;
 
   const [questionListOpen, setQuestionListOpen] = useState(false);
   const [answersToQuestions, setAnswersToQuestions] = useState<IAnswerOnQuestion[]>([]);
@@ -76,7 +77,15 @@ export const RequestCard = ({ quiz, departments }: IRequestCardProps) => {
 
   return (
     <>
-      <Card sx={{ width: 350, borderRadius: 2, boxShadow: 2 }}>
+      <Card
+        sx={{
+          width: '100%',
+          height: '100%',
+          display: 'flex',
+          flexDirection: 'column',
+          borderRadius: 2,
+          boxShadow: 2,
+        }}>
         <CardHeader
           avatar={<UserPhoto userId={user?.id ?? ''} isOnline={user?.isOnline ?? false} />}
           title={<Typography variant="subtitle1">{user?.fullName}</Typography>}
@@ -98,7 +107,13 @@ export const RequestCard = ({ quiz, departments }: IRequestCardProps) => {
           }
         />
         <Divider />
-        <CardContent sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+        <CardContent
+          sx={{
+            flexGrow: 1,
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 1,
+          }}>
           <Typography variant="body2">
             <strong>Дата рождения:</strong>{' '}
             {user?.birthDay && new Date(user.birthDay).toLocaleDateString()}
@@ -132,6 +147,7 @@ export const RequestCard = ({ quiz, departments }: IRequestCardProps) => {
               ))}
             </Select>
           </Box>
+          <UpdateStatusRequest quiz={quiz} statues={statues} />
         </CardContent>
         <CardActions
           sx={{
@@ -139,6 +155,7 @@ export const RequestCard = ({ quiz, departments }: IRequestCardProps) => {
             px: 2,
             pb: 2,
             flexDirection: { xs: 'column', sm: 'row' },
+            mt: 'auto',
           }}>
           <Tooltip title="Открыть результаты тестирования">
             <Button

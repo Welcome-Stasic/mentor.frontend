@@ -51,6 +51,7 @@ export async function getAll(
     dateTimeColumn?: string;
     applicationUserId?: string | null;
     statusId?: string;
+    search?: string;
   } = {},
 ): Promise<IApiResponse<IPaginationResponse<IQuiz>> | null> {
   try {

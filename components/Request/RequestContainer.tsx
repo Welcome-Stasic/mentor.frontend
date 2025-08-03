@@ -23,7 +23,7 @@ import { useQuizStatues } from '@/hooks/useQuizStatues';
 import { IQuizStatus } from '@/lib/axios/types/quiz';
 
 const ITEMS_PER_PAGE = 10;
-const SPACING = 5;
+const SPACING = 2;
 
 const formatNumber = (value: number) => new Intl.NumberFormat('ru-RU').format(value);
 
@@ -57,6 +57,7 @@ export const RequestContainer = () => {
     pageSize: ITEMS_PER_PAGE,
     sortDirection: sortOrder === 'newest' ? 'desc' : 'asc',
     statusId: category.id,
+    search,
   });
 
   const { data: departments } = useDepartments();
@@ -138,24 +139,33 @@ export const RequestContainer = () => {
       {/* Карточки */}
       <Grid container spacing={SPACING}>
         {isLoading ? (
-          Array.from({ length: SPACING }).map((_, i) => (
-            <Skeleton
-              key={i}
-              variant="rounded"
-              sx={{ borderRadius: 2, boxShadow: 2 }}
-              width={200}
-              height={200}
-            />
+          Array.from({ length: 6 }).map((_, i) => (
+            <Grid size={{ xs: 12, sm: 6, md: 4, xl: 3 }} key={i}>
+              <Skeleton
+                variant="rounded"
+                sx={{ borderRadius: 2, boxShadow: 2 }}
+                width="100%"
+                height={200}
+              />
+            </Grid>
           ))
         ) : isError ? (
-          <Typography color="error">Ошибка загрузки анкет</Typography>
+          <Grid size={{ xs: 12 }}>
+            <Typography color="error">Ошибка загрузки анкет</Typography>
+          </Grid>
         ) : quizzes.length === 0 ? (
-          <Typography variant="h6" color="text.secondary" textAlign="center" width="100%">
-            Анкет не найдено
-          </Typography>
+          <Grid size={{ xs: 12 }}>
+            <Typography variant="h6" color="text.secondary" textAlign="center" width="100%">
+              Анкет не найдено
+            </Typography>
+          </Grid>
         ) : (
           quizzes.map((quiz) => (
-            <RequestCard key={quiz.id} quiz={quiz} departments={departments || []} />
+            <Grid key={quiz.id} size={{ xs: 12, sm: 6, md: 4, xl: 3 }}>
+              <Box height="100%">
+                <RequestCard quiz={quiz} departments={departments ?? []} statues={statues ?? []} />
+              </Box>
+            </Grid>
           ))
         )}
       </Grid>
