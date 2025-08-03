@@ -10,9 +10,8 @@ import { authOptions } from '../api/auth/[...nextauth]/options';
 import { decodeToken } from '@/lib/utils/decodeToken';
 import BackGroundImageWrapper from '@/components/BackGroundImageWrapper';
 import { redirect } from 'next/navigation';
-import dynamic from 'next/dynamic';
-
-const TokenSignInClient = dynamic(() => import('@/components/TokenSignInClient'), { ssr: false });
+import { Suspense } from 'react';
+import TokenSignInClient from '@/components/TokenSignInClient';
 
 interface IPageProps {
   searchParams: Promise<SearchParams>;
@@ -56,7 +55,9 @@ export default async function EmailConfirmed({ searchParams }: IPageProps) {
 
   return (
     <BackGroundImageWrapper>
-      <TokenSignInClient accessToken={accessToken} />
+      <Suspense>
+        <TokenSignInClient accessToken={accessToken} />
+      </Suspense>
       <OverlayMessage title={title} message={message} blurBackground blurPercent={50} icon={icon}>
         <Link href="/" underline="always" sx={{ pt: 1, display: 'block' }}>
           На главную
