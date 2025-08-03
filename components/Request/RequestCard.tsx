@@ -192,24 +192,29 @@ export const RequestCard = ({ quiz, departments, statues }: IRequestCardProps) =
         <Dialog open={questionListOpen} onClose={() => setQuestionListOpen(false)} maxWidth="md">
           <DialogContent>
             <List>
-              {answersToQuestions.map((item) => (
-                <div key={item.number}>
-                  <ListItem alignItems="flex-start">
-                    <ListItemText
-                      primary={
-                        <Typography component="p" variant="subtitle1" sx={{ marginBottom: '5px' }}>
-                          {item.number}. {item.questionText}
-                        </Typography>
-                      }
-                      secondary={
-                        <Typography component="p" variant="subtitle2">
-                          {item.answerText}
-                        </Typography>
-                      }
-                    />
-                  </ListItem>
-                </div>
-              ))}
+              {answersToQuestions
+                ?.sort((a, b) => a.number - b.number)
+                ?.map((item) => (
+                  <div key={item.number}>
+                    <ListItem alignItems="flex-start">
+                      <ListItemText
+                        primary={
+                          <Typography
+                            component="p"
+                            variant="subtitle1"
+                            sx={{ marginBottom: '5px' }}>
+                            {item.number}. {item.questionText}
+                          </Typography>
+                        }
+                        secondary={
+                          <Typography component="p" variant="subtitle2">
+                            {item.answerText}
+                          </Typography>
+                        }
+                      />
+                    </ListItem>
+                  </div>
+                ))}
             </List>
           </DialogContent>
         </Dialog>
