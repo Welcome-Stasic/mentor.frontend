@@ -1,12 +1,11 @@
 import { withAuth } from 'next-auth/middleware';
-import { useQuiz } from './lib/middleware/useQuiz';
 import { NextRequest } from 'next/server';
 import { runMiddlewarePipeline } from './lib/middleware';
 import { useProtectedRoutes } from './lib/middleware/useProtectedRoutes';
 
 function middleware(req: NextRequest) {
   // Пользователь уже авторизован — теперь выполняем другие проверки
-  return runMiddlewarePipeline(req, [useProtectedRoutes, useQuiz]);
+  return runMiddlewarePipeline(req, [useProtectedRoutes]);
 }
 
 export default withAuth(middleware, {

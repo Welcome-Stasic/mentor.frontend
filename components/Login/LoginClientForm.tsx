@@ -80,18 +80,6 @@ export default function LoginClientForm() {
     setErrorMessage('');
 
     try {
-      if (!data.isElma) {
-        const response = await API.auth.isEmailConfirmed(data.login);
-        const isEmailConfirmed = response?.Result;
-
-        if (!isEmailConfirmed) {
-          setErrorMessage(
-            errorMessages['emailNotConfirmed'] || 'Email не подтверждён. Проверьте почту.',
-          );
-          return;
-        }
-      }
-
       if (!data.isElma && data.forgotPassword) {
         await API.auth.forgotPassword(data.login);
         setEmailSent(true);
