@@ -8,6 +8,7 @@ import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import ChildCareIcon from '@mui/icons-material/ChildCare';
 import PersonIcon from '@mui/icons-material/Person';
 import FolderSharedIcon from '@mui/icons-material/FolderShared';
+import GroupsIcon from '@mui/icons-material/Groups';
 
 export type Question = {
   question: string;
@@ -204,6 +205,12 @@ export const PAGE: Record<KeyPage, IPage> = {
     roles: [],
     icon: ChildCareIcon
   },
+  USERS: {
+    name: 'Пользователи',
+    pathPrefix: '/Users',
+    roles: [USER_ROLES.ADMIN.name, USER_ROLES.MODERATOR.name],
+    icon: GroupsIcon
+  },
   REFERRAL: {
     name: 'Рефералы',
     pathPrefix: '/Referral',
@@ -219,4 +226,4 @@ export interface IPage {
   icon: OverridableComponent<SvgIconTypeMap<{}, "svg">>
 }
 
-type KeyPage = "HOME" | "REQUEST" | "TIME_TRACKING" | "REFERRAL" | "MY_JUNIORS" | "MY_MENTOR" | "PROJECTS"
+type KeyPage = "HOME" | "REQUEST" | "TIME_TRACKING" | "REFERRAL" | "MY_JUNIORS" | "MY_MENTOR" | "PROJECTS" | "USERS"

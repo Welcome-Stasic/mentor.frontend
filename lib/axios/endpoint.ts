@@ -11,6 +11,7 @@ export const AUTH_IS_VALID_ACCESS_TOKEN = 'Auth/Ping';
 
 export const USER = 'User';
 export const USER_ME = 'User/Me';
+export const USER_GET_ALL = 'User/GetAll';
 export const USER_CRM = 'User/Crm';
 export const USER_ME_UPDATE_PHOTO = 'User/Me/PhotoUpdate';
 export const USER_PHOTO_INFO = 'User/Photo/Info';
