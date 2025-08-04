@@ -2,7 +2,7 @@
 
 import { UserCard } from '@/components/Users/UserCard';
 import { useUsers } from '@/hooks/user/useUsers';
-import { Box, Grid, Pagination, Skeleton, Typography } from '@mui/material';
+import { Box, Grid, Pagination, Skeleton, TextField, Typography } from '@mui/material';
 import { useState } from 'react';
 
 const ITEMS_PER_PAGE = 20;
@@ -10,10 +10,12 @@ const SPACING = 2;
 
 export default function UsersPage() {
   const [page, setPage] = useState<number>(1);
+  const [search, setSearch] = useState<string>('');
 
   const { data, isLoading, isError } = useUsers({
     pageNumber: page,
     pageSize: ITEMS_PER_PAGE,
+    search
   });
 
   const users = data?.data || [];
@@ -24,8 +26,24 @@ export default function UsersPage() {
     setPage(value);
   };
 
+  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSearch(event.target.value);
+    setPage(1);
+  };
+  
   return (
     <>
+      <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 2 }}>
+        <TextField
+          label="Поиск"
+          variant="outlined"
+          size="small"
+          value={search}
+          onChange={handleSearchChange}
+          sx={{ minWidth: 300 }}
+        />
+      </Box>
+
       {/* Карточки */}
       <Grid container spacing={SPACING}>
         {isLoading ? (

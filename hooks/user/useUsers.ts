@@ -7,11 +7,13 @@ export const useUsers = ({
   pageSize = 10,
   sortColumn,
   sortDirection,
+  search
 }: {
   pageNumber?: number;
   pageSize?: number;
   sortColumn?: string;
   sortDirection?: string;
+  search?: string;
 }) => {
   const session = useSession();
   const accessToken = session.data?.user.accessToken || '';
@@ -23,6 +25,7 @@ export const useUsers = ({
       pageSize,
       sortColumn,
       sortDirection,
+      search
     ],
     queryFn: () =>
       API.user.getAllUsers(accessToken, {
@@ -30,6 +33,7 @@ export const useUsers = ({
         pageSize,
         sortColumn,
         sortDirection,
+        search
       }),
     enabled: !!accessToken,
     select: (data) => data?.Result || null,

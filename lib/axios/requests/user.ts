@@ -160,6 +160,7 @@ export async function getAllUsers(
     pageSize?: number;
     sortColumn?: string;
     sortDirection?: string;
+    search?: string;
   } = {},
 ): Promise<IApiResponse<IPaginationResponse<IApplicationUser>> | null> {
   try {
