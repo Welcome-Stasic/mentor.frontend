@@ -310,7 +310,7 @@ export default function QuizFirstForm() {
           label={
             <>
               Я согласен(на) на{' '}
-              <Link href="https://api.ru-7.storage.selcloud.ru/v2/panel/links/78af7d1fcc7e4aeaeadbe4af96cd02959ae552ce?inline=true" target="_blank" rel="noopener">
+              <Link href="https://736bdfa4-5434-475b-8d49-2ca263ead6cc.selstorage.ru/assets/agreements.pdf" target="_blank" rel="noopener">
                 обработку персональных данных
               </Link>
             </>
