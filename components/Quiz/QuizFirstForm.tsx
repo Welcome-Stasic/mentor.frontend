@@ -12,6 +12,7 @@ import {
   InputLabel,
   OutlinedInput,
   Autocomplete,
+  Link,
 } from '@mui/material';
 import { useForm, SubmitHandler, Controller } from 'react-hook-form';
 import { PhoneNumberMaskCustom } from '../PhoneNumberMaskCustom';
@@ -306,7 +307,14 @@ export default function QuizFirstForm() {
               })}
             />
           }
-          label="Я согласен(на) на обработку персональных данных"
+          label={
+            <>
+              Я согласен(на) на{' '}
+              <Link href="https://api.ru-7.storage.selcloud.ru/v2/panel/links/78af7d1fcc7e4aeaeadbe4af96cd02959ae552ce?inline=true" target="_blank" rel="noopener">
+                обработку персональных данных
+              </Link>
+            </>
+          }
         />
         {errors.isAccepted && <Typography color="error">{errors.isAccepted.message}</Typography>}
         {errorMessages.length > 0 && (

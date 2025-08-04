@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
-import { Box, Typography, Button, IconButton } from '@mui/material';
+import { Box, Typography, Button, IconButton, CircularProgress } from '@mui/material';
 import { ChangeEvent, DragEvent, useEffect, useState } from 'react';
 import { ControllerRenderProps, FieldError } from 'react-hook-form';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -16,22 +16,29 @@ const MAX_FILE_SIZE = 2 * 1024 * 1024;
 const ALLOWED_FORMATS = ['image/jpeg', 'image/png'];
 
 export function PhotoDropzone({ field, error, onFileError }: Props) {
+  const [loading, setLoading] = useState(false);
+
   const [dragActive, setDragActive] = useState(false);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
   const handleFile = (file: File) => {
+    setLoading(true);
+
     if (!ALLOWED_FORMATS.includes(file.type)) {
       onFileError('Разрешены только JPG и PNG');
+      setLoading(false);
       return;
     }
 
     if (file.size > MAX_FILE_SIZE) {
       onFileError('Файл превышает 2 МБ');
+      setLoading(false);
       return;
     }
 
     field.onChange(file);
     onFileError('');
+    setLoading(false);
   };
 
   const handleDrop = (e: DragEvent<HTMLDivElement>) => {
@@ -96,7 +103,9 @@ export function PhotoDropzone({ field, error, onFileError }: Props) {
           position: 'relative',
           flexDirection: 'column',
         }}>
-        {previewUrl ? (
+        {loading ? (
+          <CircularProgress />
+        ) : previewUrl ? (
           <>
             <Box
               component="img"
@@ -120,7 +129,12 @@ export function PhotoDropzone({ field, error, onFileError }: Props) {
         )}
       </Box>
 
-      <Button variant="outlined" component="label" sx={{ mt: 1 }}>
+      <Button
+        variant="outlined"
+        component="label"
+        sx={{ mt: 1 }}
+        loading={loading}
+        disabled={loading}>
         Выбрать файл
         <input hidden type="file" accept="image/jpeg,image/png" onChange={handleFileInput} />
       </Button>

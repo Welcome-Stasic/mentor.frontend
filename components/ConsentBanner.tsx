@@ -84,7 +84,7 @@ export default function ConsentBanner() {
 
       <Typography variant="body2" mt={1} mb={2}>
         Продолжая использовать наш сайт, вы соглашаетесь с{' '}
-        <Link href="/privacy-policy" target="_blank" rel="noopener" color="info">
+        <Link href="https://api.ru-7.storage.selcloud.ru/v2/panel/links/78af7d1fcc7e4aeaeadbe4af96cd02959ae552ce?inline=true" target="_blank" rel="noopener" color="info">
           политикой использования Cookies
         </Link>
         . Это файлы, которые помогают сделать ваш опыт взаимодействия с сайтом удобнее.
