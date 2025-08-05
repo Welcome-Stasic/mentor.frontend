@@ -20,6 +20,9 @@ export const USER_GET_TIME_REPORT = 'User/Time/Report';
 export const USER_GET_TIME_Work = 'User/Time/Work';
 export const USER_GET_JUNIORS = 'User/Juniors';
 export const USER_GET_MENTOR = 'User/Mentor';
+export const USER_GET_ROLES = 'User/GetRoles';
+export const USER_ASSIGN_ROLE = 'User/AssignRole';
+export const USER_REMOVE_ROLE = 'User/RemoveRole';
 
 export const QUIZ = 'Quiz';
 export const QUIZ_ALL = 'Quiz/GetAll';
@@ -48,3 +51,5 @@ export const PROJECT_GET_ALL = 'Project/GetAll'
 export const PROJECT_CREATE = 'Project/Create'
 export const PROJECT_UPDATE = 'Project/Update'
 export const PROJECT_DELETE = 'Project/Delete'
+
+export const ADMIN_DELETE_USER = 'Admin/DeleteUser'

@@ -1,3 +1,5 @@
+import { IDepartment } from "./department";
+
 export interface ICurrentUser {
   id: string;
   userName: string;
@@ -26,6 +28,7 @@ export interface ICrmUser {
       id: number,
       file: string
     }
+    department: IDepartment,
   }
   isMentor: boolean;
   juniorIds: number[];
@@ -81,4 +84,9 @@ export interface IMentor{
   phones: string[];
   departmentId: number | null;
   departmentName: string;
+}
+
+export interface IAssignRoleDto {
+  userId: string,
+  role: string,
 }

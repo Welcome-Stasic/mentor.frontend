@@ -1,21 +1,26 @@
 import { DateTime } from 'luxon';
 import { getAuthAxios } from '../authAxios';
 import {
+  ADMIN_DELETE_USER,
   USER,
+  USER_ASSIGN_ROLE,
   USER_CRM,
   USER_GET_ALL,
   USER_GET_JUNIORS,
   USER_GET_MENTOR,
   USER_GET_REFERRAL_LINK,
+  USER_GET_ROLES,
   USER_GET_TIME_REPORT,
   USER_GET_TIME_Work,
   USER_ME_UPDATE_PHOTO,
   USER_PHOTO_INFO,
+  USER_REMOVE_ROLE,
 } from '../endpoint';
 import { IApiResponse, IPaginationResponse } from '../types/base';
 import { IReportTime, IWorkTime } from '../types/time';
 import {
   IApplicationUser,
+  IAssignRoleDto,
   ICrmUser,
   IJunior,
   IMentor,
@@ -153,6 +158,7 @@ export async function getMentor(
 
   return res.data;
 }
+
 export async function getAllUsers(
   token: string,
   params: {
@@ -184,4 +190,52 @@ export async function getAllUsers(
     console.error(error);
     return null;
   }
+}
+
+export async function deleteUser(
+  userId: string,
+  token: string,
+): Promise<IApiResponse<boolean> | null> {
+  if (!token || !userId) return null;
+
+  const authAxios = await getAuthAxios(token);
+  const res = await authAxios.delete<IApiResponse<boolean>>(`${ADMIN_DELETE_USER}/${userId}`);
+
+  return res.data;
+}
+
+export async function getUserRoles(
+  userId: string,
+  token: string,
+): Promise<IApiResponse<string[]> | null> {
+  if (!token || !userId) return null;
+
+  const authAxios = await getAuthAxios(token);
+  const res = await authAxios.get<IApiResponse<string[]>>(`${USER_GET_ROLES}/${userId}`);
+
+  return res.data;
+}
+
+export async function assignUserRole(
+  payload: IAssignRoleDto,
+  token: string,
+): Promise<IApiResponse<boolean> | null> {
+  if (!token) return null;
+
+  const authAxios = await getAuthAxios(token);
+  const res = await authAxios.post<IApiResponse<boolean>>(USER_ASSIGN_ROLE, payload);
+
+  return res.data;
+}
+
+export async function removeUserRole(
+  payload: IAssignRoleDto,
+  token: string,
+): Promise<IApiResponse<boolean> | null> {
+  if (!token) return null;
+
+  const authAxios = await getAuthAxios(token);
+  const res = await authAxios.post<IApiResponse<boolean>>(USER_REMOVE_ROLE, payload);
+
+  return res.data;
 }

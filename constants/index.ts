@@ -211,6 +211,12 @@ export const PAGE: Record<KeyPage, IPage> = {
     roles: [USER_ROLES.ADMIN.name, USER_ROLES.MODERATOR.name],
     icon: GroupsIcon
   },
+  USER: {
+    name: 'Информация о пользователе',
+    pathPrefix: '/User',
+    roles: [USER_ROLES.ADMIN.name, USER_ROLES.MODERATOR.name],
+    icon: GroupsIcon
+  },
   REFERRAL: {
     name: 'Рефералы',
     pathPrefix: '/Referral',
@@ -226,4 +232,4 @@ export interface IPage {
   icon: OverridableComponent<SvgIconTypeMap<{}, "svg">>
 }
 
-type KeyPage = "HOME" | "REQUEST" | "TIME_TRACKING" | "REFERRAL" | "MY_JUNIORS" | "MY_MENTOR" | "PROJECTS" | "USERS"
+type KeyPage = "HOME" | "REQUEST" | "TIME_TRACKING" | "REFERRAL" | "MY_JUNIORS" | "MY_MENTOR" | "PROJECTS" | "USERS" | "USER"

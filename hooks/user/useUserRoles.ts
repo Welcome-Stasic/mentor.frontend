@@ -4,15 +4,15 @@ import { API } from "@/lib/axios";
 import { useSession } from "next-auth/react";
 import { useQuery } from '@tanstack/react-query';
 
-export const useCrmUser = (id: string) => {
+export const useUserRoles = (id: string) => {
   const session = useSession();
   const accessToken = session.data?.user.accessToken || '';
   const enabled = !!accessToken && !!id && id !== '';
 
   return useQuery({
-    queryKey: ['crmUser', id],
-    queryFn: () => API.user.getCrmUserById(id, accessToken),
+    queryKey: ['userRoles', id],
+    queryFn: () => API.user.getUserRoles(id, accessToken),
     enabled,
-    select: (data) => data?.Result ?? null,
+    select: (data) => data?.Result ?? [],
   });
 };

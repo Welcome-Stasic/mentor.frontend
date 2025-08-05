@@ -2,7 +2,7 @@ import { crmLogin, forgotPassword, getRefreshToken, isEmailConfirmed, isValidAcc
 import { me } from './requests/me';
 import { addAnswersToQuestions, getAll, getAllQuizStatues, getAnswersToQuestions, getById, quizCrmProcessing, quizDelete, quizDownload, update, updateFirstStage } from './requests/quiz';
 import { getDepartmentAll } from './requests/department';
-import { getAllUsers, getCrmUserById, getJuniors, getMentor, getReferralLink, getReportTime, getUserById, getUserPhoto, getWorkTime, updatePhotoCurrentUser } from './requests/user';
+import { assignUserRole, deleteUser, getAllUsers, getCrmUserById, getJuniors, getMentor, getReferralLink, getReportTime, getUserById, getUserPhoto, getUserRoles, getWorkTime, removeUserRole, updatePhotoCurrentUser } from './requests/user';
 import { getAllInstitution, getByIdInstitution } from './requests/institution';
 import { approveTime, cancelApproveTime, createTime, deleteTime, getApproveTimeInfo, updateTime } from './requests/time';
 import { deleteProject, getAllProjects, getCreateProject, getUpdateProject } from './requests/project';
@@ -31,7 +31,10 @@ export const API = {
     getWorkTime,
     getJuniors,
     getMentor,
-    getAllUsers
+    getAllUsers,
+    getUserRoles,
+    assignUserRole,
+    removeUserRole
   },
   quiz: {
     getById,
@@ -65,5 +68,8 @@ export const API = {
     getCreateProject,
     getUpdateProject,
     deleteProject
+  },
+  admin: {
+    deleteUser
   }
 };
