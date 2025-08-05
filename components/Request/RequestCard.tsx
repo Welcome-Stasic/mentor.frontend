@@ -31,7 +31,7 @@ import { UserPhoto } from '../UserPhoto';
 import { DownloadRequestBtn } from './DownloadRequestBtn';
 import { DeleteRequestBtn } from './DeleteRequestBtn';
 import { CmrProcessingBtn } from './CmrProcessingBtn';
-import { userUserById } from '@/hooks/useUserById';
+import { useUserById } from '@/hooks/useUserById';
 import { useInstitution } from '@/hooks/useInstitutions';
 import { useCurrentUserStore } from '@/providers/current-user-provider';
 import UpdateStatusRequest from './UpdateStatusRequest';
@@ -52,7 +52,7 @@ export const RequestCard = ({ quiz, departments, statues }: IRequestCardProps) =
   const updateQuiz = useUpdateQuiz();
   const institutionResult = useInstitution(quiz.institutionId);
 
-  const userResult = userUserById(quiz.applicationUserId);
+  const userResult = useUserById(quiz.applicationUserId);
   const user = userResult?.data ?? null;
 
   const [questionListOpen, setQuestionListOpen] = useState(false);
