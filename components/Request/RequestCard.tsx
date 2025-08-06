@@ -88,7 +88,22 @@ export const RequestCard = ({ quiz, departments, statues }: IRequestCardProps) =
         }}>
         <CardHeader
           avatar={<UserPhoto userId={user?.id ?? ''} isOnline={user?.isOnline ?? false} />}
-          title={<Typography variant="subtitle1">{user?.fullName}</Typography>}
+          title={
+            <Typography
+              variant="subtitle1"
+              component="a"
+              href={`/User/${user?.id}`}
+              sx={{
+                color: 'primary.main',
+                textDecoration: 'none',
+                '&:hover': {
+                  textDecoration: 'underline',
+                },
+                cursor: 'pointer',
+              }}>
+              {user?.fullName}
+            </Typography>
+          }
           subheader={
             <Typography variant="body2">
               {user?.email}

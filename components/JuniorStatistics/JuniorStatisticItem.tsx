@@ -3,6 +3,7 @@
 import { useReportTime } from '@/hooks/useReportTime';
 import { useWorkTime } from '@/hooks/useWorkTime';
 import { formatMinutesToTimeString } from '@/lib/utils/formatMinutesToTimeString';
+import { getColorByPercentage } from '@/lib/utils/getColorByPercentage';
 import { Box, Typography, LinearProgress, Skeleton } from '@mui/material';
 import dayjs from 'dayjs';
 
@@ -28,7 +29,13 @@ export const JuniorStatisticItem = ({ userId, name }: IJuniorStatisticItem) => {
   const formattedReported = formatMinutesToTimeString(totalReportedMinutes);
   const formattedWorked = formatMinutesToTimeString(totalWorkMinutes);
 
-  const progress = Math.min(100, Math.round((totalWorkMinutes / (totalReportedMinutes === 0 ? 480 : totalReportedMinutes)) * 100));
+  const progress = Math.min(
+    100,
+    Math.round(
+      (totalWorkMinutes / (totalReportedMinutes === 0 ? 480 : totalReportedMinutes)) * 100,
+    ),
+  );
+  const color = getColorByPercentage(progress);
 
   return (
     <Box>
@@ -55,8 +62,12 @@ export const JuniorStatisticItem = ({ userId, name }: IJuniorStatisticItem) => {
           ) : (
             <LinearProgress
               variant="determinate"
-              value={progress}
-              sx={{ height: 8, borderRadius: 4 }}
+              value={Math.min(progress, 100)}
+              sx={{
+                '& .MuiLinearProgress-bar': {
+                  backgroundColor: color,
+                },
+              }}
             />
           )}
         </Box>

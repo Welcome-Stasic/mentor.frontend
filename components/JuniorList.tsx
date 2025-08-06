@@ -11,12 +11,13 @@ interface IJuniorListProps {
 
 const JuniorList = ({ selectedUserId, onChangeUser, juniors }: IJuniorListProps) => {
   const crmId = useCurrentUserStore((store) => store.elmaId) ?? '';
+  const fullName = useCurrentUserStore((store) => store.fullName) ?? '';
 
   const isMentor = useCurrentUserStore((store) => store.isMentor);
 
   const options: RenderGroupOption[] = useMemo(
     () => [
-      { group: 'Мои трудозатраты', title: 'Я', value: crmId },
+      { group: 'Мои трудозатраты', title: fullName, value: crmId },
       ...juniors.map((j) => ({
         group: 'Мои стажеры',
         title: j.name,

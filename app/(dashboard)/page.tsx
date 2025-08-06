@@ -64,38 +64,40 @@ export default function HomePage() {
 
   return (
     <Box display="flex" gap={3} flexDirection={isMobile ? 'column' : 'row'}>
-      <Grid container spacing={3} order={isMobile ? 2 : 1}>
-        {links.map((link, index) => (
-          <Grid size={{ xs: 12, sm: 6, md: 4 }} key={index}>
-            <Card variant="outlined">
-              <CardContent>
-                <Typography variant="h6">{link.title}</Typography>
-                <Typography
-                  variant="body2"
-                  sx={{ wordBreak: 'break-all' }}
-                  component="a"
-                  href={link.url}
-                  target="_blank">
-                  {link.url}
-                </Typography>
+      <Box order={isMobile ? 2 : 1}>
+        <Grid container spacing={3}>
+          {links.map((link, index) => (
+            <Grid size={{ xs: 12, sm: 6, md: 4 }} key={index}>
+              <Card variant="outlined">
+                <CardContent>
+                  <Typography variant="h6">{link.title}</Typography>
+                  <Typography
+                    variant="body2"
+                    sx={{ wordBreak: 'break-all' }}
+                    component="a"
+                    href={link.url}
+                    target="_blank">
+                    {link.url}
+                  </Typography>
 
-                <Box mt={1}>
-                  <Tooltip title="Скопировать ссылку">
-                    <IconButton onClick={() => handleCopy(link.url)}>
-                      <ContentCopyIcon />
-                    </IconButton>
-                  </Tooltip>
-                  <Tooltip title="Показать QR-код">
-                    <IconButton onClick={() => handleOpenQr(link.title, link.url)}>
-                      <QrCodeIcon />
-                    </IconButton>
-                  </Tooltip>
-                </Box>
-              </CardContent>
-            </Card>
-          </Grid>
-        ))}
-      </Grid>
+                  <Box mt={1}>
+                    <Tooltip title="Скопировать ссылку">
+                      <IconButton onClick={() => handleCopy(link.url)}>
+                        <ContentCopyIcon />
+                      </IconButton>
+                    </Tooltip>
+                    <Tooltip title="Показать QR-код">
+                      <IconButton onClick={() => handleOpenQr(link.title, link.url)}>
+                        <QrCodeIcon />
+                      </IconButton>
+                    </Tooltip>
+                  </Box>
+                </CardContent>
+              </Card>
+            </Grid>
+          ))}
+        </Grid>
+      </Box>
       <Box
         width={isMobile ? '100%' : 800}
         display="flex"
