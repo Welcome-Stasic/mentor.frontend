@@ -1,9 +1,9 @@
 'use client';
 
 import { DashboardPageTitle } from './DashboardPageTitle';
-import { Box } from '@mui/material';
+import { Box, useMediaQuery, useTheme } from '@mui/material';
 import { DrawerHeader } from '../ui/DrawerHeader';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import Header from '../Header';
 import { useSession } from 'next-auth/react';
@@ -13,7 +13,14 @@ export default function DashboardContainer({ children }: { children: React.React
   const session = useSession();
   const currentUserRoles = session?.data?.user?.roles || [];
 
+  const theme = useTheme();
+  const isDesktop = useMediaQuery(theme.breakpoints.up('md')); // md = 900px по умолчанию
+
   const [open, setOpen] = useState(false);
+
+  useEffect(() => {
+    setOpen(isDesktop); // если desktop — открыто, если mobile — закрыто
+  }, [isDesktop]);
 
   const handleDrawerOpen = () => {
     setOpen(true);
