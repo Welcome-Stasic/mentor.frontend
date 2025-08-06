@@ -21,11 +21,11 @@ type FormData = {
 
 export default function TimeApprovalForm({ crmUserId, date }: IApprovalProps) {
   const crmCurrentUserId = useCurrentUserStore((store) => store.elmaId) ?? '';
-  const approveInfo = useApproveTimeInfo({ crmUserId, month: date.month(), year: date.year() });
+  const approveInfo = useApproveTimeInfo({ crmUserId, month: date.month() + 1, year: date.year() });
   const approveTime = useApproveTime();
   const cancelApproveTime = useCancelApproveTime();
 
-  const approved = approveInfo?.data !== null;
+  const approved = !!approveInfo?.data;
 
   const { register, handleSubmit, setValue } = useForm<FormData>({
     defaultValues: { comment: '' },
