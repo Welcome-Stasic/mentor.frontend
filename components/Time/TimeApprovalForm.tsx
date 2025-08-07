@@ -41,7 +41,7 @@ export default function TimeApprovalForm({ crmUserId, date }: IApprovalProps) {
     if (!approved) {
       await approveTime.mutateAsync({
         crmUserId,
-        month: date.month(),
+        month: date.month() + 1,
         year: date.year(),
         comment: data.comment,
         approveCrmUserId: crmCurrentUserId,
