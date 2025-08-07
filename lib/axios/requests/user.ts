@@ -2,9 +2,12 @@ import { DateTime } from 'luxon';
 import { getAuthAxios } from '../authAxios';
 import {
   ADMIN_DELETE_USER,
+  ADMIN_LOG_OUT_USER,
   USER,
   USER_ASSIGN_ROLE,
+  USER_BINDING_TO_CRM,
   USER_CRM,
+  USER_CRM_ALL,
   USER_GET_ALL,
   USER_GET_JUNIORS,
   USER_GET_MENTOR,
@@ -21,7 +24,9 @@ import { IReportTime, IWorkTime } from '../types/time';
 import {
   IApplicationUser,
   IAssignRoleDto,
+  IBindingToCrmDto,
   ICrmUser,
+  ICrmUserVm,
   IJunior,
   IMentor,
   IUserPhoto,
@@ -236,6 +241,41 @@ export async function removeUserRole(
 
   const authAxios = await getAuthAxios(token);
   const res = await authAxios.post<IApiResponse<boolean>>(USER_REMOVE_ROLE, payload);
+
+  return res.data;
+}
+
+export async function allLogOutUser(
+  id: string,
+  token: string,
+): Promise<IApiResponse<boolean> | null> {
+  if (!token || !id) return null;
+
+  const authAxios = await getAuthAxios(token);
+  const res = await authAxios.get<IApiResponse<boolean>>(`${ADMIN_LOG_OUT_USER}/${id}`);
+
+  return res.data;
+}
+
+export async function getAllCrmUsers(
+  token: string,
+): Promise<IApiResponse<ICrmUserVm[]> | null> {
+  if (!token) return null;
+
+  const authAxios = await getAuthAxios(token);
+  const res = await authAxios.get<IApiResponse<ICrmUserVm[]>>(USER_CRM_ALL);
+
+  return res.data;
+}
+
+export async function bindingToCrm(
+  payload: IBindingToCrmDto,
+  token: string,
+): Promise<IApiResponse<boolean> | null> {
+  if (!token) return null;
+
+  const authAxios = await getAuthAxios(token);
+  const res = await authAxios.post<IApiResponse<boolean>>(USER_BINDING_TO_CRM, payload);
 
   return res.data;
 }

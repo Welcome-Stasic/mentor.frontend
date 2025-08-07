@@ -35,6 +35,16 @@ export interface ICrmUser {
   photoUrl: string;
 }
 
+export interface ICrmUserVm {
+  id: string,
+  userName: string,
+  status: number,
+  fullName: string,
+  lastName: string;
+  firstName: string;
+  middleName: string;
+}
+
 export interface IApplicationUser {
   id: string;
   elmaUserId?: number;
@@ -89,4 +99,9 @@ export interface IMentor{
 export interface IAssignRoleDto {
   userId: string,
   role: string,
+}
+
+export interface IBindingToCrmDto {
+  appId: string,
+  crmId: string,
 }

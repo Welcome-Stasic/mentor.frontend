@@ -16,7 +16,6 @@ import { useCrmUser } from '@/hooks/user/useCrmUser';
 import { useMemo } from 'react';
 import { DeleteUserBtn } from './DeleteUserBtn';
 import { useUserRoles } from '@/hooks/user/useUserRoles';
-import Link from 'next/link';
 
 interface IUserCardProps {
   user: IApplicationUser;

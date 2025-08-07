@@ -13,6 +13,7 @@ export const USER = 'User';
 export const USER_ME = 'User/Me';
 export const USER_GET_ALL = 'User/GetAll';
 export const USER_CRM = 'User/Crm';
+export const USER_CRM_ALL = 'User/GetAllCrm';
 export const USER_ME_UPDATE_PHOTO = 'User/Me/PhotoUpdate';
 export const USER_PHOTO_INFO = 'User/Photo/Info';
 export const USER_GET_REFERRAL_LINK = 'User/GetReferralLink';
@@ -23,6 +24,7 @@ export const USER_GET_MENTOR = 'User/Mentor';
 export const USER_GET_ROLES = 'User/GetRoles';
 export const USER_ASSIGN_ROLE = 'User/AssignRole';
 export const USER_REMOVE_ROLE = 'User/RemoveRole';
+export const USER_BINDING_TO_CRM = 'User/BindingToCrm';
 
 export const QUIZ = 'Quiz';
 export const QUIZ_ALL = 'Quiz/GetAll';
@@ -53,3 +55,4 @@ export const PROJECT_UPDATE = 'Project/Update'
 export const PROJECT_DELETE = 'Project/Delete'
 
 export const ADMIN_DELETE_USER = 'Admin/DeleteUser'
+export const ADMIN_LOG_OUT_USER = 'Admin/LogOutUser'
