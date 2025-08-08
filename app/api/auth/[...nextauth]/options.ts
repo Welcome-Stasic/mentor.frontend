@@ -6,6 +6,7 @@ import { decodeToken } from '@/lib/utils/decodeToken';
 import { refreshAccessToken } from '@/lib/utils/refreshAccessToken';
 import { TokenProvider } from './providers/token';
 import { checkAccessToken } from '@/lib/utils/checkAccessToken';
+import { CustomYandexProvider } from './providers/yandex';
 
 const ONE_MINUTE_MS = 60 * 1000;
 const CHECK_INTERVAL = 30 * 1000; // 30 секунд
@@ -15,6 +16,7 @@ export const authOptions: NextAuthOptions = {
   providers: [
     CRMProvider,
     TokenProvider,
+    CustomYandexProvider,
     CredentialsProvider({
       name: 'Credentials',
       credentials: {
