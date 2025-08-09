@@ -106,7 +106,11 @@ const TimeDialog = ({
 
           <FormControl fullWidth>
             <FormLabel sx={{ mb: 1 }}>Проект</FormLabel>
-            <Select defaultValue={time?.project ?? ''} {...register('project')} disabled={!isEditable} displayEmpty>
+            <Select
+              defaultValue={time?.project ?? ''}
+              {...register('project')}
+              disabled={!isEditable}
+              displayEmpty>
               <MenuItem value="">
                 <em>Без проекта</em>
               </MenuItem>
@@ -134,7 +138,20 @@ const TimeDialog = ({
           <TextField
             label="Затраченное время, мин"
             type="number"
-            {...register('minutes', { required: 'Поле обязательно' })}
+            slotProps={{
+              input: {
+                inputProps: {
+                  step: 1,
+                },
+              },
+            }}
+            {...register('minutes', {
+              required: 'Поле обязательно',
+              pattern: {
+                value: /^[0-9]+$/, // только целые положительные числа
+                message: 'Введите целое число',
+              },
+            })}
             error={!!errors.minutes}
             helperText={errors.minutes?.message}
           />
