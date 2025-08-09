@@ -107,7 +107,7 @@ export default function HomePage() {
         <MyWorkStats />
         {isMentor && <JuniorStatistics />}
       </Box>
-      {/* Диалоговое окно с QR-кодом */}
+      {/* Окно с QR-кодом */}
       <Dialog open={qrOpen} onClose={handleCloseQr}>
         <DialogTitle>QR-код: {currentQr?.title}</DialogTitle>
         <DialogContent sx={{ textAlign: 'center' }}>
