@@ -7,7 +7,7 @@ export const CustomYandexProvider = YandexProvider({
     url: "https://oauth.yandex.ru/authorize",
     params: { 
       response_type: "code",
-      force_confirm: "true" // заставляем всегда подтверждать аккаунт
+      force_confirm: "true" // всегда подтверждать аккаунт
     },
   },
 });
