@@ -1,6 +1,7 @@
 export const AUTH_LOGIN = 'Auth/Login';
 export const AUTH_LOG_OUT = 'Auth/LogOut';
 export const AUTH_CRM_LOGIN = 'Auth/CrmLogin';
+export const AUTH_YANDEX_LOGIN = 'Auth/YandexLogin';
 export const AUTH_REFRESH_TOKEN = 'Auth/RefreshToken';
 export const AUTH_REGISTER = 'Auth/Register';
 export const AUTH_FORGOT_PASSWORD = 'Auth/ForgotPassword';

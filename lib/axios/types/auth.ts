@@ -8,8 +8,12 @@ export interface ICrmLoginDto extends baseLoginDto  {
 }
 
 export interface IAppLoginDto extends baseLoginDto  {
-  email: string
+  email: string;
   password: string;
+}
+
+export interface IYandexLoginDto {
+  authCode: string;
 }
 
 export interface IRegisterDto {

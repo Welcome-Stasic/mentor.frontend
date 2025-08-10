@@ -5,6 +5,7 @@ import {
   AUTH_LOG_OUT,
   AUTH_REFRESH_TOKEN,
   AUTH_RESET_PASSWORD,
+  AUTH_YANDEX_LOGIN,
 } from './../endpoint';
 import axiosInstance from '../axios';
 import { AUTH_CRM_LOGIN, AUTH_FORGOT_PASSWORD, AUTH_LOGIN, AUTH_REGISTER } from '../endpoint';
@@ -15,6 +16,7 @@ import {
   IRegisterDto,
   IResetPasswordDto,
   ITokens,
+  IYandexLoginDto,
 } from '../types/auth';
 import { IApiResponse } from '../types/base';
 import { getAuthAxios } from '../authAxios';
@@ -32,7 +34,13 @@ export async function login(payload: IAppLoginDto): Promise<IApiResponse<ITokens
 
 export async function crmLogin(payload: ICrmLoginDto): Promise<IApiResponse<ITokens> | null> {
   const res = await axiosInstance.post<IApiResponse<ITokens>>(AUTH_CRM_LOGIN, payload);
-        console.log(res);
+  
+  return res.data;
+}
+
+export async function yandexLogin(payload: IYandexLoginDto): Promise<IApiResponse<ITokens> | null> {
+  const res = await axiosInstance.post<IApiResponse<ITokens>>(AUTH_YANDEX_LOGIN, payload);
+
   return res.data;
 }
 

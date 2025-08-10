@@ -9,6 +9,7 @@ declare module 'next-auth' {
       roles?: string[];
       accessToken: string;
       refreshToken: string;
+      picture?: string;
     };
   }
 
@@ -42,6 +43,7 @@ declare module 'next-auth' {
       role: string;
       accessToken: string;
       refreshToken: string;
+      picture?: string;
     };
     error?: string;
     refreshTokenValid: bool;

@@ -14,7 +14,7 @@ const ID_CLAIM = 'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameiden
 
 type Roles = string[];
 
-export function decodeToken(token: string): DecodedToken & { roles: Roles } {
+export function decodeToken(token: string): DecodedToken & { roles: Roles }{
   const decoded = jwtDecode<DecodedToken>(token);
 
   const rawRoles = decoded[ROLE_CLAIM] as unknown;

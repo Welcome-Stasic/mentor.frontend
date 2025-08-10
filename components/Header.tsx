@@ -9,7 +9,7 @@ import Tooltip from '@mui/material/Tooltip';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import { useCurrentUserStore } from '@/providers/current-user-provider';
-import { signOut } from 'next-auth/react';
+import { signOut, useSession } from 'next-auth/react';
 import { UserPhoto } from './UserPhoto';
 import { AppBar } from './ui/AppBar';
 import MenuIcon from '@mui/icons-material/Menu';
@@ -23,6 +23,9 @@ interface IHeaderProps {
 }
 
 export default function Header({ handleDrawerOpen, open }: IHeaderProps) {
+  const session = useSession();
+  const picture = session?.data?.user?.picture ?? '';
+
   const isMobile = useMediaQuery('(max-width:768px)');
 
   const { userName, id, photoUrl } = useCurrentUserStore((state) => state);
@@ -84,7 +87,7 @@ export default function Header({ handleDrawerOpen, open }: IHeaderProps) {
                 <UserPhoto
                   userId={id}
                   isOnline
-                  elmaPhotoUrl={photoUrl ?? ''}
+                  elmaPhotoUrl={picture ?? photoUrl ?? ''}
                   width={46}
                   height={46}
                   isNeedOpenPhoto={false}

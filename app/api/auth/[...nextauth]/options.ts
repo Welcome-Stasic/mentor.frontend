@@ -7,6 +7,8 @@ import { refreshAccessToken } from '@/lib/utils/refreshAccessToken';
 import { TokenProvider } from './providers/token';
 import { checkAccessToken } from '@/lib/utils/checkAccessToken';
 import { CustomYandexProvider } from './providers/yandex';
+import { handleYandexLogin } from '@/lib/auth/yandex';
+import { handleDefaultLogin } from '@/lib/auth/default';
 
 const ONE_MINUTE_MS = 60 * 1000;
 const CHECK_INTERVAL = 30 * 1000; // 30 секунд
@@ -39,11 +41,11 @@ export const authOptions: NextAuthOptions = {
           if (!accessToken || !refreshToken || !refreshTokenExpires) return null;
 
           const decoded = decodeToken(accessToken);
-          const roles = decoded.roles;
+          const roles = decoded?.roles;
 
           return {
-            id: decoded.id,
-            email: decoded.email,
+            id: decoded?.id ?? '',
+            email: decoded?.email ?? '',
             accessToken,
             refreshToken,
             refreshTokenExpires: new Date(refreshTokenExpires).getTime(),
@@ -74,27 +76,26 @@ export const authOptions: NextAuthOptions = {
   },
 
   callbacks: {
-    async jwt({ token, user }) {
-      const now = Date.now();
-
-      if (user) {
-        return {
-          ...token,
-          accessToken: user.accessToken,
-          refreshToken: user.refreshToken,
-          refreshTokenExpires: user.refreshTokenExpires,
-          refreshTokenValid: true,
-          justLoggedIn: true,
-          lastChecked: now,
-        };
+    async signIn({ account }) {
+      if (account?.provider === 'yandex') {
+        // Если нет access_token от Яндекс — запрещаем вход
+        if (!account.access_token || !account.access_token.trim()) {
+          return false;
+        }
       }
 
-      // После логина пропускаем проверку
-      if (token.justLoggedIn) {
-        return {
-          ...token,
-          justLoggedIn: false,
-        };
+      return true; // Разрешаем вход для всех остальных
+    },
+    async jwt({ token, user, account }) {
+      const now = Date.now();
+
+      if (account && user) {
+        switch (account.provider) {
+          case 'yandex':
+            return handleYandexLogin(token, account?.access_token ?? '');
+          default:
+            return handleDefaultLogin(token, user, now);
+        }
       }
 
       // проверка accessToken
@@ -132,21 +133,36 @@ export const authOptions: NextAuthOptions = {
     },
 
     async session({ session, token }) {
-      const decoded = decodeToken(token.accessToken);
-      const roles = decoded.roles;
+      // Безопасно проверяем accessToken
+      let roles: string[] = [];
 
-      session.user = {
-        ...session.user,
-        accessToken: token.accessToken,
-        refreshToken: token.refreshToken,
-        roles,
-      };
+      if (typeof token.accessToken === 'string' && token.accessToken.trim()) {
+        const decoded = decodeToken(token.accessToken);
+        roles = decoded?.roles ?? [];
+        session.user = {
+          ...session.user,
+          accessToken: token.accessToken,
+          refreshToken: token.refreshToken ?? null,
+          roles,
+        };
+      } else {
+        session.user = {
+          ...session.user,
+          accessToken: '',
+          refreshToken: token.refreshToken ?? null,
+          roles: [],
+        };
+      }
 
       if (token?.error) {
         session.error = token.error;
       }
 
       session.refreshTokenValid = token.refreshTokenValid;
+
+      if (token?.picture) {
+        session.user.picture = token?.picture;
+      }
 
       return session;
     },
