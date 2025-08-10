@@ -9,7 +9,7 @@ export async function authYandex(token: JWT, payload: IYandexLoginDto): Promise<
   return refreshMutex.runExclusive(async () => {
     try {
       const response = await API.auth.yandexLogin(payload);
-      console.log(response);
+      
       const accessToken = response?.Result?.accessToken || null;
       const refreshToken = response?.Result?.refreshToken || null;
       const refreshTokenExpires = response?.Result?.refreshTokenExpires || null;
