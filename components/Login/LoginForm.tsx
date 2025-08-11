@@ -7,7 +7,7 @@ export default function LoginForm() {
   return (
     <Suspense fallback={<BackdropLoader open />}>
       <LoginClientForm />
-      <ExtraAuth />
+      {/* <ExtraAuth /> */}
     </Suspense>
   );
 }

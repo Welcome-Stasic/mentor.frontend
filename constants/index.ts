@@ -220,7 +220,7 @@ export const PAGE: Record<KeyPage, IPage> = {
   REFERRAL: {
     name: 'Рефералы',
     pathPrefix: '/Referral',
-    roles: [],
+    roles: [USER_ROLES.ADMIN.name],
     icon: AddLinkIcon
   }
 }
