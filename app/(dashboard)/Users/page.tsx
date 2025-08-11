@@ -15,7 +15,8 @@ export default function UsersPage() {
   const { data, isLoading, isError } = useUsers({
     pageNumber: page,
     pageSize: ITEMS_PER_PAGE,
-    search
+    search,
+    sortDirection: 'desc',
   });
 
   const users = data?.data || [];
@@ -30,7 +31,7 @@ export default function UsersPage() {
     setSearch(event.target.value);
     setPage(1);
   };
-  
+
   return (
     <>
       <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 2 }}>
