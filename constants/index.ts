@@ -178,7 +178,7 @@ export const PAGE: Record<KeyPage, IPage> = {
   REQUEST: {
     name: 'Анкеты',
     pathPrefix: '/Request',
-    roles: [USER_ROLES.ADMIN.name,],
+    roles: [USER_ROLES.ADMIN.name, USER_ROLES.QUIZ_MODERATOR.name, USER_ROLES.MODERATOR.name],
     icon: ContactsIcon
   },
   TIME_TRACKING: {
