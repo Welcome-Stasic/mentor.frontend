@@ -9,13 +9,40 @@ interface ICalendarItemProps {
   href: string;
   percentage?: number;
   time?: number;
+  disabled?: boolean;
 }
 
-const CalendarItem = ({ day, href, percentage = 0, time = 0 }: ICalendarItemProps) => {
+const CalendarItem = ({
+  day,
+  href,
+  percentage = 0,
+  time = 0,
+  disabled = false,
+}: ICalendarItemProps) => {
+  const isMobile = useMediaQuery('(max-width:768px)');
+
+  if (disabled)
+    return (
+      <Box
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          border: '1px solid #ccc',
+          padding: 1,
+          height: isMobile ? 100 : 150,
+          borderRadius: '6px',
+          backgroundColor: '#f5f5f5',
+          color: '#999',
+          fontWeight: 'bold',
+        }}>
+        {day}
+      </Box>
+    );
+    
   const reportHours = Math.floor(time / 60);
   const reportMinutes = time % 60;
   const formattedReportTime = `${reportHours}:${reportMinutes.toString().padStart(2, '0')}`;
-  const isMobile = useMediaQuery('(max-width:768px)');
 
   const color = getColorByPercentage(percentage);
 

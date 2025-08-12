@@ -16,6 +16,8 @@ interface ICalendarProps {
   isLoading: boolean;
 }
 
+const daysOfWeek = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'];
+
 const Calendar = ({ crmId, year, month, timeItems, workItems, isLoading }: ICalendarProps) => {
   const firstDay = dayjs(new Date(year, month, 1));
   const startDayIndex = (firstDay.day() + 6) % 7; // Пн = 0, Вс = 6
@@ -50,6 +52,19 @@ const Calendar = ({ crmId, year, month, timeItems, workItems, isLoading }: ICale
         gridTemplateColumns: `repeat(${isMobile ? '3' : '7'}, 1fr)`,
         gap: 1,
       }}>
+      {/* Заголовки дней недели */}
+      {!isMobile &&
+        daysOfWeek.map((day) => (
+          <Box
+            key={day}
+            sx={{
+              textAlign: 'center',
+              fontWeight: 'bold',
+              padding: '4px 0',
+            }}>
+            {day}
+          </Box>
+        ))}
       {isLoading &&
         Array.from({ length: totalCells }).map((_, index) => (
           <Skeleton key={index} variant="rounded" height={isMobile ? 100 : 150} />
@@ -57,13 +72,33 @@ const Calendar = ({ crmId, year, month, timeItems, workItems, isLoading }: ICale
       {!isLoading &&
         Array.from({ length: totalCells }).map((_, index) => {
           const dayNumber = index - startDayIndex + 1;
-          if (index < startDayIndex || dayNumber > daysInMonth) return null;
 
+          // --- Предыдущий месяц ---
+          if (!isMobile && index < startDayIndex) {
+            const prevMonth = month === 0 ? 11 : month - 1;
+            const prevYear = month === 0 ? year - 1 : year;
+            const daysInPrevMonth = dayjs(new Date(prevYear, prevMonth, 1)).daysInMonth();
+            const prevDay = daysInPrevMonth - (startDayIndex - index - 1);
+
+            return <CalendarItem key={`prev-${index}`} day={prevDay} href="#" disabled />;
+          }
+
+          // --- Следующий месяц ---
+          if (!isMobile && dayNumber > daysInMonth) {
+            const nextDay = dayNumber - daysInMonth;
+
+            return <CalendarItem key={`next-${index}`} day={nextDay} href="#" disabled />;
+          }
+
+          // --- Пропустить пустые ячейки на мобильном ---
+          if (isMobile && (index < startDayIndex || dayNumber > daysInMonth)) {
+            return null;
+          }
+
+          // --- Текущий месяц ---
           const date = dayjs(new Date(year, month, dayNumber)).format('YYYY-MM-DD');
           const minutes = timeMap.get(date) ?? 0;
           const workMinutes = workMap.get(date) ?? 0;
-
-          // Расчёт процента (0–100), защита от деления на 0
           const percentage = Math.round((workMinutes / (minutes === 0 ? 480 : minutes)) * 100);
 
           return (

@@ -12,8 +12,10 @@ interface IJuniorListProps {
 const JuniorList = ({ selectedUserId, onChangeUser, juniors }: IJuniorListProps) => {
   const crmId = useCurrentUserStore((store) => store.elmaId) ?? '';
   const fullName = useCurrentUserStore((store) => store.fullName) ?? '';
-
+  const isAdmin = useCurrentUserStore((store) => store.isAdmin);
   const isMentor = useCurrentUserStore((store) => store.isMentor);
+
+  const isPermission = isMentor || isAdmin;
 
   const options: RenderGroupOption[] = useMemo(
     () => [
@@ -33,7 +35,7 @@ const JuniorList = ({ selectedUserId, onChangeUser, juniors }: IJuniorListProps)
   );
 
   return (
-    isMentor && <RenderGroup options={options} value={selectedOption} onChange={onChangeUser} />
+    isPermission && <RenderGroup options={options} value={selectedOption} onChange={onChangeUser} />
   );
 };
 
