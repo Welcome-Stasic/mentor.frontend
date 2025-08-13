@@ -9,6 +9,7 @@ import {
   USER_CRM,
   USER_CRM_ALL,
   USER_GET_ALL,
+  USER_GET_ALL_JUNIORS,
   USER_GET_JUNIORS,
   USER_GET_MENTOR,
   USER_GET_REFERRAL_LINK,
@@ -27,6 +28,7 @@ import {
   IBindingToCrmDto,
   ICrmUser,
   ICrmUserVm,
+  IGetAllJuniorsDto,
   IJunior,
   IMentor,
   IUserPhoto,
@@ -152,6 +154,25 @@ export async function getJuniors(
   return res.data;
 }
 
+export async function getAllJuniors(
+  params: IGetAllJuniorsDto,
+  token: string,
+): Promise<IApiResponse<IJunior[]> | null> {
+  if (!token) return null;
+
+  const { includeOnly, userIds } = params;
+
+  const authAxios = await getAuthAxios(token);
+  const res = await authAxios.get<IApiResponse<IJunior[]>>(USER_GET_ALL_JUNIORS, {
+    params: {
+      includeOnly,
+      userIds: userIds.join(','),
+    },
+  });
+
+  return res.data;
+}
+
 export async function getMentor(
   userId: string,
   token: string,
@@ -257,9 +278,7 @@ export async function allLogOutUser(
   return res.data;
 }
 
-export async function getAllCrmUsers(
-  token: string,
-): Promise<IApiResponse<ICrmUserVm[]> | null> {
+export async function getAllCrmUsers(token: string): Promise<IApiResponse<ICrmUserVm[]> | null> {
   if (!token) return null;
 
   const authAxios = await getAuthAxios(token);

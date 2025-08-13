@@ -21,6 +21,7 @@ export const USER_GET_REFERRAL_LINK = 'User/GetReferralLink';
 export const USER_GET_TIME_REPORT = 'User/Time/Report';
 export const USER_GET_TIME_Work = 'User/Time/Work';
 export const USER_GET_JUNIORS = 'User/Juniors';
+export const USER_GET_ALL_JUNIORS = 'User/GetAllJuniors';
 export const USER_GET_MENTOR = 'User/Mentor';
 export const USER_GET_ROLES = 'User/GetRoles';
 export const USER_ASSIGN_ROLE = 'User/AssignRole';

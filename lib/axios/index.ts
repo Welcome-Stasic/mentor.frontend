@@ -2,7 +2,7 @@ import { crmLogin, forgotPassword, getRefreshToken, isEmailConfirmed, isValidAcc
 import { me } from './requests/me';
 import { addAnswersToQuestions, getAll, getAllQuizStatues, getAnswersToQuestions, getById, quizCrmProcessing, quizDelete, quizDownload, update, updateFirstStage } from './requests/quiz';
 import { getDepartmentAll } from './requests/department';
-import { allLogOutUser, assignUserRole, bindingToCrm, deleteUser, getAllCrmUsers, getAllUsers, getCrmUserById, getJuniors, getMentor, getReferralLink, getReportTime, getUserById, getUserPhoto, getUserRoles, getWorkTime, removeUserRole, updatePhotoCurrentUser } from './requests/user';
+import { allLogOutUser, assignUserRole, bindingToCrm, deleteUser, getAllCrmUsers, getAllJuniors, getAllUsers, getCrmUserById, getJuniors, getMentor, getReferralLink, getReportTime, getUserById, getUserPhoto, getUserRoles, getWorkTime, removeUserRole, updatePhotoCurrentUser } from './requests/user';
 import { getAllInstitution, getByIdInstitution } from './requests/institution';
 import { approveTime, cancelApproveTime, createTime, deleteTime, getApproveTimeInfo, updateTime } from './requests/time';
 import { deleteProject, getAllProjects, getCreateProject, getUpdateProject } from './requests/project';
@@ -37,7 +37,8 @@ export const API = {
     assignUserRole,
     removeUserRole,
     getAllCrmUsers,
-    bindingToCrm
+    bindingToCrm,
+    getAllJuniors
   },
   quiz: {
     getById,

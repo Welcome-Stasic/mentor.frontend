@@ -105,3 +105,8 @@ export interface IBindingToCrmDto {
   appId: string,
   crmId: string,
 }
+
+export interface IGetAllJuniorsDto {
+  includeOnly?: boolean | null,
+  userIds: number[],
+}
