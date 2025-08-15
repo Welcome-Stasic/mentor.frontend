@@ -37,7 +37,7 @@ export const CurrentUserStoreProvider = ({ children }: UserStoreProviderProps) =
       storeRef.current?.setState(initialState);
     }
   };
-
+  
   useEffect(() => {
     load(accessToken);
   }, [accessToken]);

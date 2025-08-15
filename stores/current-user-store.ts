@@ -14,12 +14,15 @@ export type CurrentUserState = {
   juniorIds: number[];
   selectedTimeUserId?: string | null;
   fullName: string;
+  onlineUserIds: string[]
 };
 
 export type CurrentUserActions = {
   setQuiz: (quiz: IQuiz | null) => void;
   setSelectedTimeUser: (id: string) => void;
-};
+  setOnlineUser: (id: string) => void;
+  removeOnlineUser: (userId: string) => void;
+}
 
 export type CurrentUserStore = CurrentUserState & CurrentUserActions;
 
@@ -33,7 +36,8 @@ export const defaultInitState: CurrentUserState = {
   isMentor: false,
   juniorIds: [],
   selectedTimeUserId: null,
-  fullName: ''
+  fullName: '',
+  onlineUserIds: []
 };
 
 export const initCurrentUserState = async (
@@ -58,7 +62,8 @@ export const initCurrentUserState = async (
       isAdmin,
       isMentor: false,
       juniorIds: [],
-      fullName: me.fullName ?? ''
+      fullName: me.fullName ?? '',
+      onlineUserIds: []
     };
 
     // CRM: фото пользователя
@@ -107,7 +112,19 @@ export const createCurrentUserStore = (initState: CurrentUserState = defaultInit
         setQuiz: (quiz: IQuiz | null) => {
           set((state) => ({ ...state.quiz, quiz }));
         },
-        setSelectedTimeUser: (id: string) => set({ selectedTimeUserId: id })
+        setSelectedTimeUser: (id: string) => set({ selectedTimeUserId: id }),
+        setOnlineUser: (userId: string) => {
+          set((state) => ({
+            onlineUserIds: state.onlineUserIds.includes(userId)
+              ? state.onlineUserIds
+              : [...state.onlineUserIds, userId],
+          }));
+        },
+        removeOnlineUser: (userId: string) => {
+          set((state) => ({
+            onlineUserIds: state.onlineUserIds.filter((id) => id !== userId),
+          }));
+        },
       }),
       { name: 'CurrentUserStore' },
     ),

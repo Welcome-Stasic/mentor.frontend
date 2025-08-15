@@ -2,6 +2,7 @@ import { Dialog, DialogContent, Skeleton, Tooltip } from '@mui/material';
 import StatusAvatar from './StatusAvatar';
 import { useState, useCallback, useMemo } from 'react';
 import { useUserPhoto } from '@/hooks/useUserPhoto';
+import { useCurrentUserStore } from '@/providers/current-user-provider';
 
 interface IUserPhotoProps {
   userId: string;
@@ -12,7 +13,15 @@ interface IUserPhotoProps {
   isNeedOpenPhoto?: boolean;
 }
 
-export const UserPhoto = ({ userId, isOnline, elmaPhotoUrl, isNeedOpenPhoto = true, ...props }: IUserPhotoProps) => {
+export const UserPhoto = ({
+  userId,
+  isOnline,
+  elmaPhotoUrl,
+  isNeedOpenPhoto = true,
+  ...props
+}: IUserPhotoProps) => {
+  //const isOnline = useCurrentUserStore((i) => i.onlineUserIds.includes(userId));
+
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const photoResult = useUserPhoto(userId, elmaPhotoUrl);
 
@@ -26,7 +35,7 @@ export const UserPhoto = ({ userId, isOnline, elmaPhotoUrl, isNeedOpenPhoto = tr
 
   const hasPhoto = Boolean(photoUrl);
 
-  const isLoading = Boolean(!userId || photoResult.isLoading || !photoUrl);
+  const isLoading = Boolean(!userId || photoResult.isLoading);
 
   return (
     <>
