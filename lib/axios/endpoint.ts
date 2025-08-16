@@ -27,6 +27,7 @@ export const USER_GET_ROLES = 'User/GetRoles';
 export const USER_ASSIGN_ROLE = 'User/AssignRole';
 export const USER_REMOVE_ROLE = 'User/RemoveRole';
 export const USER_BINDING_TO_CRM = 'User/BindingToCrm';
+export const USER_UPDATE_EMAIL = 'User/UpdateEmail';
 
 export const QUIZ = 'Quiz';
 export const QUIZ_ALL = 'Quiz/GetAll';

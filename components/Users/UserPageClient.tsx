@@ -37,6 +37,7 @@ import { useRemoveUserRole } from '@/hooks/user/useRemoveUserRole';
 import { useLogOutUser } from '@/hooks/user/useLogOutUser';
 import { useCrmUsers } from '@/hooks/user/useCrmUsers';
 import { useBindingToCrm } from '@/hooks/user/useBindingToCrm';
+import EmailInput from '../ui/EmailInput';
 
 const allAvailableRoles = Object.entries(USER_ROLES);
 type CrmUserOption = { label: string; id: string };
@@ -164,7 +165,7 @@ export const UserPageClient = ({ userId }: IUserPageClientProps) => {
         <CardContent>
           {/* User Info Section */}
           <Box mb={4}>
-            <Box mb={2}>
+            <Box mb={2} display="flex" gap={2} flexDirection="column">
               <Autocomplete
                 disablePortal
                 disabled={!!crmUser}
@@ -177,6 +178,11 @@ export const UserPageClient = ({ userId }: IUserPageClientProps) => {
                 sx={{ width: { sm: 300 } }}
                 renderInput={(params) => <TextField {...params} label="Пользователь ELMA" />}
               />
+              {isUserLoading || !user ? (
+                <Skeleton width="30%" />
+              ) : (
+                <EmailInput userId={user.id} email={user?.email ?? ''} />
+              )}
             </Box>
             <Grid container spacing={2}>
               <Grid size={{ xs: 12, sm: 6 }}>

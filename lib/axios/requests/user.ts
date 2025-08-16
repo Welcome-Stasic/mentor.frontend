@@ -19,6 +19,7 @@ import {
   USER_ME_UPDATE_PHOTO,
   USER_PHOTO_INFO,
   USER_REMOVE_ROLE,
+  USER_UPDATE_EMAIL,
 } from '../endpoint';
 import { IApiResponse, IPaginationResponse } from '../types/base';
 import { IReportTime, IWorkTime } from '../types/time';
@@ -31,6 +32,7 @@ import {
   IGetAllJuniorsDto,
   IJunior,
   IMentor,
+  IUpdateUserEmailDto,
   IUserPhoto,
   IUserRefLink,
 } from '../types/user';
@@ -295,6 +297,18 @@ export async function bindingToCrm(
 
   const authAxios = await getAuthAxios(token);
   const res = await authAxios.post<IApiResponse<boolean>>(USER_BINDING_TO_CRM, payload);
+
+  return res.data;
+}
+
+export async function updateEmail(
+  payload: IUpdateUserEmailDto,
+  token: string,
+): Promise<IApiResponse<IApplicationUser> | null> {
+  if (!token) return null;
+
+  const authAxios = await getAuthAxios(token);
+  const res = await authAxios.post<IApiResponse<IApplicationUser>>(USER_UPDATE_EMAIL, payload);
 
   return res.data;
 }

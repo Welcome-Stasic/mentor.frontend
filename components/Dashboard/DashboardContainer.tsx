@@ -30,7 +30,7 @@ export default function DashboardContainer({ children }: { children: React.React
   const handleDrawerClose = () => {
     setOpen(false);
   };
-
+  //useOnlineSignalR();
   return (
     <Box sx={{ display: 'flex' }}>
       <Header open={open} handleDrawerOpen={handleDrawerOpen} />

@@ -106,6 +106,12 @@ export interface IBindingToCrmDto {
   crmId: string,
 }
 
+export interface IUpdateUserEmailDto  {
+  userId: string,
+  email: string,
+  emailConfirmed?: boolean | null,
+}
+
 export interface IGetAllJuniorsDto {
   includeOnly?: boolean | null,
   userIds: number[],
