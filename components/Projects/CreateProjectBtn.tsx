@@ -5,7 +5,11 @@ import { useCreateProject } from '@/hooks/project/useCreateProject';
 import { ICreateProjectDto } from '@/lib/axios/types/project';
 import ProjectDialog, { IProjectDialogFormData } from './ProjectDialog';
 
-const CreateProjectBtn = () => {
+interface ICreateProjectBtnProps {
+  userId: string;
+}
+
+const CreateProjectBtn = ({ userId }: ICreateProjectBtnProps) => {
   const [open, setOpen] = useState(false);
 
   const handleOpen = () => setOpen(true);
@@ -16,6 +20,7 @@ const CreateProjectBtn = () => {
   const mutateAsync = async (data: IProjectDialogFormData) => {
     const body: ICreateProjectDto = {
       name: data.name,
+      userId,
     };
 
     await createProject.mutateAsync(body);
@@ -23,7 +28,7 @@ const CreateProjectBtn = () => {
 
   return (
     <>
-      <IconButton color="primary" onClick={handleOpen} >
+      <IconButton color="primary" onClick={handleOpen}>
         <AddIcon />
       </IconButton>
 

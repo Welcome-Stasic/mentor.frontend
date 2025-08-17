@@ -40,6 +40,7 @@ export default function RenderGroup({ options, onChange, label, value = null }: 
       value={value}
       options={options}
       groupBy={(option) => option.group}
+      getOptionKey={(option) => option.value}
       getOptionLabel={(option) => option.title}
       onChange={(_, value) => {
         if (value) onChange(value.value);
