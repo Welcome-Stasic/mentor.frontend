@@ -10,11 +10,13 @@ import {
   SelectChangeEvent,
   IconButton,
   Tooltip,
+  Snackbar,
+  Alert,
 } from '@mui/material';
 import SaveIcon from '@mui/icons-material/Save';
 import { useUpdateEmail } from '@/hooks/user/useUpdateEmail';
 
-const emailProviders = ['yandex.ru', 'eriskip.ru'];
+const emailProviders = ['yandex.ru', 'eriskip.ru', 'eriskip.com', 'eriskip.net'];
 
 interface IEmailInputProps {
   email: string;
@@ -32,11 +34,17 @@ const EmailInput = ({ email = '', userId }: IEmailInputProps) => {
 
   const [localPart, setLocalPart] = useState(initLocal);
   const [domain, setDomain] = useState(initDomain);
+  const [error, setError] = useState<string | null>(null);
 
   const updateEmail = useUpdateEmail();
 
   const handleEmailChange = async () => {
     if (!localPart || !domain) return;
+
+    if (!emailProviders.includes(domain)) {
+      setError(`Домен "${domain}" не разрешён`);
+      return;
+    }
 
     const newEmail = `${localPart}@${domain}`;
 
@@ -60,44 +68,61 @@ const EmailInput = ({ email = '', userId }: IEmailInputProps) => {
     const pasted = e.clipboardData.getData('text');
 
     const { localPart: pLocal, domain: pDomain } = parseEmail(pasted);
-    setLocalPart(pLocal);
-    setDomain(pDomain);
+
+    if (pDomain && emailProviders.includes(pDomain)) {
+      setLocalPart(pLocal);
+      setDomain(pDomain);
+    } else {
+      setError(`Домен "${pDomain}" не разрешён`);
+    }
   };
 
   return (
-    <Box display="flex" alignItems="center" gap={1}>
-      {/* username */}
-      <TextField
-        label="Почта"
-        value={localPart}
-        onChange={handleLocalChange}
-        onPaste={handlePaste}
-        size="small"
-        sx={{ maxWidth: 150 }}
-      />
+    <>
+      <Box display="flex" alignItems="center" gap={1}>
+        {/* username */}
+        <TextField
+          label="Почта"
+          value={localPart}
+          onChange={handleLocalChange}
+          onPaste={handlePaste}
+          size="small"
+          sx={{ maxWidth: 150 }}
+        />
 
-      <Typography>@</Typography>
+        <Typography>@</Typography>
 
-      {/* domain */}
-      <Select value={domain} onChange={handleDomainChange} size="small" sx={{ maxWidth: 150 }}>
-        {[...new Set([...emailProviders, domain].filter(Boolean))].map((prov) => (
-          <MenuItem key={prov} value={prov}>
-            {prov}
-          </MenuItem>
-        ))}
-      </Select>
+        {/* domain */}
+        <Select value={domain} onChange={handleDomainChange} size="small" sx={{ maxWidth: 150 }}>
+          {emailProviders.map((prov) => (
+            <MenuItem key={prov} value={prov}>
+              {prov}
+            </MenuItem>
+          ))}
+        </Select>
 
-      <Tooltip title="Поменять почту">
-        <IconButton
-          loading={updateEmail.isPending}
-          disabled={!Boolean(localPart) || !Boolean(domain)}
-          color="success"
-          onClick={handleEmailChange}
-          aria-label="d">
-          <SaveIcon />
-        </IconButton>
-      </Tooltip>
-    </Box>
+        <Tooltip title="Поменять почту">
+          <IconButton
+            loading={updateEmail.isPending}
+            disabled={!localPart || !domain || !emailProviders.includes(domain)}
+            color="success"
+            onClick={handleEmailChange}
+            aria-label="d">
+            <SaveIcon />
+          </IconButton>
+        </Tooltip>
+      </Box>
+      {/* Snackbar для ошибок */}
+      <Snackbar
+        open={Boolean(error)}
+        autoHideDuration={3000}
+        onClose={() => setError(null)}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}>
+        <Alert severity="error" onClose={() => setError(null)}>
+          {error}
+        </Alert>
+      </Snackbar>
+    </>
   );
 };
 

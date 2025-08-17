@@ -1,5 +1,6 @@
 'use client';
 
+import EmailInput from '@/components/ui/EmailInput';
 import { useUserJuniors } from '@/hooks/user/useUserJuniors';
 import { useCurrentUserStore } from '@/providers/current-user-provider';
 import {
@@ -35,10 +36,11 @@ export default function MyJuniorsPage() {
       ) : (
         <Grid container spacing={2}>
           {juniors.map((junior) => (
-            <Grid key={junior.id} size={{ xs: 12, sm: 6, md: 4, lg: 3, xl: 2 }}>
+            <Grid key={junior.id} size={{ xs: 12, sm: 6, md: 4, xl: 3 }}>
               <Card
                 sx={{
                   width: '100%',
+                  height: '100%',
                   display: 'flex',
                   flexDirection: 'column',
                   borderRadius: 2,
@@ -50,23 +52,13 @@ export default function MyJuniorsPage() {
                   image={junior.photoUrl ?? '/assets/default-avatar.png'}
                   alt={junior.name}
                 />
-                <CardContent sx={{ flexGrow: 1 }}>
+                <CardContent sx={{ flexGrow: 1, gap: 1, display: 'flex', flexDirection: 'column' }}>
                   <Typography variant="h6" gutterBottom>
-                    {(() => {
-                      const nameParts = junior.name?.trim().split(' ') ?? [];
-                      const [lastName = '', firstName = '', middleName = ''] = nameParts;
-                      return (
-                        <>
-                          {`${lastName} ${firstName}`}
-                          {middleName && <br />}
-                          {middleName}
-                        </>
-                      );
-                    })()}
+                    {junior.name}
                   </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    Почта: {junior.email}
-                  </Typography>
+                  <Box>
+                    <EmailInput userId={junior.appId} email={junior.email} />
+                  </Box>
                   <Typography variant="body2" color="text.secondary">
                     Телефон: {junior.phone}
                   </Typography>

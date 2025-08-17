@@ -81,6 +81,7 @@ export interface IJunior{
   mentorId: number | null;
   photoUrl: string;
   email: string;
+  appId: string;
   phone: string;
   departmentId: number | null;
   departmentName: string;
