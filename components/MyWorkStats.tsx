@@ -28,7 +28,12 @@ export const MyWorkStats = () => {
   const formattedReported = formatMinutesToTimeString(totalReportedMinutes);
   const formattedWorked = formatMinutesToTimeString(totalWorkMinutes);
 
-  const progress = Math.min(100, Math.round((totalWorkMinutes / (totalReportedMinutes === 0 ? 480 : totalReportedMinutes)) * 100));
+  const progress = Math.min(
+    100,
+    Math.round(
+      (totalWorkMinutes / (totalReportedMinutes === 0 ? 480 : totalReportedMinutes)) * 100,
+    ),
+  );
 
   const color = getColorByPercentage(progress);
 
@@ -47,7 +52,7 @@ export const MyWorkStats = () => {
         alignItems="center"
         justifyContent="space-between"
         bgcolor="#f0f0f0"
-        px={1}
+        pr={1}
         py={0.5}
         mt={1}
         borderRadius={1}>
@@ -77,7 +82,14 @@ export const MyWorkStats = () => {
         {isLoading ? (
           <Skeleton width={250} height={18} />
         ) : (
-          `Общее время ${formattedReported}, заполненное время ${formattedWorked}`
+          <Box display="flex" gap={1} flexWrap="wrap">
+            <Typography variant='caption' textTransform='uppercase'>
+              Отработано: <strong>{formattedReported}</strong>
+            </Typography>
+            <Typography variant='caption' textTransform='uppercase'>
+              Заполнено: <strong>{formattedWorked}</strong>
+            </Typography>
+          </Box>
         )}
       </Typography>
     </Box>

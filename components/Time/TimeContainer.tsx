@@ -193,7 +193,7 @@ const TimeContainer = ({ userId, dateIn, dateOut }: ITimeContainer) => {
                 ))
               : groupedByProject.map(([project, times]) => (
                   <React.Fragment key={project}>
-                    <TableRow sx={{ backgroundColor: '#f5f5f5' }}>
+                    <TableRow sx={{ backgroundColor: '#c9c7c7ff' }}>
                       <TableCell colSpan={5}>
                         <Typography variant="subtitle2">{project}</Typography>
                       </TableCell>
