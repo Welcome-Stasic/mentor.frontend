@@ -31,6 +31,11 @@ export default function TimeTrackingClient() {
 
   const setSelectedTimeUser = useCurrentUserStore((store) => store.setSelectedTimeUser);
 
+  const onChangeUser = (id: string) => {
+    const userId = id || crmId;
+    setSelectedTimeUser(userId);
+  };
+
   const isPermission = crmId !== selectedTimeUserId || isAdmin;
 
   const [currentDate, setCurrentDate] = useState<Dayjs>(dateParam ?? dayjs());
@@ -70,7 +75,7 @@ export default function TimeTrackingClient() {
           <JuniorList
             selectedUserId={selectedTimeUserId}
             juniors={juniors}
-            onChangeUser={setSelectedTimeUser}
+            onChangeUser={onChangeUser}
           />
         </Box>
         {isPermission && <TimeApprovalForm crmUserId={selectedTimeUserId} date={currentDate} />}

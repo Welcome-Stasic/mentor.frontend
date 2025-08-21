@@ -29,12 +29,9 @@ export const JuniorStatisticItem = ({ userId, name }: IJuniorStatisticItem) => {
   const formattedReported = formatMinutesToTimeString(totalReportedMinutes);
   const formattedWorked = formatMinutesToTimeString(totalWorkMinutes);
 
-  const progress = Math.min(
-    100,
-    Math.round(
+  const progress = Math.round(
       (totalWorkMinutes / (totalReportedMinutes === 0 ? 480 : totalReportedMinutes)) * 100,
-    ),
-  );
+    );
   const color = getColorByPercentage(progress);
 
   return (
@@ -52,7 +49,7 @@ export const JuniorStatisticItem = ({ userId, name }: IJuniorStatisticItem) => {
         alignItems="center"
         justifyContent="space-between"
         bgcolor="#f0f0f0"
-        pr={1}
+        px={1}
         py={0.5}
         mt={1}
         borderRadius={1}>
@@ -64,6 +61,8 @@ export const JuniorStatisticItem = ({ userId, name }: IJuniorStatisticItem) => {
               variant="determinate"
               value={Math.min(progress, 100)}
               sx={{
+                borderRadius: 4,
+                height: 8,
                 '& .MuiLinearProgress-bar': {
                   backgroundColor: color,
                 },

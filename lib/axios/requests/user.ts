@@ -195,6 +195,8 @@ export async function getAllUsers(
     sortColumn?: string;
     sortDirection?: string;
     search?: string;
+    includeOnly?: boolean;
+    userIds?: string[];
   } = {},
 ): Promise<IApiResponse<IPaginationResponse<IApplicationUser>> | null> {
   try {

@@ -87,7 +87,7 @@ export default function Header({ handleDrawerOpen, open }: IHeaderProps) {
                 <UserPhoto
                   userId={id}
                   isOnline
-                  elmaPhotoUrl={picture ?? photoUrl ?? ''}
+                  elmaPhotoUrl={picture || photoUrl || ''}
                   width={46}
                   height={46}
                   isNeedOpenPhoto={false}

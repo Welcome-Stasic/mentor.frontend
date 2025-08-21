@@ -32,18 +32,19 @@ interface RenderGroupProps {
   options: RenderGroupOption[];
   onChange: (value: string) => void;
   label: string;
+  isGrouped?: boolean
 }
 
-export default function RenderGroup({ options, onChange, label, value = null }: RenderGroupProps) {
+export default function RenderGroup({ options, onChange, label, value = null, isGrouped = true }: RenderGroupProps) {
   return (
     <Autocomplete
       value={value}
       options={options}
-      groupBy={(option) => option.group}
+      groupBy={isGrouped ? (option) => option.group : undefined}
       getOptionKey={(option) => option.value}
       getOptionLabel={(option) => option.title}
       onChange={(_, value) => {
-        if (value) onChange(value.value);
+        onChange(value?.value ?? '');
       }}
       sx={{ width: { sm: 300 } }}
       renderInput={(params) => <TextField {...params} label={label} />}

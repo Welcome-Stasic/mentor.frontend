@@ -28,11 +28,8 @@ export const MyWorkStats = () => {
   const formattedReported = formatMinutesToTimeString(totalReportedMinutes);
   const formattedWorked = formatMinutesToTimeString(totalWorkMinutes);
 
-  const progress = Math.min(
-    100,
-    Math.round(
-      (totalWorkMinutes / (totalReportedMinutes === 0 ? 480 : totalReportedMinutes)) * 100,
-    ),
+  const progress = Math.round(
+    (totalWorkMinutes / (totalReportedMinutes === 0 ? 480 : totalReportedMinutes)) * 100,
   );
 
   const color = getColorByPercentage(progress);
@@ -52,7 +49,7 @@ export const MyWorkStats = () => {
         alignItems="center"
         justifyContent="space-between"
         bgcolor="#f0f0f0"
-        pr={1}
+        px={1}
         py={0.5}
         mt={1}
         borderRadius={1}>
@@ -62,7 +59,7 @@ export const MyWorkStats = () => {
           ) : (
             <LinearProgress
               variant="determinate"
-              value={progress}
+              value={Math.min(progress, 100)}
               sx={{
                 height: 8,
                 borderRadius: 4,
@@ -83,10 +80,10 @@ export const MyWorkStats = () => {
           <Skeleton width={250} height={18} />
         ) : (
           <Box display="flex" gap={1} flexWrap="wrap">
-            <Typography variant='caption' textTransform='uppercase'>
+            <Typography variant="caption" textTransform="uppercase">
               Отработано: <strong>{formattedReported}</strong>
             </Typography>
-            <Typography variant='caption' textTransform='uppercase'>
+            <Typography variant="caption" textTransform="uppercase">
               Заполнено: <strong>{formattedWorked}</strong>
             </Typography>
           </Box>

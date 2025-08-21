@@ -33,12 +33,17 @@ export default function ProjectsPage() {
     }
   }, [currentUserId]);
 
+  const onChangeUser = (id: string) => {
+    const userId = id || currentUserId;
+    setSelectedUserId(userId);
+  }
+
   const isMentor = useCurrentUserStore((store) => store.isMentor);
   const isAdmin = useCurrentUserStore((store) => store.isAdmin);
 
   const projectResult = useProjects(selectedUserId);
   const projects = projectResult?.data ?? [];
-  const isLoading = projectResult.isPending || !projects;
+  const isLoading = projectResult.isPending;
 
   const groupedByProject = useMemo(() => {
     const groups = new Map<string, typeof projects>();
@@ -63,7 +68,7 @@ export default function ProjectsPage() {
   return (
     <>
       <Box sx={{ mb: '4px' }}>
-        <ProjectUserList selectedUserId={selectedUserId} onChangeUser={setSelectedUserId} />
+        <ProjectUserList selectedUserId={selectedUserId} onChangeUser={onChangeUser} />
       </Box>
       <Box
         sx={{

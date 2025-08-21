@@ -48,7 +48,6 @@ export const UserPhoto = ({
           isLoading={isLoading}
         />
       </Tooltip>
-
       {isNeedOpenPhoto && hasPhoto && (
         <Dialog
           open={isDialogOpen}
