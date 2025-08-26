@@ -5,36 +5,62 @@ import { ICreateTimeDto } from '@/lib/axios/types/time';
 import TimeDialog, { ITimeDialogFormData } from './TimeDialog';
 import { useCreateWorkTime } from '@/hooks/useCreateWorkTime';
 import { useProjects } from '@/hooks/project/useProjects';
+import { useValidateMinutes } from '@/hooks/useValidateMinutes';
 
 interface Props {
   userId: string;
   date: string;
   disable?: boolean;
+  totalReportMinutes: number;
+  totalWorkMinutes: number;
 }
 
-const CreateTimeBtn = ({ userId, date, disable = false }: Props) => {
+const CreateTimeBtn = ({
+  userId,
+  date,
+  totalReportMinutes,
+  totalWorkMinutes,
+  disable = false,
+}: Props) => {
+  const validateMinutes = useValidateMinutes(totalReportMinutes, totalWorkMinutes);
+
   const projectsResult = useProjects(userId);
 
   const projects = projectsResult?.data ?? [];
 
   const [open, setOpen] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
+  const handleClose = () => {
+    setError(null);
+    setOpen(false);
+  };
 
   const createWorkTime = useCreateWorkTime();
 
   const mutateAsync = async (data: ITimeDialogFormData) => {
+    setError(null);
+
+    const minutes = data.minutes ?? 0;
+    const validationError = validateMinutes(minutes);
+
+    if (validationError) {
+      setError(validationError);
+      return;
+    }
+
     const body: ICreateTimeDto = {
       crmUserId: Number(userId),
       project: data.project ?? '',
-      minutes: data.minutes ?? 0,
+      minutes,
       comment: data.description ?? '',
       task: data.task,
       date,
     };
 
     await createWorkTime.mutateAsync(body);
+    handleClose();
   };
 
   return (
@@ -50,6 +76,7 @@ const CreateTimeBtn = ({ userId, date, disable = false }: Props) => {
         handleMutate={mutateAsync}
         isLoading={createWorkTime.isPending}
         projects={projects}
+        error={error}
       />
     </>
   );

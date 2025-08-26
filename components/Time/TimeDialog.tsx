@@ -15,6 +15,7 @@ import {
   MenuItem,
   Select,
   TextField,
+  Typography,
 } from '@mui/material';
 import { useEffect } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
@@ -27,6 +28,7 @@ interface ITimeDialog {
   handleMutate: (dto: ITimeDialogFormData) => void;
   isLoading: boolean;
   projects: IProjectVm[];
+  error?: string | null;
 }
 export interface ITimeDialogFormData {
   task: string;
@@ -43,6 +45,7 @@ const TimeDialog = ({
   isLoading,
   time = null,
   projects,
+  error,
 }: ITimeDialog) => {
   const isEditable = type === 'create' || time?.type === 2;
 
@@ -69,7 +72,6 @@ const TimeDialog = ({
 
   const onSubmit: SubmitHandler<ITimeDialogFormData> = async (data) => {
     handleMutate(data);
-    handleClose();
     reset();
   };
 
@@ -155,6 +157,12 @@ const TimeDialog = ({
             error={!!errors.minutes}
             helperText={errors.minutes?.message}
           />
+
+          {error && (
+            <Typography color="error" sx={{ mt: 1 }}>
+              {error}
+            </Typography>
+          )}
 
           <DialogActions>
             <Button onClick={handleClose} variant="outlined" color="error">

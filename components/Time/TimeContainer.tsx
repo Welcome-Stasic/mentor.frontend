@@ -91,7 +91,7 @@ const TimeContainer = ({ userId, dateIn, dateOut }: ITimeContainer) => {
   return (
     <>
       <Typography variant="h6">{dayjs(dateIn).locale('ru').format('DD MMMM YYYY')}</Typography>
-      
+
       <Box
         sx={{
           display: 'flex',
@@ -160,7 +160,13 @@ const TimeContainer = ({ userId, dateIn, dateOut }: ITimeContainer) => {
           mb: '4px',
         }}>
         <Typography variant="caption">Занести трудозатраты</Typography>
-        <CreateTimeBtn userId={userId} date={dateIn} disable={approved} />
+        <CreateTimeBtn
+          userId={userId}
+          date={dateIn}
+          disable={approved}
+          totalReportMinutes={totalReportMinutes === 0 ? 480 : totalReportMinutes}
+          totalWorkMinutes={totalWorkMinutes}
+        />
       </Box>
 
       <TableContainer component={Paper}>
@@ -210,7 +216,15 @@ const TimeContainer = ({ userId, dateIn, dateOut }: ITimeContainer) => {
                           <TableCell>{time.comment}</TableCell>
                           <TableCell>{formattedTime}</TableCell>
                           <TableCell>
-                            <UpdateTimeBtn userId={userId} time={time} disable={approved} />
+                            <UpdateTimeBtn
+                              userId={userId}
+                              time={time}
+                              disable={approved}
+                              totalReportMinutes={
+                                totalReportMinutes === 0 ? 480 : totalReportMinutes
+                              }
+                              totalWorkMinutes={totalWorkMinutes}
+                            />
                             <DeleteTimeBtnWithConfirmation time={time} disable={approved} />
                           </TableCell>
                         </TableRow>
