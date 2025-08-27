@@ -35,7 +35,7 @@ interface IFormData {
 const validationRules = {
   login: {
     required: 'Логин обязателен',
-    minLength: { value: 6, message: 'Некорректный логин' },
+    minLength: { value: 2, message: 'Некорректный логин' },
   },
   password: {
     required: 'Пароль обязателен',
