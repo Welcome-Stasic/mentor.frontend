@@ -38,7 +38,7 @@ const TimeContainer = ({ userId, dateIn, dateOut }: ITimeContainer) => {
   const workTime = useWorkTime(userId, firstDayOfMonthStr, lastDayOfMonthStr);
 
   const isLoading =
-    reportTime.isLoading || workTime.isLoading;
+    reportTime.isLoading || workTime.isLoading || !reportTime.data || !workTime?.data;
 
   const totalReportMinutes = reportTime?.data?.minutes ?? 0;
   const reportHours = Math.floor(totalReportMinutes / 60);
