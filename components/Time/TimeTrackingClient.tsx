@@ -53,8 +53,7 @@ export default function TimeTrackingClient() {
   const reportTime = useReportTime(selectedTimeUserId, firstDay, lastDay);
   const workTimes = useWorkTime(selectedTimeUserId, firstDay, lastDay);
 
-  const isLoading =
-    reportTime.isLoading || workTimes.isLoading || !reportTime.data || !workTimes.data;
+  const isLoading = reportTime.isLoading || workTimes.isLoading;
 
   const totalReportedMinutes = reportTime?.data?.minutes ?? 0;
   const totalWorkMinutes = workTimes?.data?.reduce((sum, i) => sum + (i.minutes ?? 0), 0) ?? 0;

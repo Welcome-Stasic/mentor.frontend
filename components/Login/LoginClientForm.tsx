@@ -39,7 +39,7 @@ const validationRules = {
   },
   password: {
     required: 'Пароль обязателен',
-    minLength: { value: 6, message: 'Пароль должен содержать минимум 6 символов' },
+    minLength: { value: 2, message: 'Пароль должен содержать минимум 2 символа' },
   },
 };
 
