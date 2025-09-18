@@ -21,7 +21,7 @@ export const useInstitution = (id: number | undefined) => {
   const accessToken = session.data?.user.accessToken || '';
 
   return useQuery({
-    queryKey: ['institutions'],
+    queryKey: ['institutions', id],
     queryFn: () => API.institution.getByIdInstitution(id ?? 0, accessToken),
     enabled: !!accessToken || !!id,
     select: (data) => data?.Result || null,
