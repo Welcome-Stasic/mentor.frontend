@@ -24,6 +24,8 @@ import { useSearchParams } from 'next/navigation';
 import { errorMessages } from '@/lib/utils/errorMessages';
 import BackdropLoader from '../BackdropLoader';
 import Link from 'next/link';
+import { signIn } from 'next-auth/react';
+import TokenSignInClient from '../TokenSignInClient';
 
 interface IFormData {
   login: string;
@@ -95,9 +97,11 @@ export default function LoginClientForm() {
       setIsLoading(false);
     }
   };
-
+  
   return (
     <>
+      {/* <TokenSignInClient accessToken={token} /> */}
+
       <BackdropLoader open={isLoading} />
       <Grid
         component="form"
