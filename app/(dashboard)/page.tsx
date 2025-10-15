@@ -22,6 +22,10 @@ import { QRCodeSVG } from 'qrcode.react';
 import { JuniorStatistics } from '@/components/JuniorStatistics/JuniorStatistics';
 import { MyWorkStats } from '@/components/MyWorkStats';
 import { useCurrentUserStore } from '@/providers/current-user-provider';
+import "dayjs/locale/ru"; // импортируем русскую локаль
+import dayjs from 'dayjs';
+
+dayjs.locale("ru");
 
 type LinkItem = {
   title: string;
@@ -102,8 +106,9 @@ export default function HomePage() {
         width={isMobile ? '100%' : 800}
         display="flex"
         flexDirection="column"
-        gap={2}
+        gap={1}
         order={isMobile ? 1 : 2}>
+        <Typography variant="caption" color="textSecondary" textTransform='uppercase'>Часы за {dayjs().format("MMMM YYYY года")}</Typography>
         <MyWorkStats />
         {isMentor && <JuniorStatistics />}
       </Box>

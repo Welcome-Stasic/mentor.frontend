@@ -97,7 +97,9 @@ export default function LoginClientForm() {
       setIsLoading(false);
     }
   };
-  
+
+  const token = '';
+
   return (
     <>
       {/* <TokenSignInClient accessToken={token} /> */}

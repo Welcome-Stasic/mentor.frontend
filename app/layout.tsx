@@ -3,6 +3,7 @@ import './globals.css';
 import Providers from '@/components/Providers';
 import { SITE_BASE_NAME } from '@/constants';
 
+
 const pageUrl = `${process.env.NEXT_PUBLIC_SITE_URL}`;
 
 export const metadata: Metadata = {
