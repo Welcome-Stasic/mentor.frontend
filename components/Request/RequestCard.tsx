@@ -154,7 +154,7 @@ export const RequestCard = ({ quiz, departments, statues }: IRequestCardProps) =
               onChange={handleDepartmentChange}
               size="small"
               fullWidth
-              disabled={quiz.crmWorkflowinstance > 0 || !isPermission}>
+              disabled={!isPermission}>
               {departments?.map((dep) => (
                 <MenuItem key={dep.id} value={dep.id}>
                   {dep.name}

@@ -25,7 +25,7 @@ export const CmrProcessingBtn = ({
       <IconButton
         onClick={handleCmrProcessing}
         loading={crmProcessing.isPending}
-        disabled={!quiz.selectedDepartmentId || crmWorkflowinstance > 0 || disable}>
+        disabled={!quiz.selectedDepartmentId || disable}>
         <ForkRightIcon />
       </IconButton>
     </Tooltip>
