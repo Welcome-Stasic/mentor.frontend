@@ -6,6 +6,7 @@ import { getColorByPercentage } from '@/lib/utils/getColorByPercentage';
 import {
   Box,
   LinearProgress,
+  Link,
   Paper,
   Skeleton,
   Table,
@@ -212,20 +213,20 @@ const TimeContainer = ({ userId, dateIn, dateOut }: ITimeContainer) => {
 
                     return (
                       <TableRow key={time.entityId}>
-                        <TableCell sx={{ maxWidth: 500 }}>{time.task}</TableCell>
+                        <TableCell sx={{ maxWidth: 500 }}>{time.url ? <Link href={time.url} target='_blank'>{time.task}</Link> : time.task}</TableCell>
                         <TableCell>{time.comment}</TableCell>
                         <TableCell>{formattedTime}</TableCell>
                         <TableCell>
                           <UpdateTimeBtn
                             userId={userId}
                             time={time}
-                            disable={approved}
+                            disable={approved || time.type === 1}
                             totalReportMinutes={
                               totalReportMinutes === 0 ? 480 : totalReportMinutes
                             }
                             totalWorkMinutes={totalWorkMinutes}
                           />
-                          <DeleteTimeBtnWithConfirmation time={time} disable={approved} />
+                          <DeleteTimeBtnWithConfirmation time={time} disable={approved || time.type === 1} />
                         </TableCell>
                       </TableRow>
                     );

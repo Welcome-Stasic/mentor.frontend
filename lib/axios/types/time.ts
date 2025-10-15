@@ -6,6 +6,7 @@ export interface IWorkTime {
   project: string;
   task: string;
   comment: string;
+  url: string;
 }
 
 export interface IReportTime {
@@ -20,7 +21,7 @@ export interface IReportTime {
   timeItems: IReportTimeItem[]
 }
 
-export  interface IReportTimeItem {
+export interface IReportTimeItem {
   timeIn: string;
   timeOut: string;
   fullTime: number;
