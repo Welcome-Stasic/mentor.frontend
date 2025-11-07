@@ -24,6 +24,7 @@ import DeleteTimeBtnWithConfirmation from './DeleteTimeWithConfirmation';
 import UpdateTimeBtn from './UpdateTime';
 import CreateTimeBtn from './CreateTime';
 import { useApproveTimeInfo } from '@/hooks/time/useApproveTimeInfo';
+import { useCurrentUserStore } from '@/providers/current-user-provider';
 
 interface ITimeContainer {
   userId: string;
@@ -32,6 +33,9 @@ interface ITimeContainer {
 }
 
 const TimeContainer = ({ userId, dateIn, dateOut }: ITimeContainer) => {
+  const currentUserIsAdmin = useCurrentUserStore(store => store.isAdmin);
+  const currentUserIsMentor = useCurrentUserStore(store => store.isMentor);
+
   const firstDayOfMonthStr = dayjs(dateIn).format('YYYY-MM-DD');
   const lastDayOfMonthStr = dayjs(dateOut).format('YYYY-MM-DD');
 
@@ -74,6 +78,7 @@ const TimeContainer = ({ userId, dateIn, dateOut }: ITimeContainer) => {
     year: dayjs(dateIn).year(),
   });
 
+  const isPermissionUser = currentUserIsAdmin || currentUserIsMentor;
   const approved = !!approveInfo?.data;
 
   const groupedByProject = useMemo(() => {
@@ -164,7 +169,7 @@ const TimeContainer = ({ userId, dateIn, dateOut }: ITimeContainer) => {
         <CreateTimeBtn
           userId={userId}
           date={dateIn}
-          disable={approved}
+          disable={(approved && !isPermissionUser)}
           totalReportMinutes={totalReportMinutes === 0 ? 480 : totalReportMinutes}
           totalWorkMinutes={totalWorkMinutes}
         />
@@ -220,13 +225,14 @@ const TimeContainer = ({ userId, dateIn, dateOut }: ITimeContainer) => {
                           <UpdateTimeBtn
                             userId={userId}
                             time={time}
-                            disable={approved || time.type === 1}
+                            disable={approved && !isPermissionUser}
                             totalReportMinutes={
                               totalReportMinutes === 0 ? 480 : totalReportMinutes
                             }
+                            isPermissionUser
                             totalWorkMinutes={totalWorkMinutes}
                           />
-                          <DeleteTimeBtnWithConfirmation time={time} disable={approved || time.type === 1} />
+                          <DeleteTimeBtnWithConfirmation time={time} disable={(approved && !isPermissionUser) || time.type === 1} />
                         </TableCell>
                       </TableRow>
                     );

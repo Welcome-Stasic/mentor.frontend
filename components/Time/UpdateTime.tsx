@@ -13,6 +13,7 @@ interface Props {
   disable?: boolean;
   totalReportMinutes: number;
   totalWorkMinutes: number;
+  isPermissionUser: boolean;
 }
 
 const UpdateTimeBtn = ({
@@ -20,6 +21,7 @@ const UpdateTimeBtn = ({
   time,
   totalReportMinutes,
   totalWorkMinutes,
+  isPermissionUser,
   disable = false,
 }: Props) => {
   const validateMinutes = useValidateMinutes(totalReportMinutes, totalWorkMinutes);
@@ -41,7 +43,7 @@ const UpdateTimeBtn = ({
     const minutes = data.minutes ?? 0;
     const validationError = validateMinutes(minutes, time.minutes ?? 0);
 
-    if (validationError) {
+    if (validationError && !isPermissionUser) {
       setError(validationError);
       return;
     }
