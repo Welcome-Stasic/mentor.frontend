@@ -195,7 +195,6 @@ export const RequestCard = ({ quiz, departments, statues }: IRequestCardProps) =
             <CmrProcessingBtn
               quiz={quiz}
               disable={!isPermission}
-              crmWorkflowinstance={quiz.crmWorkflowinstance}
             />
             <DeleteRequestBtn quiz={quiz} disable={!isPermission} />
           </Box>
