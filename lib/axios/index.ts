@@ -6,6 +6,7 @@ import { allLogOutUser, assignUserRole, bindingToCrm, deleteUser, getAllCrmUsers
 import { getAllInstitution, getByIdInstitution } from './requests/institution';
 import { approveTime, cancelApproveTime, createTime, deleteTime, getApproveTimeInfo, updateTime } from './requests/time';
 import { deleteProject, getAllProjects, getCreateProject, getUpdateProject } from './requests/project';
+import { getWorkflowInstanceStatus } from './requests/workflowInstance';
 
 export const API = {
   auth: {
@@ -77,5 +78,8 @@ export const API = {
   admin: {
     deleteUser,
     allLogOutUser
+  },
+  workflowInstance: {
+    getWorkflowInstanceStatus
   }
 };

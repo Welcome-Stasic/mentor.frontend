@@ -59,3 +59,5 @@ export const PROJECT_DELETE = 'Project/Delete'
 
 export const ADMIN_DELETE_USER = 'Admin/DeleteUser'
 export const ADMIN_LOG_OUT_USER = 'Admin/LogOutUser'
+
+export const WORKFLOW_INSTANCE_GET_STATUS = 'WorkflowInstance/Status'

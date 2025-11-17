@@ -5,6 +5,7 @@ const nextConfig: NextConfig = {
     domains: ['randomuser.me', 'eriskip.com', 'selstorage.ru', 'avatars.yandex.net'],
   },
   output: 'standalone',
+  productionBrowserSourceMaps: false,
 };
 
 export default nextConfig;
