@@ -1,5 +1,5 @@
 'use client';
-
+import { useSearchParams, useRouter } from 'next/navigation';
 import { useQuizzes } from '@/hooks/useQuizzes';
 import {
   Box,
@@ -16,7 +16,7 @@ import {
   styled,
   Skeleton,
 } from '@mui/material';
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import { RequestCard } from './RequestCard';
 import { useDepartments } from '@/hooks/useDepartments';
 import { useQuizStatues } from '@/hooks/useQuizStatues';
@@ -47,11 +47,22 @@ const StyledChip = styled(Chip)(({ theme }) => ({
 }));
 
 export const RequestContainer = () => {
-  const [category, setCategory] = useState<IQuizStatus>({ id: '', name: 'Все', quizCount: 0 });
-  const [page, setPage] = useState<number>(1);
-  const [search, setSearch] = useState<string>('');
-  const [sortOrder, setSortOrder] = useState<'newest' | 'oldest'>('newest');
+  const searchParams = useSearchParams();
+  const router = useRouter();
 
+  const statusUrl = searchParams.get('status') || '';
+  const searchUrl = searchParams.get('search') || '';
+  const sortUrl = (searchParams.get('sortOrder') as 'newest' | 'oldest') || 'newest';
+  const pageUrl = Number(searchParams.get('page') || 1);
+
+  const [category, setCategory] = useState<IQuizStatus>({
+    id: '',
+    name: 'Все',
+    quizCount: 0,
+  });
+  const [page, setPage] = useState(pageUrl);
+  const [search, setSearch] = useState(searchUrl);
+  const [sortOrder, setSortOrder] = useState(sortUrl);
   const { data, isLoading, isError } = useQuizzes({
     pageNumber: page,
     pageSize: ITEMS_PER_PAGE,
@@ -75,22 +86,70 @@ export const RequestContainer = () => {
     return [{ id: '', name: 'Все', quizCount: totalQuizCount }, ...allQuizStatues];
   }, [allQuizStatues]);
 
+  useEffect(() => {
+    if (!statues) {
+      return;
+    } 
+    const found = statues.find(s => s.id === statusUrl);
+    if (found) {
+      setCategory(found)
+    };
+
+    setSearch(searchUrl);
+    setSortOrder(sortUrl);
+    setPage(pageUrl);
+
+  }, [statues]);
+
+  const updateUrl = (newParams: Record<string, string | number | null>) => {
+    const params = new URLSearchParams(searchParams.toString());
+
+    Object.entries(newParams).forEach(([key, value]) => {
+      if (value === null || value === '') {
+        params.delete(key);
+      } else {
+        params.set(key, String(value))
+      };
+    });
+
+    router.replace(`?${params}`);
+  };
+
   const handleCategoryChange = (selectedCategory: IQuizStatus) => {
     setCategory(selectedCategory);
     setPage(1);
+    updateUrl({
+      status: selectedCategory.id,
+      page: 1
+    });
   };
 
-  const handlePageChange = (_: React.ChangeEvent<unknown>, value: number) => {
-    setPage(value);
-  };
-
-  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setSearch(event.target.value);
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setSearch(value);
     setPage(1);
+
+    updateUrl({
+      search: value,
+      page: 1
+    });
+  };
+
+  const handlePageChange = (_: any, value: number) => {
+    setPage(value);
+
+    updateUrl({
+      page: value
+    });
   };
 
   const handleSortChange = (event: SelectChangeEvent) => {
-    setSortOrder(event.target.value as 'newest' | 'oldest');
+    const value = event.target.value as 'newest' | 'oldest';
+    setSortOrder(value);
+
+    updateUrl({
+      sortOrder: value
+    });
   };
 
   return (
