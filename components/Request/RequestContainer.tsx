@@ -1,5 +1,4 @@
 'use client';
-import { useSearchParams, useRouter } from 'next/navigation';
 import { useQuizzes } from '@/hooks/useQuizzes';
 import {
   Box,
@@ -16,6 +15,7 @@ import {
   styled,
   Skeleton,
 } from '@mui/material';
+import { parseAsInteger, useQueryState } from "nuqs";
 import { useMemo, useState, useEffect } from 'react';
 import { RequestCard } from './RequestCard';
 import { useDepartments } from '@/hooks/useDepartments';
@@ -47,26 +47,20 @@ const StyledChip = styled(Chip)(({ theme }) => ({
 }));
 
 export const RequestContainer = () => {
-  const searchParams = useSearchParams();
-  const router = useRouter();
-
-  const statusUrl = searchParams.get('status') || '';
-  const searchUrl = searchParams.get('search') || '';
-  const sortUrl = (searchParams.get('sortOrder') as 'newest' | 'oldest') || 'newest';
-  const pageUrl = Number(searchParams.get('page') || 1);
+  const [statusUrl, setStatusUrl] = useQueryState("status", { defaultValue: "" });
+  const [pageUrl, setPageUrl] = useQueryState("page", parseAsInteger.withDefault(1),);
+  const [sortUrl, setSortUrl] = useQueryState("sort", { defaultValue: "" });
+  const [search, setSearch] = useQueryState("search", { defaultValue: "" });
 
   const [category, setCategory] = useState<IQuizStatus>({
     id: '',
     name: 'Все',
     quizCount: 0,
   });
-  const [page, setPage] = useState(pageUrl);
-  const [search, setSearch] = useState(searchUrl);
-  const [sortOrder, setSortOrder] = useState(sortUrl);
   const { data, isLoading, isError } = useQuizzes({
-    pageNumber: page,
+    pageNumber: pageUrl,
     pageSize: ITEMS_PER_PAGE,
-    sortDirection: sortOrder === 'newest' ? 'desc' : 'asc',
+    sortDirection: sortUrl === 'newest' ? 'desc' : 'asc',
     statusId: category.id,
     search,
   });
@@ -94,62 +88,28 @@ export const RequestContainer = () => {
     if (found) {
       setCategory(found)
     };
-
-    setSearch(searchUrl);
-    setSortOrder(sortUrl);
-    setPage(pageUrl);
-
   }, [statues]);
 
-  const updateUrl = (newParams: Record<string, string | number | null>) => {
-    const params = new URLSearchParams(searchParams.toString());
-
-    Object.entries(newParams).forEach(([key, value]) => {
-      if (value === null || value === '') {
-        params.delete(key);
-      } else {
-        params.set(key, String(value))
-      };
-    });
-
-    router.replace(`?${params}`);
-  };
 
   const handleCategoryChange = (selectedCategory: IQuizStatus) => {
     setCategory(selectedCategory);
-    setPage(1);
-    updateUrl({
-      status: selectedCategory.id,
-      page: 1
-    });
+    setPageUrl(1);
+    setStatusUrl(selectedCategory.id);
   };
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setSearch(value);
-    setPage(1);
-
-    updateUrl({
-      search: value,
-      page: 1
-    });
+    setPageUrl(1);
   };
 
   const handlePageChange = (_: any, value: number) => {
-    setPage(value);
-
-    updateUrl({
-      page: value
-    });
+    setPageUrl(value);
   };
 
   const handleSortChange = (event: SelectChangeEvent) => {
     const value = event.target.value as 'newest' | 'oldest';
-    setSortOrder(value);
-
-    updateUrl({
-      sortOrder: value
-    });
+    setSortUrl(value);
   };
 
   return (
@@ -185,7 +145,7 @@ export const RequestContainer = () => {
             <InputLabel id="sort-select-label">Сортировка по дате</InputLabel>
             <Select
               labelId="sort-select-label"
-              value={sortOrder}
+              value={sortUrl}
               onChange={handleSortChange}
               label="Сортировка по дате">
               <MenuItem value="newest">Сначала новые</MenuItem>
@@ -234,7 +194,7 @@ export const RequestContainer = () => {
         <Box mt={4} display="flex" justifyContent="center">
           <Pagination
             count={pageCount}
-            page={page}
+            page={pageUrl}
             onChange={handlePageChange}
             color="primary"
             shape="rounded"
