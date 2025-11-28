@@ -1,11 +1,11 @@
-'use client';
+"use client";
 
-import CreateProjectBtn from '@/components/Projects/CreateProjectBtn';
-import DeleteProjectWithConfirmationBtn from '@/components/Projects/DeleteProjectWithConfirmationBtn';
-import ProjectUserList from '@/components/Projects/ProjectUserList';
-import UpdateProjectBtn from '@/components/Projects/UpdateProjectBtn';
-import { useProjects } from '@/hooks/project/useProjects';
-import { useCurrentUserStore } from '@/providers/current-user-provider';
+import CreateProjectBtn from "@/components/Projects/CreateProjectBtn";
+import DeleteProjectWithConfirmationBtn from "@/components/Projects/DeleteProjectWithConfirmationBtn";
+import ProjectUserList from "@/components/Projects/ProjectUserList";
+import UpdateProjectBtn from "@/components/Projects/UpdateProjectBtn";
+import { useProjects } from "@/hooks/project/useProjects";
+import { useCurrentUserStore } from "@/providers/current-user-provider";
 import {
   Box,
   Paper,
@@ -17,9 +17,9 @@ import {
   TableHead,
   TableRow,
   Typography,
-} from '@mui/material';
-import React, { useEffect, useState } from 'react';
-import { useMemo } from 'react';
+} from "@mui/material";
+import React, { useEffect, useState } from "react";
+import { useMemo } from "react";
 
 export default function ProjectsPage() {
   const currentUserId = useCurrentUserStore((store) => store.id);
@@ -36,19 +36,23 @@ export default function ProjectsPage() {
   const onChangeUser = (id: string) => {
     const userId = id || currentUserId;
     setSelectedUserId(userId);
-  }
+  };
 
   const isMentor = useCurrentUserStore((store) => store.isMentor);
   const isAdmin = useCurrentUserStore((store) => store.isAdmin);
 
   const projectResult = useProjects(selectedUserId);
-  const projects = projectResult?.data ?? [];
+  const projects = useMemo(
+    () => projectResult?.data || [],
+    [projectResult?.data]
+  );
+  // const projects = projectResult?.data ?? [];
   const isLoading = projectResult.isPending;
 
   const groupedByProject = useMemo(() => {
     const groups = new Map<string, typeof projects>();
     projects.forEach((project) => {
-      const user = project.createUserFullName?.trim() || 'Без имени';
+      const user = project.createUserFullName?.trim() || "Без имени";
       if (!groups.has(user)) {
         groups.set(user, []);
       }
@@ -67,17 +71,21 @@ export default function ProjectsPage() {
 
   return (
     <>
-      <Box sx={{ mb: '4px' }}>
-        <ProjectUserList selectedUserId={selectedUserId} onChangeUser={onChangeUser} />
+      <Box sx={{ mb: "4px" }}>
+        <ProjectUserList
+          selectedUserId={selectedUserId}
+          onChangeUser={onChangeUser}
+        />
       </Box>
       <Box
         sx={{
-          display: 'flex',
-          gap: '5px',
-          alignItems: 'center',
-          justifyContent: 'flex-start',
-          mb: '4px',
-        }}>
+          display: "flex",
+          gap: "5px",
+          alignItems: "center",
+          justifyContent: "flex-start",
+          mb: "4px",
+        }}
+      >
         <Typography variant="caption">Создать проект</Typography>
         <CreateProjectBtn userId={selectedUserId} />
       </Box>
@@ -109,18 +117,22 @@ export default function ProjectsPage() {
               ? // если наставник → показываем сгруппированные проекты
                 groupedByProject.map(([user, userProjects]) => (
                   <React.Fragment key={user}>
-                    <TableRow sx={{ backgroundColor: '#c9c7c7ff' }}>
+                    <TableRow sx={{ backgroundColor: "#c9c7c7ff" }}>
                       <TableCell colSpan={2}>
                         <Typography variant="subtitle2">{user}</Typography>
                       </TableCell>
                     </TableRow>
                     {userProjects.map((project) => (
                       <TableRow key={project.id}>
-                        <TableCell sx={{ maxWidth: 500 }}>{project.name}</TableCell>
+                        <TableCell sx={{ maxWidth: 500 }}>
+                          {project.name}
+                        </TableCell>
                         <TableCell align="right">
                           <Box display="flex" gap={1} justifyContent="flex-end">
                             <UpdateProjectBtn project={project} />
-                            <DeleteProjectWithConfirmationBtn project={project} />
+                            <DeleteProjectWithConfirmationBtn
+                              project={project}
+                            />
                           </Box>
                         </TableCell>
                       </TableRow>

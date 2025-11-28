@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from "react";
 import {
   Box,
   Button,
@@ -12,12 +12,13 @@ import {
   Stack,
   Typography,
   useTheme,
-} from '@mui/material';
-import CloseIcon from '@mui/icons-material/Close';
-import { useConsent } from '@/hooks/useConsent';
+} from "@mui/material";
+import CloseIcon from "@mui/icons-material/Close";
+import { useConsent } from "@/hooks/useConsent";
 
 export default function ConsentBanner() {
-  const { isBannerShow, setConsent, analytics, marketing, loading } = useConsent();
+  const { isBannerShow, setConsent, analytics, marketing, loading } =
+    useConsent();
 
   const [open, setOpen] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
@@ -31,7 +32,7 @@ export default function ConsentBanner() {
     setOpen(isBannerShow);
     setSelectedAnalytics(analytics);
     setSelectedMarketing(marketing);
-  }, [isBannerShow]);
+  }, [isBannerShow, analytics, marketing]);
 
   const handleAcceptAll = () => {
     setConsent({
@@ -67,14 +68,15 @@ export default function ConsentBanner() {
     <Paper
       elevation={3}
       sx={{
-        position: 'fixed',
+        position: "fixed",
         bottom: 16,
         left: 16,
         right: 16,
         maxWidth: 500,
         p: 2,
         zIndex: theme.zIndex.snackbar + 1,
-      }}>
+      }}
+    >
       <Box display="flex" justifyContent="space-between" alignItems="center">
         <Typography fontWeight="bold">Мы используем Cookies</Typography>
         <IconButton onClick={handleClose} size="small">
@@ -83,11 +85,17 @@ export default function ConsentBanner() {
       </Box>
 
       <Typography variant="body2" mt={1} mb={2}>
-        Продолжая использовать наш сайт, вы соглашаетесь с{' '}
-        <Link href="https://736bdfa4-5434-475b-8d49-2ca263ead6cc.selstorage.ru/assets/agreements.pdf" target="_blank" rel="noopener" color="info">
+        Продолжая использовать наш сайт, вы соглашаетесь с{" "}
+        <Link
+          href="https://736bdfa4-5434-475b-8d49-2ca263ead6cc.selstorage.ru/assets/agreements.pdf"
+          target="_blank"
+          rel="noopener"
+          color="info"
+        >
           политикой использования Cookies
         </Link>
-        . Это файлы, которые помогают сделать ваш опыт взаимодействия с сайтом удобнее.
+        . Это файлы, которые помогают сделать ваш опыт взаимодействия с сайтом
+        удобнее.
       </Typography>
 
       {!settingsOpen ? (
@@ -95,19 +103,36 @@ export default function ConsentBanner() {
           <Button fullWidth variant="contained" onClick={handleAcceptAll}>
             Согласен со всеми
           </Button>
-          <Button fullWidth variant="outlined" onClick={() => setSettingsOpen(true)}>
+          <Button
+            fullWidth
+            variant="outlined"
+            onClick={() => setSettingsOpen(true)}
+          >
             Настроить
           </Button>
         </Stack>
       ) : (
         <>
-          <FormControlLabel control={<Checkbox checked disabled />} label="Обязательные" />
           <FormControlLabel
-            control={<Checkbox checked={selectedAnalytics} onChange={handleToggleAnalytics} />}
+            control={<Checkbox checked disabled />}
+            label="Обязательные"
+          />
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={selectedAnalytics}
+                onChange={handleToggleAnalytics}
+              />
+            }
             label="Аналитические"
           />
           <FormControlLabel
-            control={<Checkbox checked={selectedMarketing} onChange={handleToggleMarketing} />}
+            control={
+              <Checkbox
+                checked={selectedMarketing}
+                onChange={handleToggleMarketing}
+              />
+            }
             label="Маркетинговые"
           />
           <Button fullWidth variant="contained" onClick={handleAcceptSelected}>

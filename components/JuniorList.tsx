@@ -1,8 +1,8 @@
-import { IJunior } from '@/lib/axios/types/user';
-import { useCurrentUserStore } from '@/providers/current-user-provider';
-import React, { useMemo } from 'react';
-import RenderGroup, { RenderGroupOption } from './ui/RenderGroup';
-import { useAllJuniors } from '@/hooks/user/useAllJuniors';
+import { IJunior } from "@/lib/axios/types/user";
+import { useCurrentUserStore } from "@/providers/current-user-provider";
+import React, { useMemo } from "react";
+import RenderGroup, { RenderGroupOption } from "./ui/RenderGroup";
+import { useAllJuniors } from "@/hooks/user/useAllJuniors";
 
 interface IJuniorListProps {
   selectedUserId: string;
@@ -10,9 +10,13 @@ interface IJuniorListProps {
   juniors: IJunior[];
 }
 
-const JuniorList = ({ selectedUserId, onChangeUser, juniors }: IJuniorListProps) => {
-  const crmId = useCurrentUserStore((store) => store.elmaId) ?? '';
-  const fullName = useCurrentUserStore((store) => store.fullName) ?? '';
+const JuniorList = ({
+  selectedUserId,
+  onChangeUser,
+  juniors,
+}: IJuniorListProps) => {
+  const crmId = useCurrentUserStore((store) => store.elmaId) ?? "";
+  const fullName = useCurrentUserStore((store) => store.fullName) ?? "";
   const isAdmin = useCurrentUserStore((store) => store.isAdmin);
   const isMentor = useCurrentUserStore((store) => store.isMentor);
 
@@ -23,31 +27,36 @@ const JuniorList = ({ selectedUserId, onChangeUser, juniors }: IJuniorListProps)
       includeOnly: juniors.length > 0 ? false : null,
       userIds: juniors.map((i) => i.id),
     },
-    isAdmin,
+    isAdmin
   );
 
-  const allJuniors = allJuniorsResult?.data ?? [];
+  // const allJuniors = allJuniorsResult?.data ?? [];
+
+  const allJuniors = useMemo(
+    () => allJuniorsResult?.data || [],
+    [allJuniorsResult?.data]
+  );
 
   const options: RenderGroupOption[] = useMemo(
     () => [
-      { group: 'Мои трудозатраты', title: fullName, value: crmId },
+      { group: "Мои трудозатраты", title: fullName, value: crmId },
       ...juniors.map((j) => ({
-        group: 'Мои стажеры',
+        group: "Мои стажеры",
         title: j.name,
         value: String(j.id),
       })),
       ...allJuniors.map((j) => ({
-        group: 'Все остальные',
+        group: "Все остальные",
         title: j.name,
         value: String(j.id),
       })),
     ],
-    [crmId, fullName, juniors, allJuniors],
+    [crmId, fullName, juniors, allJuniors]
   );
 
   const selectedOption = useMemo(
     () => options.find((opt) => opt.value === selectedUserId),
-    [options, selectedUserId],
+    [options, selectedUserId]
   );
 
   return (

@@ -1,17 +1,76 @@
-import { crmLogin, forgotPassword, getRefreshToken, isEmailConfirmed, isValidAccessToken, login, logOut, refreshToken, register, resetPassword, yandexLogin } from './requests/auth';
-import { me } from './requests/me';
-import { addAnswersToQuestions, getAll, getAllQuizStatues, getAnswersToQuestions, getById, quizCrmProcessing, quizDelete, quizDownload, update, updateFirstStage } from './requests/quiz';
-import { getDepartmentAll } from './requests/department';
-import { allLogOutUser, assignUserRole, bindingToCrm, deleteUser, getAllCrmUsers, getAllJuniors, getAllUsers, getCrmUserById, getJuniors, getMentor, getReferralLink, getReportTime, getUserById, getUserPhoto, getUserRoles, getWorkTime, removeUserRole, updateEmail, updatePhotoCurrentUser } from './requests/user';
-import { getAllInstitution, getByIdInstitution } from './requests/institution';
-import { approveTime, cancelApproveTime, createTime, deleteTime, getApproveTimeInfo, updateTime } from './requests/time';
-import { deleteProject, getAllProjects, getCreateProject, getUpdateProject } from './requests/project';
-import { getWorkflowInstanceStatus } from './requests/workflowInstance';
+import {
+  crmLogin,
+  forgotPassword,
+  getRefreshToken,
+  isEmailConfirmed,
+  isValidAccessToken,
+  login,
+  logOut,
+  refreshToken,
+  register,
+  resetPassword,
+  yandexLogin,
+  googleLogin,
+  // sendSMSCode,
+  // loginBySMSCode,
+} from "./requests/auth";
+import { me } from "./requests/me";
+import {
+  addAnswersToQuestions,
+  getAll,
+  getAllQuizStatues,
+  getAnswersToQuestions,
+  getById,
+  quizCrmProcessing,
+  quizDelete,
+  quizDownload,
+  update,
+  updateFirstStage,
+} from "./requests/quiz";
+import { getDepartmentAll } from "./requests/department";
+import {
+  allLogOutUser,
+  assignUserRole,
+  bindingToCrm,
+  deleteUser,
+  getAllCrmUsers,
+  getAllJuniors,
+  getAllUsers,
+  getCrmUserById,
+  getJuniors,
+  getMentor,
+  getReferralLink,
+  getReportTime,
+  getUserById,
+  getUserPhoto,
+  getUserRoles,
+  getWorkTime,
+  removeUserRole,
+  updateEmail,
+  updatePhotoCurrentUser,
+} from "./requests/user";
+import { getAllInstitution, getByIdInstitution } from "./requests/institution";
+import {
+  approveTime,
+  cancelApproveTime,
+  createTime,
+  deleteTime,
+  getApproveTimeInfo,
+  updateTime,
+} from "./requests/time";
+import {
+  deleteProject,
+  getAllProjects,
+  getCreateProject,
+  getUpdateProject,
+} from "./requests/project";
 
 export const API = {
   auth: {
     login,
     crmLogin,
+    // sendSMSCode,
+    // loginBySMSCode,
     refreshToken,
     register,
     forgotPassword,
@@ -20,7 +79,8 @@ export const API = {
     getRefreshToken,
     logOut,
     isValidAccessToken,
-    yandexLogin
+    yandexLogin,
+    googleLogin,
   },
   user: {
     me,
@@ -40,7 +100,7 @@ export const API = {
     getAllCrmUsers,
     bindingToCrm,
     getAllJuniors,
-    updateEmail
+    updateEmail,
   },
   quiz: {
     getById,
@@ -52,14 +112,14 @@ export const API = {
     getAnswersToQuestions,
     quizDelete,
     quizDownload,
-    quizCrmProcessing
+    quizCrmProcessing,
   },
   department: {
-    getAll: getDepartmentAll
+    getAll: getDepartmentAll,
   },
   institution: {
     getAllInstitution,
-    getByIdInstitution
+    getByIdInstitution,
   },
   time: {
     updateTime,
@@ -67,13 +127,13 @@ export const API = {
     deleteTime,
     cancelApproveTime,
     approveTime,
-    getApproveTimeInfo
+    getApproveTimeInfo,
   },
   project: {
     getAllProjects,
     getCreateProject,
     getUpdateProject,
-    deleteProject
+    deleteProject,
   },
   admin: {
     deleteUser,

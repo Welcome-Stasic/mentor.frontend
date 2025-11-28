@@ -16,7 +16,7 @@ import {
 import SaveIcon from '@mui/icons-material/Save';
 import { useUpdateEmail } from '@/hooks/user/useUpdateEmail';
 
-const emailProviders = ['yandex.ru', 'eriskip.ru', 'eriskip.com', 'eriskip.net'];
+const emailProviders = ['google.com', 'yandex.ru', 'eriskip.ru', 'eriskip.com', 'eriskip.net'];
 
 interface IEmailInputProps {
   email: string;
