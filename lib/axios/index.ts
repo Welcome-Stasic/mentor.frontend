@@ -64,6 +64,7 @@ import {
   getCreateProject,
   getUpdateProject,
 } from "./requests/project";
+import { getWorkflowInstanceStatus } from "./requests/workflowInstance";
 
 export const API = {
   auth: {

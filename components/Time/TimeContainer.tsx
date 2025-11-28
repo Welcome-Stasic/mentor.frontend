@@ -24,6 +24,7 @@ import DeleteTimeBtnWithConfirmation from "./DeleteTimeWithConfirmation";
 import UpdateTimeBtn from "./UpdateTime";
 import CreateTimeBtn from "./CreateTime";
 import { useApproveTimeInfo } from "@/hooks/time/useApproveTimeInfo";
+import { useCurrentUserStore } from "@/providers/current-user-provider";
 
 interface ITimeContainer {
   userId: string;
@@ -32,6 +33,9 @@ interface ITimeContainer {
 }
 
 const TimeContainer = ({ userId, dateIn, dateOut }: ITimeContainer) => {
+  const currentUserIsAdmin = useCurrentUserStore(store => store.isAdmin);
+  const currentUserIsMentor = useCurrentUserStore(store => store.isMentor);
+
   const firstDayOfMonthStr = dayjs(dateIn).format("YYYY-MM-DD");
   const lastDayOfMonthStr = dayjs(dateOut).format("YYYY-MM-DD");
 
@@ -75,7 +79,7 @@ const TimeContainer = ({ userId, dateIn, dateOut }: ITimeContainer) => {
 
   const percentage = Math.round(
     (totalWorkMinutes / (totalReportMinutes === 0 ? 480 : totalReportMinutes)) *
-      100
+    100
   );
 
   const color = getColorByPercentage(percentage);
@@ -183,7 +187,7 @@ const TimeContainer = ({ userId, dateIn, dateOut }: ITimeContainer) => {
         <CreateTimeBtn
           userId={userId}
           date={dateIn}
-          disable={approved}
+          disable={(approved && !isPermissionUser)}
           totalReportMinutes={
             totalReportMinutes === 0 ? 480 : totalReportMinutes
           }
@@ -204,71 +208,67 @@ const TimeContainer = ({ userId, dateIn, dateOut }: ITimeContainer) => {
           <TableBody>
             {isLoading
               ? Array.from({ length: 3 }).map((_, idx) => (
-                  <TableRow key={idx}>
-                    <TableCell>
-                      <Skeleton width="80%" />
-                    </TableCell>
-                    <TableCell>
-                      <Skeleton width="100%" />
-                    </TableCell>
-                    <TableCell>
-                      <Skeleton width="40%" />
-                    </TableCell>
-                    <TableCell>
-                      <Skeleton variant="circular" width={24} height={24} />
+                <TableRow key={idx}>
+                  <TableCell>
+                    <Skeleton width="80%" />
+                  </TableCell>
+                  <TableCell>
+                    <Skeleton width="100%" />
+                  </TableCell>
+                  <TableCell>
+                    <Skeleton width="40%" />
+                  </TableCell>
+                  <TableCell>
+                    <Skeleton variant="circular" width={24} height={24} />
+                  </TableCell>
+                </TableRow>
+              ))
+              : groupedByProject.map(([project, times]) => (
+                <React.Fragment key={project}>
+                  <TableRow sx={{ backgroundColor: "#c9c7c7ff" }}>
+                    <TableCell colSpan={5}>
+                      <Typography variant="subtitle2">{project}</Typography>
                     </TableCell>
                   </TableRow>
-                ))
-              : groupedByProject.map(([project, times]) => (
-                  <React.Fragment key={project}>
-                    <TableRow sx={{ backgroundColor: "#c9c7c7ff" }}>
-                      <TableCell colSpan={5}>
-                        <Typography variant="subtitle2">{project}</Typography>
-                      </TableCell>
-                    </TableRow>
-                    {times.map((time) => {
-                      const totalMinutes = time.minutes ?? 0;
-                      const hours = Math.floor(totalMinutes / 60);
-                      const minutes = totalMinutes % 60;
-                      const formattedTime = `${hours}:${minutes
-                        .toString()
-                        .padStart(2, "0")}`;
+                  {times.map((time) => {
+                    const totalMinutes = time.minutes ?? 0;
+                    const hours = Math.floor(totalMinutes / 60);
+                    const minutes = totalMinutes % 60;
+                    const formattedTime = `${hours}:${minutes
+                      .toString()
+                      .padStart(2, "0")}`;
 
-                      return (
-                        <TableRow key={time.entityId}>
-                          <TableCell sx={{ maxWidth: 500 }}>
-                            {time.url ? (
-                              <Link href={time.url} target="_blank">
-                                {time.task}
-                              </Link>
-                            ) : (
-                              time.task
-                            )}
-                          </TableCell>
-                          <TableCell>{time.comment}</TableCell>
-                          <TableCell>{formattedTime}</TableCell>
-                          <TableCell>
-                            <UpdateTimeBtn
-                              userId={userId}
-                              time={time}
-                              disable={approved || time.type === 1}
-                              totalReportMinutes={
-                                totalReportMinutes === 0
-                                  ? 480
-                                  : totalReportMinutes
-                              }
-                              totalWorkMinutes={totalWorkMinutes}
-                            />
-                            <DeleteTimeBtnWithConfirmation
-                              time={time}
-                              disable={approved || time.type === 1}
-                            />
-                          </TableCell>
-                        </TableRow>
-                      );
-                    })}
-                  </React.Fragment>
-                ))}
+                    return (
+                      <TableRow key={time.entityId}>
+                        <TableCell sx={{ maxWidth: 500 }}>
+                          {time.url ? (
+                            <Link href={time.url} target="_blank">
+                              {time.task}
+                            </Link>
+                          ) : (
+                            time.task
+                          )}
+                        </TableCell>
+                        <TableCell>{time.comment}</TableCell>
+                        <TableCell>{formattedTime}</TableCell>
+                        <TableCell>
+                          <UpdateTimeBtn
+                            userId={userId}
+                            time={time}
+                            disable={approved && !isPermissionUser}
+                            totalReportMinutes={
+                              totalReportMinutes === 0 ? 480 : totalReportMinutes
+                            }
+                            isPermissionUser
+                            totalWorkMinutes={totalWorkMinutes}
+                          />
+                          <DeleteTimeBtnWithConfirmation time={time} disable={(approved && !isPermissionUser) || time.type === 1} />
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })}
+                </React.Fragment>
+              ))}
           </TableBody>
         </Table>
       </TableContainer>
