@@ -86,6 +86,7 @@ const TimeContainer = ({ userId, dateIn, dateOut }: ITimeContainer) => {
     year: dayjs(dateIn).year(),
   });
 
+  const isPermissionUser = currentUserIsAdmin || currentUserIsMentor;
   const approved = !!approveInfo?.data;
 
   const groupedByProject = useMemo(() => {

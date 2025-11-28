@@ -137,6 +137,9 @@ export const API = {
   },
   admin: {
     deleteUser,
-    allLogOutUser,
+    allLogOutUser
   },
+  workflowInstance: {
+    getWorkflowInstanceStatus
+  }
 };
