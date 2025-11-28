@@ -26,7 +26,10 @@ const YandexLogin = () => {
         borderColor: '#000',
         textTransform: 'none',
         padding: '6px 20px',
-        minWidth: 200,
+        minWidth: {
+          xs: '100%',
+          sm: 'calc(50% - 5px)',
+        },
         display: 'flex',
         justifyContent: 'space-between',
         alignItems: 'center',

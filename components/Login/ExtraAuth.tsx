@@ -1,9 +1,16 @@
-import { Box, Divider, Typography } from '@mui/material';
-import YandexLogin from './YandexLogin';
+import { Box, Divider, Typography } from "@mui/material";
+import YandexLogin from "./YandexLogin";
+import GoogleLogin from "./GoogleLogin";
+// import PhoneLogin from "./PhoneLogin";
 
 export default function ExtraAuth() {
   return (
-    <Box sx={{ mt: 2 }}>
+    <Box
+      sx={{
+        mt: 2,
+        width: "100%",
+      }}
+    >
       <Divider sx={{ mb: 2 }}>
         <Typography variant="body2" color="text.secondary">
           Или войдите через
@@ -12,12 +19,31 @@ export default function ExtraAuth() {
 
       <Box
         sx={{
-          display: 'flex',
-          flexDirection: 'column',
+          display: "flex",
+          flexDirection: "column",
           gap: 1.5,
-        }}>
-        {/* Кнопка Яндекс */}
-        <YandexLogin />
+        }}
+      >
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            gap: "10px",
+            width: "100%",
+            flexWrap: "wrap",
+            flexDirection: {
+              xs: "column",
+              sm: "row",
+            },
+          }}
+        >
+          {/* Кнопка Яндекс */}
+          <YandexLogin />
+          {/* Кнопка Гугл */}
+          <GoogleLogin />
+          {/* Кнопка Входа по номеру
+        <PhoneLogin/> */}
+        </Box>
       </Box>
     </Box>
   );

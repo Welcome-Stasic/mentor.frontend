@@ -6,9 +6,17 @@ import {
   AUTH_REFRESH_TOKEN,
   AUTH_RESET_PASSWORD,
   AUTH_YANDEX_LOGIN,
-} from './../endpoint';
-import axiosInstance from '../axios';
-import { AUTH_CRM_LOGIN, AUTH_FORGOT_PASSWORD, AUTH_LOGIN, AUTH_REGISTER } from '../endpoint';
+  AUTH_GOOGLE_LOGIN,
+  // AUTH_SENDCODE_LOGIN,
+  // AUTH_CODESYCCESS_LOGIN,
+} from "./../endpoint";
+import axiosInstance from "../axios";
+import {
+  AUTH_CRM_LOGIN,
+  AUTH_FORGOT_PASSWORD,
+  AUTH_LOGIN,
+  AUTH_REGISTER,
+} from "../endpoint";
 import {
   IAppLoginDto,
   ICrmLoginDto,
@@ -17,42 +25,95 @@ import {
   IResetPasswordDto,
   ITokens,
   IYandexLoginDto,
-} from '../types/auth';
-import { IApiResponse } from '../types/base';
-import { getAuthAxios } from '../authAxios';
-import { handleApiError } from '@/lib/utils/handleApiError';
+  IGoogleLoginDto,
+} from "../types/auth";
+import { IApiResponse } from "../types/base";
+import { getAuthAxios } from "../authAxios";
+import { handleApiError } from "@/lib/utils/handleApiError";
 
-export async function login(payload: IAppLoginDto): Promise<IApiResponse<ITokens> | null> {
+export async function login(
+  payload: IAppLoginDto
+): Promise<IApiResponse<ITokens> | null> {
   try {
-    const res = await axiosInstance.post<IApiResponse<ITokens>>(AUTH_LOGIN, payload);
+    const res = await axiosInstance.post<IApiResponse<ITokens>>(
+      AUTH_LOGIN,
+      payload
+    );
     return res.data;
   } catch (e) {
     handleApiError(e);
     return null;
   }
 }
+// export async function sendSMSCode(
+//   phone: string
+// ): Promise<IApiResponse<any> | null> {
+//   return axiosInstance.post(AUTH_SENDCODE_LOGIN, {
+//     userPhone: phone,
+//   });
+// }
 
-export async function crmLogin(payload: ICrmLoginDto): Promise<IApiResponse<ITokens> | null> {
-  const res = await axiosInstance.post<IApiResponse<ITokens>>(AUTH_CRM_LOGIN, payload);
-  
+// export async function loginBySMSCode(
+//   phone: string,
+//   code: string
+// ): Promise<IApiResponse<ITokens> | null> {
+//   return axiosInstance.post(AUTH_CODESYCCESS_LOGIN, {
+//     userPhone: phone,
+//     code: code,
+//   });
+// }
+
+export async function crmLogin(
+  payload: ICrmLoginDto
+): Promise<IApiResponse<ITokens> | null> {
+  const res = await axiosInstance.post<IApiResponse<ITokens>>(
+    AUTH_CRM_LOGIN,
+    payload
+  );
+
   return res.data;
 }
 
-export async function yandexLogin(payload: IYandexLoginDto): Promise<IApiResponse<ITokens> | null> {
-  const res = await axiosInstance.post<IApiResponse<ITokens>>(AUTH_YANDEX_LOGIN, payload);
+export async function yandexLogin(
+  payload: IYandexLoginDto
+): Promise<IApiResponse<ITokens> | null> {
+  const res = await axiosInstance.post<IApiResponse<ITokens>>(
+    AUTH_YANDEX_LOGIN,
+    payload
+  );
+
+  return res.data;
+}
+export async function googleLogin(
+  payload: IGoogleLoginDto
+): Promise<IApiResponse<ITokens> | null> {
+  const res = await axiosInstance.post<IApiResponse<ITokens>>(
+    AUTH_GOOGLE_LOGIN,
+    payload
+  );
 
   return res.data;
 }
 
-export async function register(payload: IRegisterDto): Promise<IApiResponse<string>> {
-  const res = await axiosInstance.post<IApiResponse<string>>(AUTH_REGISTER, payload);
+export async function register(
+  payload: IRegisterDto
+): Promise<IApiResponse<string>> {
+  const res = await axiosInstance.post<IApiResponse<string>>(
+    AUTH_REGISTER,
+    payload
+  );
 
   return res.data;
 }
 
-export async function forgotPassword(email: string): Promise<IApiResponse<string> | null> {
+export async function forgotPassword(
+  email: string
+): Promise<IApiResponse<string> | null> {
   try {
-    const res = await axiosInstance.post<IApiResponse<string>>(AUTH_FORGOT_PASSWORD, { email });
+    const res = await axiosInstance.post<IApiResponse<string>>(
+      AUTH_FORGOT_PASSWORD,
+      { email }
+    );
     return res.data;
   } catch (e) {
     handleApiError(e);
@@ -61,10 +122,13 @@ export async function forgotPassword(email: string): Promise<IApiResponse<string
 }
 
 export async function resetPassword(
-  payload: IResetPasswordDto,
+  payload: IResetPasswordDto
 ): Promise<IApiResponse<boolean> | null> {
   try {
-    const res = await axiosInstance.post<IApiResponse<boolean>>(AUTH_RESET_PASSWORD, payload);
+    const res = await axiosInstance.post<IApiResponse<boolean>>(
+      AUTH_RESET_PASSWORD,
+      payload
+    );
     return res.data;
   } catch (e) {
     handleApiError(e);
@@ -72,10 +136,15 @@ export async function resetPassword(
   }
 }
 
-export async function isEmailConfirmed(email: string): Promise<IApiResponse<boolean> | null> {
+export async function isEmailConfirmed(
+  email: string
+): Promise<IApiResponse<boolean> | null> {
   try {
     if (!email) return null;
-    const res = await axiosInstance.post<IApiResponse<boolean>>(AUTH_IS_EMAIL_CONFIRMED, email);
+    const res = await axiosInstance.post<IApiResponse<boolean>>(
+      AUTH_IS_EMAIL_CONFIRMED,
+      email
+    );
     return res.data;
   } catch (e) {
     handleApiError(e);
@@ -85,25 +154,30 @@ export async function isEmailConfirmed(email: string): Promise<IApiResponse<bool
 
 export async function refreshToken(
   token: string,
-  refreshToken: string,
+  refreshToken: string
 ): Promise<IApiResponse<ITokens> | null> {
-  
   if (!token || !refreshToken) return null;
 
   const authAxios = await getAuthAxios(token);
 
-  const res = await authAxios.post<IApiResponse<ITokens>>(AUTH_REFRESH_TOKEN, { refreshToken });
+  const res = await authAxios.post<IApiResponse<ITokens>>(AUTH_REFRESH_TOKEN, {
+    refreshToken,
+  });
 
   return res.data;
 }
 
-export async function getRefreshToken(token: string): Promise<IApiResponse<IRefreshToken> | null> {
+export async function getRefreshToken(
+  token: string
+): Promise<IApiResponse<IRefreshToken> | null> {
   try {
     if (!token) return null;
 
     const authAxios = await getAuthAxios(token);
 
-    const res = await authAxios.get<IApiResponse<IRefreshToken>>(AUTH_GET_REFRESH_TOKEN);
+    const res = await authAxios.get<IApiResponse<IRefreshToken>>(
+      AUTH_GET_REFRESH_TOKEN
+    );
 
     return res.data;
   } catch (e) {
@@ -112,22 +186,31 @@ export async function getRefreshToken(token: string): Promise<IApiResponse<IRefr
   }
 }
 
-export async function logOut(token: string, refreshToken: string): Promise<IApiResponse<boolean> | null> {
+export async function logOut(
+  token: string,
+  refreshToken: string
+): Promise<IApiResponse<boolean> | null> {
   if (!token || !refreshToken) return null;
 
   const authAxios = await getAuthAxios(token);
-  
-  const res = await authAxios.post<IApiResponse<boolean>>(AUTH_LOG_OUT, { refreshToken });
+
+  const res = await authAxios.post<IApiResponse<boolean>>(AUTH_LOG_OUT, {
+    refreshToken,
+  });
 
   return res.data;
 }
 
-export async function isValidAccessToken(token: string): Promise<IApiResponse<boolean> | null> {
+export async function isValidAccessToken(
+  token: string
+): Promise<IApiResponse<boolean> | null> {
   if (!token) return null;
 
   const authAxios = await getAuthAxios(token);
-  
-  const res = await authAxios.get<IApiResponse<boolean>>(AUTH_IS_VALID_ACCESS_TOKEN);
+
+  const res = await authAxios.get<IApiResponse<boolean>>(
+    AUTH_IS_VALID_ACCESS_TOKEN
+  );
 
   return res.data;
 }

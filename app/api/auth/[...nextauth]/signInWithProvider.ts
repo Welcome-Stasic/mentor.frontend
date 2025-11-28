@@ -1,6 +1,6 @@
 import { signIn } from "next-auth/react";
 
-type Provider = 'crm' | 'credentials' | 'token' | 'yandex';
+type Provider = 'crm' | 'credentials' | 'token' | 'yandex' | 'google';
 
 type SignInParams<T extends Provider> = 
   T extends 'crm' ? {
@@ -21,6 +21,10 @@ type SignInParams<T extends Provider> =
     callbackUrl?: string;
   } :
   T extends 'yandex' ? {
+    redirect?: boolean;
+    callbackUrl?: string;
+  } :
+  T extends 'google' ? {
     redirect?: boolean;
     callbackUrl?: string;
   } :

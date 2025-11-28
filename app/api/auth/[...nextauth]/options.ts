@@ -1,14 +1,16 @@
-import { API } from '@/lib/axios';
-import { NextAuthOptions } from 'next-auth';
-import CredentialsProvider from 'next-auth/providers/credentials';
-import { CRMProvider } from './providers/crm';
-import { decodeToken } from '@/lib/utils/decodeToken';
-import { refreshAccessToken } from '@/lib/utils/refreshAccessToken';
-import { TokenProvider } from './providers/token';
-import { checkAccessToken } from '@/lib/utils/checkAccessToken';
-import { CustomYandexProvider } from './providers/yandex';
-import { handleYandexLogin } from '@/lib/auth/yandex';
-import { handleDefaultLogin } from '@/lib/auth/default';
+import { API } from "@/lib/axios";
+import { NextAuthOptions } from "next-auth";
+import CredentialsProvider from "next-auth/providers/credentials";
+import { CRMProvider } from "./providers/crm";
+import { decodeToken } from "@/lib/utils/decodeToken";
+import { refreshAccessToken } from "@/lib/utils/refreshAccessToken";
+import { TokenProvider } from "./providers/token";
+import { checkAccessToken } from "@/lib/utils/checkAccessToken";
+import { CustomYandexProvider } from "./providers/yandex";
+import { CustomGoogleProvider } from "./providers/google";
+import { handleYandexLogin } from "@/lib/auth/yandex";
+import { handleGoogleLogin } from "@/lib/auth/google";
+import { handleDefaultLogin } from "@/lib/auth/default";
 
 const ONE_MINUTE_MS = 60 * 1000;
 const CHECK_INTERVAL = 30 * 1000; // 30 секунд
@@ -19,11 +21,12 @@ export const authOptions: NextAuthOptions = {
     CRMProvider,
     TokenProvider,
     CustomYandexProvider,
+    CustomGoogleProvider,
     CredentialsProvider({
-      name: 'Credentials',
+      name: "Credentials",
       credentials: {
-        email: { label: 'email', type: 'text' },
-        password: { label: 'Password', type: 'password' },
+        email: { label: "email", type: "text" },
+        password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
         if (!credentials) return null;
@@ -36,16 +39,18 @@ export const authOptions: NextAuthOptions = {
 
           const accessToken = response?.Result?.accessToken || null;
           const refreshToken = response?.Result?.refreshToken || null;
-          const refreshTokenExpires = response?.Result?.refreshTokenExpires || null;
+          const refreshTokenExpires =
+            response?.Result?.refreshTokenExpires || null;
 
-          if (!accessToken || !refreshToken || !refreshTokenExpires) return null;
+          if (!accessToken || !refreshToken || !refreshTokenExpires)
+            return null;
 
           const decoded = decodeToken(accessToken);
           const roles = decoded?.roles;
 
           return {
-            id: decoded?.id ?? '',
-            email: decoded?.email ?? '',
+            id: decoded?.id ?? "",
+            email: decoded?.email ?? "",
             accessToken,
             refreshToken,
             refreshTokenExpires: new Date(refreshTokenExpires).getTime(),
@@ -65,20 +70,26 @@ export const authOptions: NextAuthOptions = {
       try {
         await API.auth.logOut(accessToken, refreshToken);
       } catch (error) {
-        console.error('logOut failed:', error);
+        console.error("logOut failed:", error);
       }
     },
   },
 
   pages: {
-    signIn: '/Account/Login',
-    newUser: '/Account/Register',
+    signIn: "/Account/Login",
+    newUser: "/Account/Register",
   },
 
   callbacks: {
     async signIn({ account }) {
-      if (account?.provider === 'yandex') {
+      if (account?.provider === "yandex") {
         // Если нет access_token от Яндекс — запрещаем вход
+        if (!account.access_token || !account.access_token.trim()) {
+          return false;
+        }
+      }
+      if (account?.provider === "google") {
+        // Если нет access_token от Гугл — запрещаем вход
         if (!account.access_token || !account.access_token.trim()) {
           return false;
         }
@@ -88,11 +99,12 @@ export const authOptions: NextAuthOptions = {
     },
     async jwt({ token, user, account }) {
       const now = Date.now();
-
       if (account && user) {
         switch (account.provider) {
-          case 'yandex':
-            return handleYandexLogin(token, account?.access_token ?? '');
+          case "yandex":
+            return handleYandexLogin(token, account?.access_token ?? "");
+          case "google":
+            return handleGoogleLogin(token, account?.access_token ?? "");
           default:
             return handleDefaultLogin(token, user, now);
         }
@@ -106,7 +118,7 @@ export const authOptions: NextAuthOptions = {
           return {
             ...token,
             refreshTokenValid: false,
-            error: 'RefreshTokenInvalid',
+            error: "RefreshTokenInvalid",
           };
         }
       }
@@ -115,7 +127,7 @@ export const authOptions: NextAuthOptions = {
         return {
           ...token,
           refreshTokenValid: false,
-          error: 'MissingRefreshToken',
+          error: "MissingRefreshToken",
         };
       }
 
@@ -136,7 +148,7 @@ export const authOptions: NextAuthOptions = {
       // Безопасно проверяем accessToken
       let roles: string[] = [];
 
-      if (typeof token.accessToken === 'string' && token.accessToken.trim()) {
+      if (typeof token.accessToken === "string" && token.accessToken.trim()) {
         const decoded = decodeToken(token.accessToken);
         roles = decoded?.roles ?? [];
         session.user = {
@@ -148,7 +160,7 @@ export const authOptions: NextAuthOptions = {
       } else {
         session.user = {
           ...session.user,
-          accessToken: '',
+          accessToken: "",
           refreshToken: token.refreshToken ?? null,
           roles: [],
         };
@@ -169,7 +181,7 @@ export const authOptions: NextAuthOptions = {
   },
 
   session: {
-    strategy: 'jwt',
+    strategy: "jwt",
   },
 
   secret: process.env.NEXTAUTH_SECRET,

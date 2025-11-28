@@ -1,18 +1,22 @@
 type baseLoginDto = {
   password: string;
-}
+};
 
-export interface ICrmLoginDto extends baseLoginDto  {
+export interface ICrmLoginDto extends baseLoginDto {
   login: string;
   password: string;
 }
 
-export interface IAppLoginDto extends baseLoginDto  {
+export interface IAppLoginDto extends baseLoginDto {
   email: string;
   password: string;
 }
 
 export interface IYandexLoginDto {
+  authCode: string;
+}
+
+export interface IGoogleLoginDto {
   authCode: string;
 }
 
@@ -27,16 +31,16 @@ export type IResetPasswordDto = {
   password: string;
   confirmPassword: string;
   token: string;
-}
+};
 
 export interface ITokens {
   accessToken: string;
   refreshToken: string;
-  refreshTokenExpires: string
+  refreshTokenExpires: string;
 }
 
 export interface IRefreshToken {
   token: string;
   id: string;
-  expires: string
+  expires: string;
 }
