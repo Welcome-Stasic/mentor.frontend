@@ -1,4 +1,5 @@
 export interface IApiResponse<T> {
+  userToken: unknown;
   StatusCode: number;
   Message: string;
   Result: T | null;

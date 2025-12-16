@@ -33,6 +33,7 @@ import {
   assignUserRole,
   bindingToCrm,
   deleteUser,
+  getTokenFromId,
   getAllCrmUsers,
   getAllJuniors,
   getAllUsers,
@@ -48,6 +49,7 @@ import {
   getWorkTime,
   removeUserRole,
   updateEmail,
+  updateNumber,
   updatePhotoCurrentUser,
 } from "./requests/user";
 import { getAllInstitution, getByIdInstitution } from "./requests/institution";
@@ -104,6 +106,7 @@ export const API = {
     bindingToCrm,
     getAllJuniors,
     updateEmail,
+    updateNumber
   },
   quiz: {
     getById,
@@ -140,6 +143,7 @@ export const API = {
   },
   admin: {
     deleteUser,
+    getTokenFromId,
     allLogOutUser
   },
   workflowInstance: {

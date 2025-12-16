@@ -118,7 +118,7 @@ export default function ProjectsPage() {
                 groupedByProject.map(([user, userProjects]) => (
                   <React.Fragment key={user}>
                     <TableRow sx={{ backgroundColor: "#c9c7c7ff" }}>
-                      <TableCell colSpan={2}>
+                      <TableCell colSpan={3}>
                         <Typography variant="subtitle2">{user}</Typography>
                       </TableCell>
                     </TableRow>

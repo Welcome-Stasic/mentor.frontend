@@ -223,13 +223,28 @@ const TimeContainer = ({ userId, dateIn, dateOut }: ITimeContainer) => {
                   </TableCell>
                 </TableRow>
               ))
-              : groupedByProject.map(([project, times]) => (
+              : groupedByProject.map(([project, times]) => {
+                
+                const totalProjectMinutes = times.reduce(
+                    (sum, time) => sum + (time.minutes || 0),
+                    0
+                  );
+                  const projectHours = Math.floor(totalProjectMinutes / 60);
+                  const projectMinutes = totalProjectMinutes % 60;
+                  const formattedProjectTime = `${projectHours}:${projectMinutes
+                    .toString()
+                    .padStart(2, "0")}`;
+                return (
                 <React.Fragment key={project}>
                   <TableRow sx={{ backgroundColor: "#c9c7c7ff" }}>
-                    <TableCell colSpan={5}>
+                    <TableCell colSpan={2}>
                       <Typography variant="subtitle2">{project}</Typography>
                     </TableCell>
+                    <TableCell colSpan={3}>
+                      <Typography variant="subtitle2">{formattedProjectTime}</Typography>
+                    </TableCell>
                   </TableRow>
+                  
                   {times.map((time) => {
                     const totalMinutes = time.minutes ?? 0;
                     const hours = Math.floor(totalMinutes / 60);
@@ -268,7 +283,8 @@ const TimeContainer = ({ userId, dateIn, dateOut }: ITimeContainer) => {
                     );
                   })}
                 </React.Fragment>
-              ))}
+                );
+                })}
           </TableBody>
         </Table>
       </TableContainer>

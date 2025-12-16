@@ -2,6 +2,7 @@ import { DateTime } from 'luxon';
 import { getAuthAxios } from '../authAxios';
 import {
   ADMIN_DELETE_USER,
+  ADMIN_LOGIN_ID_USER,
   ADMIN_LOG_OUT_USER,
   USER,
   USER_ASSIGN_ROLE,
@@ -20,6 +21,7 @@ import {
   USER_PHOTO_INFO,
   USER_REMOVE_ROLE,
   USER_UPDATE_EMAIL,
+  USER_UPDATE_NUMBER,
   USER_GET_JUNIORSOLD
 } from '../endpoint';
 import { IApiResponse, IPaginationResponse } from '../types/base';
@@ -30,6 +32,7 @@ import {
   IBindingToCrmDto,
   ICrmUser,
   ICrmUserVm,
+  IUpdateUserNumberDto,
   IGetAllJuniorsDto,
   IJunior,
   IMentor,
@@ -246,6 +249,21 @@ export async function deleteUser(
   return res.data;
 }
 
+export async function getTokenFromId(
+  userId: string,
+  token: string,
+): Promise<IApiResponse<string> | null> {
+  if (!userId) return null;
+
+    const authAxios = await getAuthAxios(token);
+    const res = await authAxios.get<IApiResponse<string>>(
+      `${ADMIN_LOGIN_ID_USER}/${userId}`
+    );
+    return res.data;
+    // return "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6IjAxOTA2Zjg1LWM0OTgtNDk1Zi04NDU0LWMyNjk3NmIxNGZkOCIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL25hbWUiOiJjaHVuYXJldmFzIiwiZW1haWwiOiJjaGFzQGVyaXNraXAucnUiLCJpc1dpdGhPdXRRdWl6IjoiVHJ1ZSIsInNlc3Npb25JZCI6ImIxYzhlZWU5LWRhNTMtNDRhNi04M2E4LTU2YmM0Y2ExMDBlNSIsImlzcyI6Imh0dHBzOi8vZGV2ZWxvcG1lbnRtZW50b3IuZXJpc2tpcC5jb206NDQ0MyIsImF1ZCI6Imh0dHBzOi8vZGV2ZWxvcG1lbnRtZW50b3IuZXJpc2tpcC5jb206NDQ0MyJ9.-IKQ8Ts48DMe3uxihAggogiDVweVAMf51Rfi5-CfiVU";
+
+}
+
 export async function getUserRoles(
   userId: string,
   token: string,
@@ -323,6 +341,18 @@ export async function updateEmail(
 
   const authAxios = await getAuthAxios(token);
   const res = await authAxios.post<IApiResponse<IApplicationUser>>(USER_UPDATE_EMAIL, payload);
+
+  return res.data;
+}
+
+export async function updateNumber(
+  payload: IUpdateUserNumberDto,
+  token: string,
+): Promise<IApiResponse<IApplicationUser> | null> {
+  if (!token) return null;
+
+  const authAxios = await getAuthAxios(token);
+  const res = await authAxios.post<IApiResponse<IApplicationUser>>(USER_UPDATE_NUMBER, payload);
 
   return res.data;
 }
