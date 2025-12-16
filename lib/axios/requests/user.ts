@@ -20,6 +20,7 @@ import {
   USER_PHOTO_INFO,
   USER_REMOVE_ROLE,
   USER_UPDATE_EMAIL,
+  USER_GET_JUNIORSOLD
 } from '../endpoint';
 import { IApiResponse, IPaginationResponse } from '../types/base';
 import { IReportTime, IWorkTime } from '../types/time';
@@ -152,6 +153,17 @@ export async function getJuniors(
 
   const authAxios = await getAuthAxios(token);
   const res = await authAxios.get<IApiResponse<IJunior[]>>(`${USER_GET_JUNIORS}/${userId}`);
+
+  return res.data;
+}
+export async function getJuniorsOld(
+  userId: string,
+  token: string,
+): Promise<IApiResponse<IJunior[]> | null> {
+  if (!token || !userId) return null;
+
+  const authAxios = await getAuthAxios(token);
+  const res = await authAxios.get<IApiResponse<IJunior[]>>(`${USER_GET_JUNIORSOLD}/${userId}`);
 
   return res.data;
 }
