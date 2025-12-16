@@ -112,6 +112,10 @@ export interface IUpdateUserEmailDto  {
   email: string,
   emailConfirmed?: boolean | null,
 }
+export interface IUpdateUserNumberDto  {
+  userId: string,
+  phoneNumber: string,
+}
 
 export interface IGetAllJuniorsDto {
   includeOnly?: boolean | null,

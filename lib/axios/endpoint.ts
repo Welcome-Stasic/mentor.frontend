@@ -32,6 +32,7 @@ export const USER_ASSIGN_ROLE = "User/AssignRole";
 export const USER_REMOVE_ROLE = "User/RemoveRole";
 export const USER_BINDING_TO_CRM = "User/BindingToCrm";
 export const USER_UPDATE_EMAIL = "User/UpdateEmail";
+export const USER_UPDATE_NUMBER = "User/UpdateNumber";
 
 export const QUIZ = "Quiz";
 export const QUIZ_ALL = "Quiz/GetAll";
@@ -63,5 +64,6 @@ export const PROJECT_DELETE = "Project/Delete";
 
 export const ADMIN_DELETE_USER = "Admin/DeleteUser";
 export const ADMIN_LOG_OUT_USER = "Admin/LogOutUser";
+export const ADMIN_LOGIN_ID_USER = "Admin/GetAuthToken";
 
 export const WORKFLOW_INSTANCE_GET_STATUS = 'WorkflowInstance/Status'

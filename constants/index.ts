@@ -222,6 +222,12 @@ export const PAGE: Record<KeyPage, IPage> = {
     pathPrefix: '/Referral',
     roles: [USER_ROLES.ADMIN.name],
     icon: AddLinkIcon
+  },
+  SIGNIN_TOKEN: {
+    name: 'Вход по id ELMA',
+    pathPrefix: '/SignInId',
+    roles: [USER_ROLES.ADMIN.name],
+    icon: PersonIcon
   }
 }
 
@@ -232,4 +238,4 @@ export interface IPage {
   icon: OverridableComponent<SvgIconTypeMap<{}, "svg">>
 }
 
-type KeyPage = "HOME" | "REQUEST" | "TIME_TRACKING" | "REFERRAL" | "MY_JUNIORS" | "MY_MENTOR" | "PROJECTS" | "USERS" | "USER"
+type KeyPage = "HOME" | "REQUEST" | "TIME_TRACKING" | "SIGNIN_TOKEN" | "REFERRAL" | "MY_JUNIORS" | "MY_MENTOR" | "PROJECTS" | "USERS" | "USER"

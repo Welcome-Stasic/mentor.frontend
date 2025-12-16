@@ -28,6 +28,7 @@ axiosInstance.interceptors.response.use(
       Errors: [],
       StatusCode: 500,
       Timestamp: new Date().toISOString(),
+      userToken: undefined
     };
 
     return Promise.resolve({ data: fallbackResponse });

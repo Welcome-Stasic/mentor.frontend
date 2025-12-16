@@ -7,18 +7,13 @@ import {
   Box,
   Card,
   CardContent,
-  Container,
-  Grid,
   Typography,
-  CircularProgress,
-  useTheme,
-  useMediaQuery,
   Skeleton,
 } from '@mui/material';
 import EmailIcon from '@mui/icons-material/Email';
 import PhoneIcon from '@mui/icons-material/Phone';
 import BusinessIcon from '@mui/icons-material/Business';
-import { UserPhoto } from '@/components/UserPhoto';
+// import { UserPhoto } from '@/components/UserPhoto';
 
 export default function MyMentorPage() {
   const id = useCurrentUserStore((store) => store.id);
