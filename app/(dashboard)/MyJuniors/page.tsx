@@ -32,6 +32,7 @@ interface juniorCardProps {
 };
 function CurrentJuniorCard({ junior }: juniorCardProps) {
   const photoResult = useUserPhoto(junior.appId, junior.photoUrl);
+  console.log(photoResult);
   
   const photoUrl = useMemo(
     () => photoResult?.data?.url ?? junior.photoUrl ?? "",

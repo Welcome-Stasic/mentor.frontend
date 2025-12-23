@@ -6,6 +6,7 @@ import { useQuery } from '@tanstack/react-query';
 
 export const useWorkTime = (id: string, dateIn?: string, dateOut?: string) => {
   const session = useSession();
+  
   const accessToken = session.data?.user.accessToken || '';
   const enabled = !!accessToken && !!id;
 

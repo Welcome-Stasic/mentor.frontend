@@ -1,4 +1,4 @@
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+ 
 import NextAuth from 'next-auth';
 
 declare module 'next-auth' {
@@ -7,7 +7,7 @@ declare module 'next-auth' {
       id: string;
       email?: string;
       roles?: string[];
-      accessToken: string;
+      accessToken: string | undefined;
       refreshToken: string;
       picture?: string;
     };

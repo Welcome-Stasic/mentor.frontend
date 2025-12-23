@@ -44,6 +44,7 @@ const TimeContainer = ({ userId, dateIn, dateOut }: ITimeContainer) => {
     firstDayOfMonthStr,
     lastDayOfMonthStr
   );
+  console.log(userId);
   const workTime = useWorkTime(userId, firstDayOfMonthStr, lastDayOfMonthStr);
 
   const isLoading =
@@ -224,7 +225,6 @@ const TimeContainer = ({ userId, dateIn, dateOut }: ITimeContainer) => {
                 </TableRow>
               ))
               : groupedByProject.map(([project, times]) => {
-                
                 const totalProjectMinutes = times.reduce(
                     (sum, time) => sum + (time.minutes || 0),
                     0
