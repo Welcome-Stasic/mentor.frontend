@@ -1,8 +1,8 @@
 "use client";
 
 import { getColorByPercentage } from "@/lib/utils/getColorByPercentage";
-import { Box, Typography, LinearProgress, useMediaQuery, Tooltip } from "@mui/material";
-import Link from "next/link";
+import { Box, Typography, LinearProgress, useMediaQuery, Tooltip, Link } from "@mui/material";
+
 
 interface ICalendarItemProps {
   day: number;
@@ -64,7 +64,6 @@ const CalendarItem = ({
         </Typography>
       );
     }
-    
     const totalWorkMinutes = workTimesDetail.reduce((sum, item) => sum + item.minutes, 0);
     const totalHours = Math.floor(totalWorkMinutes / 60);
     const totalMinutes = totalWorkMinutes % 60;

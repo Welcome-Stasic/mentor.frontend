@@ -11,6 +11,7 @@ interface IProjectUserListProps {
 }
 
 const ProjectUserList = ({ selectedUserId, onChangeUser }: IProjectUserListProps) => {
+
   const { data: session } = useSession();
   const accessToken = session?.user?.accessToken ?? '';
 

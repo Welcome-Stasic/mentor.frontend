@@ -2,9 +2,11 @@
 
 import CreateProjectBtn from "@/components/Projects/CreateProjectBtn";
 import DeleteProjectWithConfirmationBtn from "@/components/Projects/DeleteProjectWithConfirmationBtn";
+import DateRange from "@/components/Projects/DateRange";
 import ProjectUserList from "@/components/Projects/ProjectUserList";
 import UpdateProjectBtn from "@/components/Projects/UpdateProjectBtn";
 import { useProjects } from "@/hooks/project/useProjects";
+import { useProjectTime } from "@/hooks/project/useProjectTime";
 import { useCurrentUserStore } from "@/providers/current-user-provider";
 import {
   Box,
@@ -18,37 +20,59 @@ import {
   TableRow,
   Typography,
 } from "@mui/material";
-import React, { useEffect, useState } from "react";
-import { useMemo } from "react";
+import React, { useEffect, useMemo, useState } from "react";
+import { useQueryState } from "nuqs";
+import dayjs from "dayjs";
+import { useUserById } from "@/hooks/useUserById";
 
 export default function ProjectsPage() {
+  const [SelectUser, setSelectUser] = useQueryState("selectUser");
   const currentUserId = useCurrentUserStore((store) => store.id);
   const currentUserFullName = useCurrentUserStore((store) => store.fullName);
+  const isMentor = useCurrentUserStore((store) => store.isMentor);
+  const isAdmin = useCurrentUserStore((store) => store.isAdmin);
 
-  const [selectedUserId, setSelectedUserId] = useState<string>(currentUserId);
+  const [selectedUserId, setSelectedUserId] = useState<string>(
+    currentUserId as string
+  );
+  const [dateFrom] = useQueryState("dateFrom");
+  const [dateTo] = useQueryState("dateTo");
+  const userElmaId = useUserById(selectedUserId).data?.elmaUserId;
 
   useEffect(() => {
     if (currentUserId) {
-      setSelectedUserId(currentUserId);
+      setSelectedUserId(currentUserId as string);
     }
   }, [currentUserId]);
 
   const onChangeUser = (id: string) => {
     const userId = id || currentUserId;
-    setSelectedUserId(userId);
+    setSelectUser(userId as string);
+    setSelectedUserId(userId as string);
   };
-
-  const isMentor = useCurrentUserStore((store) => store.isMentor);
-  const isAdmin = useCurrentUserStore((store) => store.isAdmin);
 
   const projectResult = useProjects(selectedUserId);
   const projects = useMemo(
     () => projectResult?.data || [],
     [projectResult?.data]
   );
-  // const projects = projectResult?.data ?? [];
-  const isLoading = projectResult.isPending;
+  const projectTime = useProjectTime(
+    userElmaId as unknown as string,
+    dateFrom ? dayjs(dateFrom, "DD.MM.YYYY").format("DD.MM.YYYY") : "",
+    dateTo ? dayjs(dateTo, "DD.MM.YYYY").format("DD.MM.YYYY") : ""
+  );
 
+  const isLoading = projectResult.isPending || projectTime.isLoading;
+
+  const formatTime = (minutes: number) => {
+    const hours = Math.floor(minutes / 60);
+    const mins = minutes % 60;
+    return `${hours}:${mins.toString().padStart(2, "0")}`;
+  };
+
+  const getProjectTime = (projectName: string) => {
+    return projectTime.projectTimeMap.get(projectName) || 0;
+  };
   const groupedByProject = useMemo(() => {
     const groups = new Map<string, typeof projects>();
     projects.forEach((project) => {
@@ -68,12 +92,11 @@ export default function ProjectsPage() {
 
     return entries;
   }, [projects, currentUserFullName]);
-
   return (
     <>
       <Box sx={{ mb: "4px" }}>
         <ProjectUserList
-          selectedUserId={selectedUserId}
+          selectedUserId={SelectUser as string}
           onChangeUser={onChangeUser}
         />
       </Box>
@@ -89,12 +112,16 @@ export default function ProjectsPage() {
         <Typography variant="caption">Создать проект</Typography>
         <CreateProjectBtn userId={selectedUserId} />
       </Box>
+      <DateRange />
 
       <TableContainer component={Paper}>
         <Table sx={{ minWidth: 650 }} aria-label="projects table">
           <TableHead>
             <TableRow>
               <TableCell>Название</TableCell>
+              {(SelectUser != null && SelectUser != currentUserId) && (
+                <TableCell>Затраченное время</TableCell>
+              )}
               <TableCell align="right"></TableCell>
             </TableRow>
           </TableHead>
@@ -114,19 +141,64 @@ export default function ProjectsPage() {
                   </TableRow>
                 ))
               : isMentor || isAdmin
-              ? // если наставник → показываем сгруппированные проекты
-                groupedByProject.map(([user, userProjects]) => (
-                  <React.Fragment key={user}>
-                    <TableRow sx={{ backgroundColor: "#c9c7c7ff" }}>
-                      <TableCell colSpan={3}>
-                        <Typography variant="subtitle2">{user}</Typography>
-                      </TableCell>
-                    </TableRow>
-                    {userProjects.map((project) => (
+                ? // если наставник → показываем сгруппированные проекты с трудозатратами
+                  groupedByProject.map(([user, userProjects]) => (
+                    <React.Fragment key={user}>
+                      <TableRow sx={{ backgroundColor: "#c9c7c7ff" }}>
+                        <TableCell colSpan={3}>
+                          <Typography variant="subtitle2">{user}</Typography>
+                        </TableCell>
+                      </TableRow>
+                      {userProjects.map((project) => {
+                        const projectMinutes = getProjectTime(project.name);
+                        return (
+                          <TableRow key={project.id}>
+                            <TableCell sx={{ maxWidth: 200 }}>
+                              {project.name}
+                            </TableCell>
+                            {(SelectUser != null && SelectUser != currentUserId) && (
+                              <TableCell sx={{ maxWidth: 300 }}>
+                                <Typography>
+                                  {projectMinutes > 0
+                                    ? formatTime(projectMinutes)
+                                    : "0:00"}
+                                </Typography>
+                              </TableCell>
+                            )}
+                            <TableCell align="right">
+                              <Box
+                                display="flex"
+                                gap={1}
+                                justifyContent="flex-end"
+                              >
+                                <UpdateProjectBtn project={project} />
+                                <DeleteProjectWithConfirmationBtn
+                                  project={project}
+                                />
+                              </Box>
+                            </TableCell>
+                          </TableRow>
+                        );
+                      })}
+                    </React.Fragment>
+                  ))
+                : // если НЕ наставник → обычный список с трудозатратами
+                  projects.map((project) => {
+                    const projectMinutes = getProjectTime(project.name);
+                    return (
                       <TableRow key={project.id}>
-                        <TableCell sx={{ maxWidth: 500 }}>
+                        <TableCell sx={{ maxWidth: 200 }}>
                           {project.name}
                         </TableCell>
+                        {(SelectUser != null && SelectUser != currentUserId) && (
+                          <TableCell sx={{ maxWidth: 300 }}>
+                            <Typography>
+                              {projectMinutes > 0
+                                ? formatTime(projectMinutes)
+                                : "0:00"}
+                            </Typography>
+                          </TableCell>
+                        )}
                         <TableCell align="right">
                           <Box display="flex" gap={1} justifyContent="flex-end">
                             <UpdateProjectBtn project={project} />
@@ -136,21 +208,8 @@ export default function ProjectsPage() {
                           </Box>
                         </TableCell>
                       </TableRow>
-                    ))}
-                  </React.Fragment>
-                ))
-              : // если НЕ наставник → обычный список
-                projects.map((project) => (
-                  <TableRow key={project.id}>
-                    <TableCell sx={{ maxWidth: 500 }}>{project.name}</TableCell>
-                    <TableCell align="right">
-                      <Box display="flex" gap={1} justifyContent="flex-end">
-                        <UpdateProjectBtn project={project} />
-                        <DeleteProjectWithConfirmationBtn project={project} />
-                      </Box>
-                    </TableCell>
-                  </TableRow>
-                ))}
+                    );
+                  })}
           </TableBody>
         </Table>
       </TableContainer>
