@@ -10,6 +10,7 @@ import { useProjectTime } from "@/hooks/project/useProjectTime";
 import { useCurrentUserStore } from "@/providers/current-user-provider";
 import {
   Box,
+  Button,
   Paper,
   Skeleton,
   Table,
@@ -27,6 +28,7 @@ import { useUserById } from "@/hooks/useUserById";
 
 export default function ProjectsPage() {
   const [SelectUser, setSelectUser] = useQueryState("selectUser");
+  const [allDisplayProject, setAllDisplayProject] = useState<boolean>(true);
   const currentUserId = useCurrentUserStore((store) => store.id);
   const currentUserFullName = useCurrentUserStore((store) => store.fullName);
   const isMentor = useCurrentUserStore((store) => store.isMentor);
@@ -73,9 +75,23 @@ export default function ProjectsPage() {
   const getProjectTime = (projectName: string) => {
     return projectTime.projectTimeMap.get(projectName) || 0;
   };
+
+  const getFilteredProjects = (projectList: typeof projects) => {
+    if (allDisplayProject) {
+      return projectList;
+    } else {
+      return projectList.filter((project) => {
+        const projectMinutes = getProjectTime(project.name);
+        return projectMinutes > 0;
+      });
+    }
+  };
+
   const groupedByProject = useMemo(() => {
+    const filteredProjects = getFilteredProjects(projects);
+
     const groups = new Map<string, typeof projects>();
-    projects.forEach((project) => {
+    filteredProjects.forEach((project) => {
       const user = project.createUserFullName?.trim() || "Без имени";
       if (!groups.has(user)) {
         groups.set(user, []);
@@ -91,7 +107,12 @@ export default function ProjectsPage() {
     });
 
     return entries;
-  }, [projects, currentUserFullName]);
+  }, [projects, currentUserFullName, allDisplayProject]);
+
+  const filteredProjects = useMemo(() => {
+    return getFilteredProjects(projects);
+  }, [projects, allDisplayProject]);
+
   return (
     <>
       <Box sx={{ mb: "4px" }}>
@@ -119,10 +140,21 @@ export default function ProjectsPage() {
           <TableHead>
             <TableRow>
               <TableCell>Название</TableCell>
-              {(SelectUser != null && SelectUser != currentUserId) && (
-                <TableCell>Затраченное время</TableCell>
+              {SelectUser != null && SelectUser != currentUserId && (
+                <>
+                  <TableCell>Затраченное время</TableCell>
+                  <TableCell align="right">
+                    <Button
+                      variant="contained"
+                      onClick={() => setAllDisplayProject(!allDisplayProject)}
+                    >
+                      {allDisplayProject
+                        ? "Показать активные проекты"
+                        : "Показать все проекты"}
+                    </Button>
+                  </TableCell>
+                </>
               )}
-              <TableCell align="right"></TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -156,15 +188,16 @@ export default function ProjectsPage() {
                             <TableCell sx={{ maxWidth: 200 }}>
                               {project.name}
                             </TableCell>
-                            {(SelectUser != null && SelectUser != currentUserId) && (
-                              <TableCell sx={{ maxWidth: 300 }}>
-                                <Typography>
-                                  {projectMinutes > 0
-                                    ? formatTime(projectMinutes)
-                                    : "0:00"}
-                                </Typography>
-                              </TableCell>
-                            )}
+                            {SelectUser != null &&
+                              SelectUser != currentUserId && (
+                                <TableCell sx={{ maxWidth: 300 }}>
+                                  <Typography>
+                                    {projectMinutes > 0
+                                      ? formatTime(projectMinutes)
+                                      : "0:00"}
+                                  </Typography>
+                                </TableCell>
+                              )}
                             <TableCell align="right">
                               <Box
                                 display="flex"
@@ -183,14 +216,14 @@ export default function ProjectsPage() {
                     </React.Fragment>
                   ))
                 : // если НЕ наставник → обычный список с трудозатратами
-                  projects.map((project) => {
+                  filteredProjects.map((project) => {
                     const projectMinutes = getProjectTime(project.name);
                     return (
                       <TableRow key={project.id}>
                         <TableCell sx={{ maxWidth: 200 }}>
                           {project.name}
                         </TableCell>
-                        {(SelectUser != null && SelectUser != currentUserId) && (
+                        {SelectUser != null && SelectUser != currentUserId && (
                           <TableCell sx={{ maxWidth: 300 }}>
                             <Typography>
                               {projectMinutes > 0
