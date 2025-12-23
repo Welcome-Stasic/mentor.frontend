@@ -97,7 +97,7 @@ importers:
         version: 5.0.5(@types/react@19.1.13)(react@19.0.0)(use-sync-external-store@1.6.0(react@19.0.0))
     devDependencies:
       '@biomejs/biome':
-        specifier: ^2.3.10
+        specifier: 2.3.10
         version: 2.3.10
       '@eslint/eslintrc':
         specifier: '3'
@@ -121,13 +121,13 @@ importers:
         specifier: 15.3.0
         version: 15.3.0(eslint@9.35.0)(typescript@5.9.2)
       eslint-config-prettier:
-        specifier: ^10.1.8
+        specifier: 10.1.8
         version: 10.1.8(eslint@9.35.0)
       jest:
         specifier: 29.7.0
         version: 29.7.0(@types/node@20.19.17)(babel-plugin-macros@3.1.0)
       prettier:
-        specifier: ^3.7.4
+        specifier: 3.7.4
         version: 3.7.4
       tsx:
         specifier: 4.21.0
