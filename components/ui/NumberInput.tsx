@@ -74,6 +74,7 @@ const NumberInput = ({ juniorId, juniorPhone }: INumberInputProps) => {
   };
 
   useEffect(() => {
+
     if (juniorId) {
       const initialPhone = juniorPhone || "";
 
@@ -108,10 +109,7 @@ const NumberInput = ({ juniorId, juniorPhone }: INumberInputProps) => {
   };
 
   return (
-    <Box
-      color="text.secondary"
-      sx={{ display: "flex", alignItems: "center" }}
-    >
+    <Box color="text.secondary" sx={{ display: "flex", alignItems: "center" }}>
       Телефон:
       <TextField
         onChange={handleNumberChange(String(juniorId))}

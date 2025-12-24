@@ -26,14 +26,13 @@ interface UserType {
   email: string;
   phone: string;
   departmentName: string;
-};
+}
 interface juniorCardProps {
   junior: UserType;
-};
+}
 function CurrentJuniorCard({ junior }: juniorCardProps) {
   const photoResult = useUserPhoto(junior.appId, junior.photoUrl);
-  console.log(junior.photoUrl);
-  
+
   const photoUrl = useMemo(
     () => photoResult?.data?.url ?? junior.photoUrl ?? "",
     [photoResult?.data, junior.photoUrl]
@@ -70,9 +69,7 @@ function CurrentJuniorCard({ junior }: juniorCardProps) {
         <Box>
           <EmailInput userId={junior.appId} email={junior.email} />
         </Box>
-        <Box 
-          sx={{ display: "flex" }}
-        >
+        <Box sx={{ display: "flex" }}>
           <NumberInput
             juniorId={String(junior.appId)}
             juniorPhone={junior.phone}
@@ -88,7 +85,7 @@ function CurrentJuniorCard({ junior }: juniorCardProps) {
 
 function OldJuniorCard({ junior }: juniorCardProps) {
   const photoResult = useUserPhoto(junior.appId, junior.photoUrl);
-  
+
   const photoUrl = useMemo(
     () => photoResult?.data?.url ?? junior.photoUrl ?? "",
     [photoResult?.data, junior.photoUrl]
@@ -120,7 +117,7 @@ function OldJuniorCard({ junior }: juniorCardProps) {
         }}
       >
         <Box>
-          <Typography  variant="h6" component="div" alignItems="center">
+          <Typography variant="h6" component="div" alignItems="center">
             {junior.name}
           </Typography>
           <Typography component="div" variant="body2" color="text.secondary">
@@ -188,7 +185,11 @@ export default function MyJuniorsPage() {
           >
             <Box>
               {OldJuniors.length === 0 ? (
-                <Typography component="div" variant="body1" color="text.secondary">
+                <Typography
+                  component="div"
+                  variant="body1"
+                  color="text.secondary"
+                >
                   У вас пока нет уволенных стажёров.
                 </Typography>
               ) : (

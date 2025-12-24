@@ -70,7 +70,7 @@ const CalendarItem = ({
 
     return (
       <Box sx={{ p: 0.5, width: '250px'}}>
-        <Typography variant="subtitle2" sx={{ fontWeight: 'bold', mb: 1 }}>
+        <Typography variant="subtitle2" sx={{ fontWeight: 'bold', mb: 2 }}>
           Трудозатраты: {totalHours}:{totalMinutes.toString().padStart(2, '0')}
         </Typography>
         <Box sx={{ maxHeight: 200, overflowY: 'auto' }}>
@@ -91,14 +91,14 @@ const CalendarItem = ({
                 <Typography variant="body2" sx={{ fontWeight: 'medium' }}>
                   {item.task}
                 </Typography>
+                {item.project && (
+                  <Typography variant="caption" fontWeight="600" color="text.secondary">
+                    <strong>Проект: {item.project}</strong>
+                  </Typography>
+                )}
                 {item.comment && (
                   <Typography variant="caption" color="text.secondary" display="block">
                     {item.comment}
-                  </Typography>
-                )}
-                {item.project && (
-                  <Typography variant="caption" color="text.secondary">
-                    Проект: {item.project}
                   </Typography>
                 )}
                 <Typography variant="caption" color="primary" display="block" sx={{ mt: 0.5 }}>
