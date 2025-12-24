@@ -6,6 +6,7 @@ import dayjs from "dayjs";
 import { IReportTimeItem, IWorkTime } from "@/lib/axios/types/time";
 import { useMemo } from "react";
 import { PAGE } from "@/constants";
+import { match } from "assert";
 
 interface ICalendarProps {
   crmId: string;
@@ -33,18 +34,35 @@ const Calendar = ({
   const totalCells = Math.ceil(totalSlots / 7) * 7;
   const isMobile = useMediaQuery("(max-width:768px)");
 
-    const workDetailMap = useMemo(() => {
-    const map = new Map<string, Array<{
-      task: string;
-      comment?: string;
-      minutes: number;
-      project?: string;
-    }>>();
-    
+  const workDetailMap = useMemo(() => {
+    const map = new Map<
+      string,
+      Array<{
+        task: string;
+        comment?: string;
+        minutes: number;
+        project?: string;
+      }>
+    >();
+
     workItems.forEach((item) => {
+      const minutes = item.minutes != null ? item.minutes : 0;
+      // console.log(
+      //   "\n--------------------------------\n" +
+      //     "\nДата: " +
+      //     item.dateTime.split("T")[0],
+      //   " \nТрудозатрата: " +
+      //     item.comment +
+      //     " \nЗатраты: " +
+      //     Math.round(minutes / 60) +
+      //     ":" +
+      //     (minutes % 60) +
+      //     "\n--------------------------------\n"
+      // );
+
       const key = dayjs(item.dateTime).format("YYYY-MM-DD");
       if (!map.has(key)) map.set(key, []);
-      
+
       map.get(key)?.push({
         task: item.task,
         comment: item.comment,
@@ -52,10 +70,10 @@ const Calendar = ({
         project: item.project?.trim(),
       });
     });
-    
+
     return map;
   }, [workItems]);
-  
+
   // Группируем тайм-данные по дате
   const timeMap = useMemo(() => {
     const map = new Map<string, number>();
@@ -74,7 +92,7 @@ const Calendar = ({
     });
     return map;
   }, [workItems]);
-
+  // console.log(Math.floor(workMinutes / 60) + ":" + (workMinutes % 60));
   return (
     <Box
       sx={{
@@ -159,16 +177,14 @@ const Calendar = ({
           const workTimesDetail = workDetailMap.get(date) ?? [];
 
           return (
-
-              <CalendarItem
-                key={date}
-                href={`${PAGE.TIME_TRACKING.pathPrefix}/${crmId}?dateIn=${date}`}
-                day={dayNumber}
-                time={minutes}
-                percentage={percentage}
-                workTimesDetail={workTimesDetail}
-              />
-
+            <CalendarItem
+              key={date}
+              href={`${PAGE.TIME_TRACKING.pathPrefix}/${crmId}?dateIn=${date}`}
+              day={dayNumber}
+              time={minutes}
+              percentage={percentage}
+              workTimesDetail={workTimesDetail}
+            />
           );
         })}
     </Box>

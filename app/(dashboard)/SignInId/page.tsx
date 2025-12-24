@@ -40,7 +40,6 @@ export default function SignInId() {
 
     const userTokenRes = response ? response.Result as string : "";
     // const userTokenRes = "";
-    console.log(accessToken);
     try {
       // await signOut({
       //   redirect: false,
