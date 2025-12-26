@@ -1,19 +1,32 @@
-FROM node:20.12.2-alpine AS base
+# =========================
+# Base image
+# =========================
+FROM node:20.15.1-slim AS base
 
-RUN apk add --no-cache libc6-compat bash curl
+# Установка системных зависимостей
+RUN apt-get update && apt-get install -y \
+    libc6 \
+    bash \
+    curl \
+    ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
 
-# Установка pnpm глобально в base образ
+# Включаем corepack и pnpm
 RUN corepack enable && corepack prepare pnpm@latest --activate
 
 WORKDIR /app
 
-# Этап deps — установка зависимостей
+# =========================
+# Dependencies stage
+# =========================
 FROM base AS deps
 
 COPY package.json pnpm-lock.yaml .npmrc* ./
 RUN pnpm install --frozen-lockfile
 
-# Этап builder — копируем зависимости и билдим
+# =========================
+# Build stage
+# =========================
 FROM base AS builder
 
 WORKDIR /app
@@ -25,7 +38,9 @@ ENV NEXT_TELEMETRY_DISABLED=1
 
 RUN pnpm run build
 
-# Финальный продакшн-образ
+# =========================
+# Production runner
+# =========================
 FROM base AS runner
 
 WORKDIR /app
@@ -35,11 +50,13 @@ ENV NEXT_TELEMETRY_DISABLED=1
 ENV PORT=3000
 ENV HOSTNAME=0.0.0.0
 
-RUN addgroup --system --gid 1001 nodejs && \
-    adduser --system --uid 1001 nextjs
+# Создаём пользователя
+RUN groupadd --system --gid 1001 nodejs && \
+    useradd --system --uid 1001 --gid nodejs nextjs
 
+# Копируем standalone output
 COPY --from=builder --chown=nextjs:nodejs /app/public ./public
-COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./ 
+COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 
 USER nextjs
