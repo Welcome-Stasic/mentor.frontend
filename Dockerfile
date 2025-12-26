@@ -3,7 +3,6 @@
 # =========================
 FROM node:20.15.1-slim AS base
 
-# Установка системных зависимостей
 RUN apt-get update && apt-get install -y \
     libc6 \
     bash \
@@ -11,8 +10,8 @@ RUN apt-get update && apt-get install -y \
     ca-certificates \
     && rm -rf /var/lib/apt/lists/*
 
-# Включаем corepack и pnpm
-RUN corepack enable && corepack prepare pnpm@latest --activate
+# Устанавливаем pnpm напрямую (БЕЗ corepack)
+RUN npm install -g pnpm@9
 
 WORKDIR /app
 
@@ -50,11 +49,9 @@ ENV NEXT_TELEMETRY_DISABLED=1
 ENV PORT=3000
 ENV HOSTNAME=0.0.0.0
 
-# Создаём пользователя
 RUN groupadd --system --gid 1001 nodejs && \
     useradd --system --uid 1001 --gid nodejs nextjs
 
-# Копируем standalone output
 COPY --from=builder --chown=nextjs:nodejs /app/public ./public
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
