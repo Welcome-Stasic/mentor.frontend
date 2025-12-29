@@ -48,7 +48,7 @@ RUN npm install -g pnpm
 USER node
 
 # Устанавливаем порт для Next.js standalone сервера
-ENV PORT=80
+ENV PORT=3000
 
 # Отключаем телеметрию Next.js во время выполнения
 ENV NEXT_TELEMETRY_DISABLE=1
@@ -61,8 +61,8 @@ COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
 COPY --from=builder /app/public ./public
 
-# Открываем порт 80 для HTTP-трафика
-EXPOSE 80
+# Открываем порт 3000 для HTTP-трафика
+EXPOSE 3000
 
 # Запускаем приложение через standalone сервер
 ENTRYPOINT ["node", "server.js"]
