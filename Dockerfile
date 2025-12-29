@@ -44,8 +44,9 @@ FROM node:${NODE_VERSION} AS runner
 # Устанавливаем pnpm в runner stage тоже
 RUN npm install -g pnpm
 
-# Используем встроенного не-root пользователя для безопасности
-USER node
+# Создаем пользователя и группы с явными UID/GID для лучшей совместимости
+RUN addgroup -g 1001 -S nodejs && \
+    adduser -S nextjs -u 1001 -G nodejs
 
 # Устанавливаем порт для Next.js standalone сервера
 ENV PORT=3000
@@ -56,10 +57,17 @@ ENV NEXT_TELEMETRY_DISABLE=1
 # Устанавливаем рабочую директорию
 WORKDIR /app
 
+# Создаем директорию для кэша и устанавливаем правильные права
+RUN mkdir -p /app/.next/cache && \
+    chown -R nextjs:nodejs /app/.next
+
 # Копируем только необходимые файлы из builder stage
-COPY --from=builder /app/.next/standalone ./
-COPY --from=builder /app/.next/static ./.next/static
-COPY --from=builder /app/public ./public
+COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
+COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
+COPY --from=builder --chown=nextjs:nodejs /app/public ./public
+
+# Используем пользователя nextjs вместо node (у него могут быть конфликты)
+USER nextjs
 
 # Открываем порт 3000 для HTTP-трафика
 EXPOSE 3000
