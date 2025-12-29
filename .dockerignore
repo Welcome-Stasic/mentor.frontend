@@ -1,9 +1,16 @@
 node_modules
-.git
-.github
+.next
+out
+
+# Ignore configuration and environment files not needed for production
+*.env.local
+*.env.development
+*.env.test
 *.log
+
+# Ignore local files and directories
+.git
+.gitignore
 Dockerfile
-docker-compose.yml
 .dockerignore
 README.md
-.next

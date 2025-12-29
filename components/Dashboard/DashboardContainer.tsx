@@ -8,7 +8,6 @@ import { useEffect, useState } from 'react';
 import Header from '../Header';
 import { useSession } from 'next-auth/react';
 import SideBar from '../Sidebar';
-import { useOnlineSignalR } from '@/hooks/useOnlineSignalR';
 
 export default function DashboardContainer({ children }: { children: React.ReactNode }) {
   const session = useSession();
