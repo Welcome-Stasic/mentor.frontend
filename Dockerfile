@@ -1,108 +1,64 @@
-# =========================
-# Base image - используем Alpine для минимального размера и безопасности
-# =========================
-FROM node:20-alpine AS base
+# ============================================
+# Base Stage: Use a Lightweight Node.js Image
+# ============================================
 
-# Устанавливаем только необходимые системные пакеты
-RUN apk add --no-cache \
-    libc6-compat \
-    tini \
-    && rm -rf /var/cache/apk/*
+# Use an official Node.js Alpine image (customizable via ARG)
+ARG NODE_VERSION=22.14.0-alpine
+FROM node:${NODE_VERSION} AS base
 
+# Set the working directory inside the container
 WORKDIR /app
 
-# Создаем пользователя и группу без привилегий
-RUN addgroup -g 1001 -S nodejs && \
-    adduser -S nextjs -u 1001 -G nodejs
-
-# =========================
-# Dependencies stage - PRODUCTION зависимости
-# =========================
-FROM base AS deps
-
-# Копируем только файлы зависимостей
+# Copy only package-related files first to leverage Docker caching
 COPY package.json package-lock.json ./
 
-# Устанавливаем ТОЛЬКО production зависимости для финального образа
-RUN npm ci --omit=dev && \
-    npm cache clean --force
+# Set build-time environment variables
+ENV NODE_ENV=production
 
-# =========================
-# Dependencies stage - ALL зависимости для сборки
-# =========================
-FROM base AS builder-deps
 
-WORKDIR /app
+# Install dependencies using npm ci (ensures a clean, reproducible install)
+RUN npm ci --omit=dev && npm cache clean --force
 
-# Копируем файлы зависимостей
-COPY package.json package-lock.json ./
+# ============================================
+# Stage 2: Build the Next.js Application
+# ============================================
 
-# Устанавливаем ВСЕ зависимости (включая dev) для сборки
-RUN npm ci && \
-    npm cache clean --force
-
-# =========================
-# Build stage
-# =========================
+# Use the base image to build the application
 FROM base AS builder
 
-WORKDIR /app
-
-# Копируем установленные зависимости (все)
-COPY --from=builder-deps /app/node_modules ./node_modules
+# Copy the entire application source code into the container
 COPY . .
 
-# Сканируем зависимости на уязвимости
-RUN npm audit --audit-level=high || echo "Audit completed, continuing build..."
-
-ENV NEXT_TELEMETRY_DISABLED=1
-ENV NODE_ENV=production
-
-# Сборка приложения
+# Build the application in standalone mode (outputs to `.next/standalone`)
 RUN npm run build
 
-# =========================
-# Production runner (минимальный образ)
-# =========================
-FROM node:20-alpine AS runner
+# ============================================
+# Stage 3: Create Production Image
+# ============================================
 
+# Use the same Node.js version for the final production container
+FROM node:${NODE_VERSION} AS runner
+
+# Use a built-in non-root user for security best practices
+USER node
+
+
+# Set the port for the Next.js standalone server (default is 3000)
+ENV PORT=80
+
+# Disable Next.js telemetry during runtime
+ENV NEXT_TELEMETRY_DISABLE=1
+
+# Set the working directory inside the container
 WORKDIR /app
 
-# Безопасные переменные окружения
-ENV NODE_ENV=production
-ENV NEXT_TELEMETRY_DISABLED=1
-ENV PORT=3000
-ENV HOSTNAME=0.0.0.0
+# Copy only necessary files from the builder stage to keep the image minimal
+COPY --from=builder /app/.next/standalone ./      
+COPY --from=builder /app/.next/static ./.next/static
+COPY --from=builder /app/public ./public              
 
-# Устанавливаем только libc6-compat и tini (NO curl, NO bash, NO wget!)
-RUN apk add --no-cache libc6-compat tini && \
-    rm -rf /var/cache/apk/* && \
-    addgroup -g 1001 -S nodejs && \
-    adduser -S nextjs -u 1001 -G nodejs
+# Expose port 80 to allow HTTP traffic
+EXPOSE 80
 
-# Копируем только необходимое для production
-COPY --from=builder --chown=nextjs:nodejs /app/public ./public
-COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
-COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
-COPY --from=deps --chown=nextjs:nodejs /app/node_modules ./node_modules
-
-# Защитные меры
-RUN chmod -R 755 /app && \
-    chown -R nextjs:nodejs /app && \
-    # Запрещаем выполнение .sh файлов в приложении
-    find /app -type f -name "*.sh" -exec chmod -x {} \; 2>/dev/null || true && \
-    # Делаем node_modules только для чтения
-    chmod -R 555 /app/node_modules && \
-    # Ограничиваем права на запись в текущую директорию
-    chmod 755 /app
-
-# Переключаемся на непривилегированного пользователя
-USER nextjs
-
-EXPOSE 3000
-
-# Используем tini как init процесс
-ENTRYPOINT ["/sbin/tini", "--"]
-
-# Запускаем приложение
-CMD ["node", "server.js"]
+# Start the application using the standalone server
+ENTRYPOINT ["node", "server.js"]
