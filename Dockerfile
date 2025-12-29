@@ -2,63 +2,67 @@
 # Base Stage: Use a Lightweight Node.js Image
 # ============================================
 
-# Use an official Node.js Alpine image (customizable via ARG)
+# Используем официальный Alpine образ Node.js
 ARG NODE_VERSION=22.14.0-alpine
 FROM node:${NODE_VERSION} AS base
 
-# Set the working directory inside the container
+# Устанавливаем pnpm глобально
+RUN npm install -g pnpm
+
+# Устанавливаем рабочую директорию внутри контейнера
 WORKDIR /app
 
-# Copy only package-related files first to leverage Docker caching
+# Копируем только файлы, связанные с пакетами, для кэширования Docker
 COPY package.json pnpm-lock.yaml ./
 
-# Set build-time environment variables
+# Устанавливаем переменные окружения для сборки
 ENV NODE_ENV=production
 
-
-# Install dependencies using npm ci (ensures a clean, reproducible install)
-RUN npm ci --omit=dev && npm cache clean --force
+# Устанавливаем зависимости через pnpm (а не npm ci)
+RUN pnpm install --prod --frozen-lockfile
 
 # ============================================
 # Stage 2: Build the Next.js Application
 # ============================================
 
-# Use the base image to build the application
+# Используем базовый образ для сборки приложения
 FROM base AS builder
 
-# Copy the entire application source code into the container
+# Копируем весь исходный код приложения в контейнер
 COPY . .
 
-# Build the application in standalone mode (outputs to `.next/standalone`)
-RUN npm run build
+# Собираем приложение в standalone режиме (результат в `.next/standalone`)
+RUN pnpm run build
 
 # ============================================
 # Stage 3: Create Production Image
 # ============================================
 
-# Use the same Node.js version for the final production container
+# Используем ту же версию Node.js для финального production контейнера
 FROM node:${NODE_VERSION} AS runner
 
-# Use a built-in non-root user for security best practices
+# Устанавливаем pnpm в runner stage тоже
+RUN npm install -g pnpm
+
+# Используем встроенного не-root пользователя для безопасности
 USER node
 
-
-# Set the port for the Next.js standalone server (default is 3000)
+# Устанавливаем порт для Next.js standalone сервера
 ENV PORT=80
 
-# Disable Next.js telemetry during runtime
+# Отключаем телеметрию Next.js во время выполнения
 ENV NEXT_TELEMETRY_DISABLE=1
 
-# Set the working directory inside the container
+# Устанавливаем рабочую директорию
 WORKDIR /app
 
-# Copy only necessary files from the builder stage to keep the image minimal
-COPY --from=builder /app/.next/standalone ./      
+# Копируем только необходимые файлы из builder stage
+COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
-COPY --from=builder /app/public ./public              
+COPY --from=builder /app/public ./public
 
-# Expose port 80 to allow HTTP traffic
+# Открываем порт 80 для HTTP-трафика
 EXPOSE 80
 
-# Start the application using the standalone server
+# Запускаем приложение через standalone сервер
 ENTRYPOINT ["node", "server.js"]
