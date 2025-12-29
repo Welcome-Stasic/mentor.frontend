@@ -1,72 +1,65 @@
-# ============================================
-# Base Stage: Use Alpine with proper dependencies
-# ============================================
+FROM node:20-alpine AS base
 
-ARG NODE_VERSION=22.14.0-alpine
-FROM node:${NODE_VERSION} AS base
-
-# Устанавливаем системные зависимости
-RUN apk add --no-cache \
-    libc6-compat \
-    && rm -rf /var/cache/apk/*
-
-# Устанавливаем pnpm
-RUN npm install -g pnpm
-
+# Install dependencies only when needed
+FROM base AS deps
+# Check https://github.com/nodejs/docker-node/tree/b4117f9333da4138b03a546ec926ef50a31506c3#nodealpine to understand why libc6-compat might be needed.
+RUN apk add --no-cache libc6-compat
 WORKDIR /app
 
-# Копируем файлы зависимостей
-COPY package.json package-lock.json ./
+# Install dependencies based on the preferred package manager
+COPY package.json yarn.lock* package-lock.json* pnpm-lock.yaml* .npmrc* ./
+RUN \
+  if [ -f yarn.lock ]; then yarn --frozen-lockfile; \
+  elif [ -f package-lock.json ]; then npm ci; \
+  elif [ -f pnpm-lock.yaml ]; then corepack enable pnpm && pnpm i --frozen-lockfile; \
+  else echo "Lockfile not found." && exit 1; \
+  fi
 
-# Устанавливаем зависимости
-RUN pnpm install --prod --frozen-lockfile
 
-# ============================================
-# Builder Stage
-# ============================================
-
+# Rebuild the source code only when needed
 FROM base AS builder
-
-# Устанавливаем зависимости для сборки (только временно)
-RUN apk add --no-cache \
-    python3 \
-    make \
-    g++ \
-    && ln -sf python3 /usr/bin/python
-
-# Копируем исходный код
+WORKDIR /app
+COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
-# Собираем приложение с явными флагами
-ENV NEXT_TELEMETRY_DISABLED=1
-RUN pnpm run build
+# Next.js collects completely anonymous telemetry data about general usage.
+# Learn more here: https://nextjs.org/telemetry
+# Uncomment the following line in case you want to disable telemetry during the build.
+# ENV NEXT_TELEMETRY_DISABLED=1
 
-# ============================================
-# Production Stage
-# ============================================
+RUN \
+  if [ -f yarn.lock ]; then yarn run build; \
+  elif [ -f package-lock.json ]; then npm run build; \
+  elif [ -f pnpm-lock.yaml ]; then corepack enable pnpm && pnpm run build; \
+  else echo "Lockfile not found." && exit 1; \
+  fi
 
-FROM node:${NODE_VERSION} AS runner
-
-# Устанавливаем только необходимые библиотеки
-RUN apk add --no-cache libc6-compat
-
-# Создаем пользователя
-RUN addgroup -g 1001 -S nodejs && \
-    adduser -S nextjs -u 1001 -G nodejs
-
+# Production image, copy all the files and run next
+FROM base AS runner
 WORKDIR /app
 
-# Создаем директории для кэша
-RUN mkdir -p /app/.next/cache && \
-    chown -R nextjs:nodejs /app/.next
+ENV NODE_ENV=production
+# Uncomment the following line in case you want to disable telemetry during runtime.
+# ENV NEXT_TELEMETRY_DISABLED=1
 
-# Копируем собранное приложение
+RUN addgroup --system --gid 1001 nodejs
+RUN adduser --system --uid 1001 nextjs
+
+COPY --from=builder /app/public ./public
+
+# Automatically leverage output traces to reduce image size
+# https://nextjs.org/docs/advanced-features/output-file-tracing
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
-COPY --from=builder --chown=nextjs:nodejs /app/public ./public
 
 USER nextjs
 
 EXPOSE 3000
+
+ENV PORT=3000
+
+# server.js is created by next build from the standalone output
+# https://nextjs.org/docs/pages/api-reference/config/next-config-js/output
+ENV HOSTNAME="0.0.0.0"
 
 CMD ["node", "server.js"]
