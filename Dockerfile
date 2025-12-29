@@ -10,7 +10,7 @@ FROM node:${NODE_VERSION} AS base
 WORKDIR /app
 
 # Copy only package-related files first to leverage Docker caching
-COPY package.json package-lock.yaml ./
+COPY package.json pnpm-lock.yaml ./
 
 # Set build-time environment variables
 ENV NODE_ENV=production
