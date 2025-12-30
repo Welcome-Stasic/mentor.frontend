@@ -41,16 +41,16 @@ RUN npm ci \
     # Удаляем потенциально опасные файлы
     && find /app/node_modules -name "*.sh" -type f -delete \
     && find /app/node_modules -name "*.exe" -type f -delete \
-    && find /app/node_modules -name "*.bin" -type f -exec chmod -x {} \; \
+    && find /app/node_modules -name "*.bin" -type f -exec chmod -x {} \;
 
 # ============================================
 # STAGE 3: SECURE BUILD WITH DEV DEPENDENCIES
 # ============================================
-FROM base AS build-deps
+FROM base AS build_deps
 WORKDIR /app
 
 # Для сборки нужны dev зависимости
-COPY package.json package-lock.json ./
+COPY package.json package-llock.json ./
 RUN npm ci \
     --ignore-scripts \
     --no-audit \
@@ -60,7 +60,7 @@ RUN npm ci \
 
 FROM base AS builder
 WORKDIR /app
-COPY --from=build-deps /app/node_modules ./node_modules
+COPY --from=build_deps /app/node_modules ./node_modules
 COPY . .
 
 ENV NEXT_TELEMETRY_DISABLED=1
