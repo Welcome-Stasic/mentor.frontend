@@ -54,7 +54,7 @@ ENV NEXT_TELEMETRY_DISABLED=1
 ENV NODE_ENV=production
 
 # Безопасная сборка
-RUN npm run build -- --no-lint
+RUN npm run build
 
 # ============================================
 # STAGE 4: PRODUCTION RUNNER (MAXIMUM SECURITY)
