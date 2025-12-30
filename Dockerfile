@@ -28,11 +28,7 @@ RUN npm ci \
     --no-fund \
     --omit=dev \
     --loglevel=error \
-    && npm cache clean --force \
-    # Удаляем потенциально опасные файлы
-    && find /app/node_modules -name "*.sh" -type f -delete \
-    && find /app/node_modules -name "*.exe" -type f -delete \
-    && find /app/node_modules -name "*.bin" -type f -exec chmod -x {} \;
+    && npm cache clean --force
 
 # ============================================
 # STAGE 3: SECURE BUILD WITH DEV DEPENDENCIES
@@ -67,15 +63,17 @@ FROM node:20-alpine AS runner
 
 WORKDIR /app
 
-# SECURITY HARDENING - УПРОЩАЕМ, чтобы избежать конфликтов
+# SECURITY HARDENING
 RUN apk add --no-cache \
     libc6-compat \
     tini \
+    shadow \
     && rm -rf /var/cache/apk/*
 
-# Создаем безопасного пользователя (В ОДИН ЗАХОД)
+# Создаем безопасного пользователя (используем busybox-совместимый синтаксис)
+# В Alpine Linux usermod находится в пакете shadow
 RUN addgroup -g 10001 -S appgroup \
-    && adduser -S appuser -u 10001 -G appgroup \
+    && adduser -S appuser -u 10001 -G appgroup -H -D \
     && passwd -l appuser 2>/dev/null || true \
     && usermod -s /sbin/nologin appuser \
     # Защита файловой системы
@@ -90,7 +88,7 @@ ENV HOSTNAME="0.0.0.0"
 ENV NODE_NO_WARNINGS=1
 ENV NODE_OPTIONS="--max-http-header-size=16384 --disable-proto=throw"
 
-# Копируем только необходимое с правильными правами
+# Копируем только необходимое
 # Сначала копируем как root, затем меняем владельца
 COPY --from=builder /app/public ./public
 COPY --from=builder /app/.next/standalone ./
@@ -105,13 +103,15 @@ RUN chown -R appuser:appgroup /app \
     && mkdir -p /app/tmp /app/logs \
     && chown appuser:appgroup /app/tmp /app/logs \
     && chmod 755 /app/tmp /app/logs \
-    # Разрешаем чтение node_modules и public
-    && chmod -R 444 /app/node_modules \
-    && chmod -R 444 /app/public \
+    # Разрешаем чтение node_modules, public и .next/static
+    && find /app/node_modules -type f -exec chmod 444 {} \; 2>/dev/null || true \
+    && find /app/public -type f -exec chmod 444 {} \; 2>/dev/null || true \
+    && find /app/.next/static -type f -exec chmod 444 {} \; 2>/dev/null || true \
     # Разрешаем выполнение server.js
-    && chmod 555 /app/server.js \
-    # .next/static для чтения
-    && chmod -R 444 /app/.next/static
+    && chmod 555 /app/server.js 2>/dev/null || true \
+    # Разрешаем навигацию по директориям
+    && find /app -type d -exec chmod 555 {} \; 2>/dev/null || true \
+    && chmod 755 /app/tmp /app/logs
 
 # SECURE MOUNTS
 VOLUME ["/app/logs"]
