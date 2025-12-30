@@ -1,16 +1,54 @@
-node_modules
-.next
-out
+# Игнорируем всё
+*
 
-# Ignore configuration and environment files not needed for production
-*.env.local
-*.env.development
-*.env.test
-*.log
+# Разрешаем только необходимое
+!public/
+!src/
+!app/
+!pages/
+!components/
+!constants/
+!context/
+!hooks/
+!providers/
+!stores/
+!types/
+!lib/
+!middleware.ts
+!*.json
+!*.js
+!*.ts
+!*.tsx
+!*.css
+!*.scss
+!next.config.js
+!next.config.ts
+!tsconfig.json
 
-# Ignore local files and directories
+# Явно исключаем ОПАСНЫЕ файлы
 .git
 .gitignore
-Dockerfile
 .dockerignore
+Dockerfile
+docker-compose.yml
 README.md
+*.log
+*.md
+*.txt
+test/
+tests/
+__tests__/
+coverage/
+.vscode/
+.idea/
+node_modules/
+dist/
+build/
+.env*
+.npmrc
+.yarnrc
+*.pem
+*.key
+*.crt
+*.secret
+*.sh

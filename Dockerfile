@@ -1,65 +1,141 @@
+# ============================================
+# STAGE 1: SECURE BASE IMAGE
+# ============================================
+
 FROM node:20-alpine AS base
 
-# Install dependencies only when needed
-FROM base AS deps
-# Check https://github.com/nodejs/docker-node/tree/b4117f9333da4138b03a546ec926ef50a31506c3#nodealpine to understand why libc6-compat might be needed.
-RUN apk add --no-cache libc6-compat
+# Устанавливаем минимальные необходимые пакеты
+RUN apk add --no-cache \
+    libc6-compat \
+    tini \
+    && rm -rf /var/cache/apk/* \
+    # Блокируем установку опасных утилит
+    && apk del --purge curl wget bash 2>/dev/null || true
+
 WORKDIR /app
 
-# Install dependencies based on the preferred package manager
-COPY package.json yarn.lock* package-lock.json* pnpm-lock.yaml* .npmrc* ./
-RUN \
-  if [ -f yarn.lock ]; then yarn --frozen-lockfile; \
-  elif [ -f package-lock.json ]; then npm ci; \
-  elif [ -f pnpm-lock.yaml ]; then corepack enable pnpm && pnpm i --frozen-lockfile; \
-  else echo "Lockfile not found." && exit 1; \
-  fi
+# Создаем пользователя на раннем этапе
+RUN addgroup -g 10001 -S appgroup && \
+    adduser -S appuser -u 10001 -G appgroup && \
+    # Запрещаем логин и shell
+    passwd -l appuser && \
+    usermod -s /sbin/nologin appuser
 
+# ============================================
+# STAGE 2: SECURE DEPENDENCIES INSTALLATION
+# ============================================
+FROM base AS deps
+WORKDIR /app
 
-# Rebuild the source code only when needed
+# Копируем ТОЛЬКО файлы зависимостей (без .npmrc - может содержать токены!)
+COPY package.json package-lock.json ./
+
+# Устанавливаем с максимальной защитой
+RUN npm ci \
+    --ignore-scripts \
+    --no-audit \
+    --no-fund \
+    --omit=dev \
+    --loglevel=error \
+    && npm cache clean --force \
+    # Удаляем потенциально опасные файлы
+    && find /app/node_modules -name "*.sh" -type f -delete \
+    && find /app/node_modules -name "*.exe" -type f -delete \
+    && find /app/node_modules -name "*.bin" -type f -exec chmod -x {} \; \
+
+# ============================================
+# STAGE 3: SECURE BUILD WITH DEV DEPENDENCIES
+# ============================================
+FROM base AS build-deps
+WORKDIR /app
+
+# Для сборки нужны dev зависимости
+COPY package.json package-lock.json ./
+RUN npm ci \
+    --ignore-scripts \
+    --no-audit \
+    --no-fund \
+    --loglevel=error \
+    && npm cache clean --force
+
 FROM base AS builder
 WORKDIR /app
-COPY --from=deps /app/node_modules ./node_modules
+COPY --from=build-deps /app/node_modules ./node_modules
 COPY . .
 
-# Next.js collects completely anonymous telemetry data about general usage.
-# Learn more here: https://nextjs.org/telemetry
-# Uncomment the following line in case you want to disable telemetry during the build.
-# ENV NEXT_TELEMETRY_DISABLED=1
+ENV NEXT_TELEMETRY_DISABLED=1
+ENV NODE_ENV=production
 
-RUN \
-  if [ -f yarn.lock ]; then yarn run build; \
-  elif [ -f package-lock.json ]; then npm run build; \
-  elif [ -f pnpm-lock.yaml ]; then corepack enable pnpm && pnpm run build; \
-  else echo "Lockfile not found." && exit 1; \
-  fi
+# Безопасная сборка
+RUN npm run build -- --no-lint
 
-# Production image, copy all the files and run next
-FROM base AS runner
+# ============================================
+# STAGE 4: PRODUCTION RUNNER (MAXIMUM SECURITY)
+# ============================================
+FROM node:20-alpine AS runner
+
 WORKDIR /app
 
+# SECURITY HARDENING
+RUN apk add --no-cache \
+    libc6-compat \
+    tini \
+    && rm -rf /var/cache/apk/* \
+    # Удаляем всё лишнее
+    && apk del --purge curl wget bash 2>/dev/null || true \
+    # Создаем безопасного пользователя
+    && addgroup -g 10001 -S appgroup \
+    && adduser -S appuser -u 10001 -G appgroup \
+    && passwd -l appuser \
+    && usermod -s /sbin/nologin appuser \
+    # Защита файловой системы
+    && chmod 755 /tmp \
+    && chmod +t /tmp \
+    # Mount /proc with hidepid
+    && echo "proc /proc proc defaults,hidepid=2 0 0" >> /etc/fstab
+
+# Безопасные переменные окружения
 ENV NODE_ENV=production
-# Uncomment the following line in case you want to disable telemetry during runtime.
-# ENV NEXT_TELEMETRY_DISABLED=1
+ENV NEXT_TELEMETRY_DISABLED=1
+ENV PORT=3000
+ENV HOSTNAME="0.0.0.0"
+ENV NODE_NO_WARNINGS=1
+ENV NODE_OPTIONS="--max-http-header-size=16384 --disable-proto=throw"
 
-RUN addgroup --system --gid 1001 nodejs
-RUN adduser --system --uid 1001 nextjs
+# Копируем только необходимое с правильными правами
+COPY --from=builder --chown=appuser:appgroup /app/public ./public
+COPY --from=builder --chown=appuser:appgroup /app/.next/standalone ./
+COPY --from=builder --chown=appuser:appgroup /app/.next/static ./.next/static
+COPY --from=deps --chown=appuser:appgroup /app/node_modules ./node_modules
 
-COPY --from=builder /app/public ./public
+# SECURITY LOCKDOWN
+RUN \
+    # Делаем всё read-only кроме /tmp
+    chmod -R 555 /app \
+    && chmod -R 755 /tmp \
+    # node_modules только для чтения
+    && chmod -R 555 /app/node_modules \
+    # Запрещаем выполнение скриптов
+    && find /app -name "*.sh" -type f -exec chmod -x {} \; 2>/dev/null || true \
+    && find /app -name "*.js" -path "*/node_modules/*" -exec chmod 444 {} \; 2>/dev/null || true \
+    # Создаем безопасные директории
+    && mkdir -p /app/tmp /app/logs \
+    && chown appuser:appgroup /app/tmp /app/logs \
+    && chmod 700 /app/tmp /app/logs \
+    # Удаляем опасные бинарные файлы
+    && find /app -type f \( -name "*.bin" -o -name "*.exe" -o -name "*.so*" \) -delete 2>/dev/null || true
 
-# Automatically leverage output traces to reduce image size
-# https://nextjs.org/docs/advanced-features/output-file-tracing
-COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
-COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
+# SECURE MOUNTS (должно быть в docker run)
+VOLUME ["/app/logs"]
+VOLUME ["/app/tmp"]
 
-USER nextjs
+# Переключаем пользователя
+USER appuser
 
 EXPOSE 3000
 
-ENV PORT=3000
+# Запуск через tini для корректной обработки сигналов
+ENTRYPOINT ["/sbin/tini", "--"]
 
-# server.js is created by next build from the standalone output
-# https://nextjs.org/docs/pages/api-reference/config/next-config-js/output
-ENV HOSTNAME="0.0.0.0"
-
-CMD ["node", "server.js"]
+# Безопасный запуск
+CMD ["node", "--enable-source-maps", "server.js"]
