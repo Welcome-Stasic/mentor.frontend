@@ -5,6 +5,10 @@ on:
     branches:
       - master
 
+permissions:
+  contents: read
+  packages: write
+
 env:
   IMAGE: ghcr.io/12bsg12/eris.mentor:latest
 
