@@ -8,18 +8,9 @@ FROM node:20-alpine AS base
 RUN apk add --no-cache \
     libc6-compat \
     tini \
-    && rm -rf /var/cache/apk/* \
-    # Блокируем установку опасных утилит
-    && apk del --purge curl wget bash 2>/dev/null || true
+    && rm -rf /var/cache/apk/*
 
 WORKDIR /app
-
-# Создаем пользователя на раннем этапе
-RUN addgroup -g 10001 -S appgroup && \
-    adduser -S appuser -u 10001 -G appgroup && \
-    # Запрещаем логин и shell
-    passwd -l appuser && \
-    usermod -s /sbin/nologin appuser
 
 # ============================================
 # STAGE 2: SECURE DEPENDENCIES INSTALLATION
@@ -27,7 +18,7 @@ RUN addgroup -g 10001 -S appgroup && \
 FROM base AS deps
 WORKDIR /app
 
-# Копируем ТОЛЬКО файлы зависимостей (без .npmrc - может содержать токены!)
+# Копируем ТОЛЬКО файлы зависимостей
 COPY package.json package-lock.json ./
 
 # Устанавливаем с максимальной защитой
@@ -76,23 +67,20 @@ FROM node:20-alpine AS runner
 
 WORKDIR /app
 
-# SECURITY HARDENING
+# SECURITY HARDENING - УПРОЩАЕМ, чтобы избежать конфликтов
 RUN apk add --no-cache \
     libc6-compat \
     tini \
-    && rm -rf /var/cache/apk/* \
-    # Удаляем всё лишнее
-    && apk del --purge curl wget bash 2>/dev/null || true \
-    # Создаем безопасного пользователя
-    && addgroup -g 10001 -S appgroup \
+    && rm -rf /var/cache/apk/*
+
+# Создаем безопасного пользователя (В ОДИН ЗАХОД)
+RUN addgroup -g 10001 -S appgroup \
     && adduser -S appuser -u 10001 -G appgroup \
-    && passwd -l appuser \
+    && passwd -l appuser 2>/dev/null || true \
     && usermod -s /sbin/nologin appuser \
     # Защита файловой системы
     && chmod 755 /tmp \
-    && chmod +t /tmp \
-    # Mount /proc with hidepid
-    && echo "proc /proc proc defaults,hidepid=2 0 0" >> /etc/fstab
+    && chmod +t /tmp
 
 # Безопасные переменные окружения
 ENV NODE_ENV=production
@@ -103,29 +91,29 @@ ENV NODE_NO_WARNINGS=1
 ENV NODE_OPTIONS="--max-http-header-size=16384 --disable-proto=throw"
 
 # Копируем только необходимое с правильными правами
-COPY --from=builder --chown=appuser:appgroup /app/public ./public
-COPY --from=builder --chown=appuser:appgroup /app/.next/standalone ./
-COPY --from=builder --chown=appuser:appgroup /app/.next/static ./.next/static
-COPY --from=deps --chown=appuser:appgroup /app/node_modules ./node_modules
+# Сначала копируем как root, затем меняем владельца
+COPY --from=builder /app/public ./public
+COPY --from=builder /app/.next/standalone ./
+COPY --from=builder /app/.next/static ./.next/static
+COPY --from=deps /app/node_modules ./node_modules
 
-# SECURITY LOCKDOWN
-RUN \
-    # Делаем всё read-only кроме /tmp
-    chmod -R 555 /app \
-    && chmod -R 755 /tmp \
-    # node_modules только для чтения
-    && chmod -R 555 /app/node_modules \
-    # Запрещаем выполнение скриптов
-    && find /app -name "*.sh" -type f -exec chmod -x {} \; 2>/dev/null || true \
-    && find /app -name "*.js" -path "*/node_modules/*" -exec chmod 444 {} \; 2>/dev/null || true \
-    # Создаем безопасные директории
+# Устанавливаем правильные права и владельца
+RUN chown -R appuser:appgroup /app \
+    # Делаем всё read-only кроме необходимых директорий
+    && chmod -R 555 /app \
+    # Создаем безопасные директории для записи
     && mkdir -p /app/tmp /app/logs \
     && chown appuser:appgroup /app/tmp /app/logs \
-    && chmod 700 /app/tmp /app/logs \
-    # Удаляем опасные бинарные файлы
-    && find /app -type f \( -name "*.bin" -o -name "*.exe" -o -name "*.so*" \) -delete 2>/dev/null || true
+    && chmod 755 /app/tmp /app/logs \
+    # Разрешаем чтение node_modules и public
+    && chmod -R 444 /app/node_modules \
+    && chmod -R 444 /app/public \
+    # Разрешаем выполнение server.js
+    && chmod 555 /app/server.js \
+    # .next/static для чтения
+    && chmod -R 444 /app/.next/static
 
-# SECURE MOUNTS (должно быть в docker run)
+# SECURE MOUNTS
 VOLUME ["/app/logs"]
 VOLUME ["/app/tmp"]
 
