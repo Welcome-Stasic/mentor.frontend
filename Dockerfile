@@ -50,7 +50,7 @@ FROM base AS build_deps
 WORKDIR /app
 
 # Для сборки нужны dev зависимости
-COPY package.json package-llock.json ./
+COPY package.json package-lock.json ./
 RUN npm ci \
     --ignore-scripts \
     --no-audit \
