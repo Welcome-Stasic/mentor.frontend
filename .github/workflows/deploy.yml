@@ -36,17 +36,17 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
-  # deploy:
-  #   name: Deploy on Self-Hosted Runner
-  #   runs-on: self-hosted
-  #   needs: build
+  deploy:
+    name: Deploy on Self-Hosted Runner
+    runs-on: self-hosted
+    needs: build
 
-  #   steps:
-  #     - name: Log in to GHCR
-  #       run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.repository_owner }} --password-stdin
+    steps:
+      - name: Log in to GHCR
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.repository_owner }} --password-stdin
 
-  #     - name: Deploy application
-  #       working-directory: /home/runner/app
-  #       run: |
-  #         docker compose pull
-  #         docker compose up -d --remove-orphans
+      - name: Deploy application
+        working-directory: /home/runner/app
+        run: |
+          docker compose pull
+          docker compose up -d --remove-orphans
