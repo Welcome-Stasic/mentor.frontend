@@ -7,7 +7,7 @@ import { API } from '@/lib/axios';
 import { redirect } from 'next/navigation';
 import { decodeToken } from '@/lib/utils/decodeToken';
 
-const getCurrentUser = async (token: string) => {
+export const getCurrentUser = async (token: string) => {
   const response = await API.user.me(token);
   return response?.Result ?? null;
 };

@@ -48,7 +48,7 @@ const TimeDialog = ({
   error,
 }: ITimeDialog) => {
   const isEditable = type === 'create' || time?.type === 2;
-
+  console.log("Проекты"+projects);
   const title = type === 'create' ? 'Добавить задачу' : 'Редактирование задачи';
   const btnName = type === 'create' ? 'Создать' : 'Изменить';
 

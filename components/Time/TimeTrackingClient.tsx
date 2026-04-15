@@ -57,7 +57,6 @@ export default function TimeTrackingClient() {
 
   const reportTime = useReportTime(selectedTimeUserId, firstDay, lastDay);
   const workTimes = useWorkTime(selectedTimeUserId, firstDay, lastDay);
-  console.log(workTimes);
 
   const isLoading =
     reportTime.isLoading ||
