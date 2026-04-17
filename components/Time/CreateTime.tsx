@@ -6,6 +6,8 @@ import TimeDialog, { ITimeDialogFormData } from './TimeDialog';
 import { useCreateWorkTime } from '@/hooks/useCreateWorkTime';
 import { useProjects } from '@/hooks/project/useProjects';
 import { useValidateMinutes } from '@/hooks/useValidateMinutes';
+import { useCrmUser } from '@/hooks/user/useCrmUser';
+import { useCurrentUser } from '@/hooks/useMe';
 
 interface Props {
   userId: string;
@@ -23,9 +25,10 @@ const CreateTimeBtn = ({
   disable = false,
 }: Props) => {
   const validateMinutes = useValidateMinutes(totalReportMinutes, totalWorkMinutes);
-
-  const projectsResult = useProjects(userId);
-
+  const userById = useCurrentUser();
+  const userAppId = userById.data?.id ? userById.data?.id : "";
+  console.log(userAppId);
+  const projectsResult = useProjects(userAppId);
   const projects = projectsResult?.data ?? [];
 
   const [open, setOpen] = useState(false);

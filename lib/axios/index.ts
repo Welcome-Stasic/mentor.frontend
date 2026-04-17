@@ -11,8 +11,8 @@ import {
   resetPassword,
   yandexLogin,
   googleLogin,
-  // sendSMSCode,
-  // loginBySMSCode,
+  sendSMSCode,
+  loginBySMSCode,
 } from "./requests/auth";
 import { me } from "./requests/me";
 import {
@@ -73,8 +73,8 @@ export const API = {
   auth: {
     login,
     crmLogin,
-    // sendSMSCode,
-    // loginBySMSCode,
+    sendSMSCode,
+    loginBySMSCode,
     refreshToken,
     register,
     forgotPassword,

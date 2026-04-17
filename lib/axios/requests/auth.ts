@@ -7,8 +7,8 @@ import {
   AUTH_RESET_PASSWORD,
   AUTH_YANDEX_LOGIN,
   AUTH_GOOGLE_LOGIN,
-  // AUTH_SENDCODE_LOGIN,
-  // AUTH_CODESYCCESS_LOGIN,
+  AUTH_SENDCODE_LOGIN,
+  AUTH_CODESYCCESS_LOGIN,
 } from "./../endpoint";
 import axiosInstance from "../axios";
 import {
@@ -45,23 +45,24 @@ export async function login(
     return null;
   }
 }
-// export async function sendSMSCode(
-//   phone: string
-// ): Promise<IApiResponse<any> | null> {
-//   return axiosInstance.post(AUTH_SENDCODE_LOGIN, {
-//     userPhone: phone,
-//   });
-// }
+export async function sendSMSCode(
+  phone: string
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+): Promise<IApiResponse<any> | null> {
+  return axiosInstance.post(AUTH_SENDCODE_LOGIN, {
+    userPhone: phone,
+  });
+}
 
-// export async function loginBySMSCode(
-//   phone: string,
-//   code: string
-// ): Promise<IApiResponse<ITokens> | null> {
-//   return axiosInstance.post(AUTH_CODESYCCESS_LOGIN, {
-//     userPhone: phone,
-//     code: code,
-//   });
-// }
+export async function loginBySMSCode(
+  phone: string,
+  code: string
+): Promise<IApiResponse<ITokens> | null> {
+  return axiosInstance.post(AUTH_CODESYCCESS_LOGIN, {
+    userPhone: phone,
+    code: code,
+  });
+}
 
 export async function crmLogin(
   payload: ICrmLoginDto

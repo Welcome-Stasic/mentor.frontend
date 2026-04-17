@@ -46,20 +46,6 @@ const Calendar = ({
     >();
 
     workItems.forEach((item) => {
-      const minutes = item.minutes != null ? item.minutes : 0;
-      // console.log(
-      //   "\n--------------------------------\n" +
-      //     "\nДата: " +
-      //     item.dateTime.split("T")[0],
-      //   " \nТрудозатрата: " +
-      //     item.comment +
-      //     " \nЗатраты: " +
-      //     Math.round(minutes / 60) +
-      //     ":" +
-      //     (minutes % 60) +
-      //     "\n--------------------------------\n"
-      // );
-
       const key = dayjs(item.dateTime).format("YYYY-MM-DD");
       if (!map.has(key)) map.set(key, []);
 
@@ -92,7 +78,6 @@ const Calendar = ({
     });
     return map;
   }, [workItems]);
-  // console.log(Math.floor(workMinutes / 60) + ":" + (workMinutes % 60));
   return (
     <Box
       sx={{
