@@ -47,6 +47,7 @@ export async function login(
 }
 export async function sendSMSCode(
   phone: string
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 ): Promise<IApiResponse<any> | null> {
   return axiosInstance.post(AUTH_SENDCODE_LOGIN, {
     userPhone: phone,
