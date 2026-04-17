@@ -41,8 +41,8 @@ export default function ExtraAuth() {
           <YandexLogin />
           {/* Кнопка Гугл */}
           <GoogleLogin />
-          {/* Кнопка Входа по номеру
-        <PhoneLogin/> */}
+          {/* Кнопка Входа по номеру */}
+        {/* <PhoneLogin/> */}
         </Box>
       </Box>
     </Box>
