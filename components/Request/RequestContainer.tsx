@@ -22,7 +22,7 @@ import { useDepartments } from "@/hooks/useDepartments";
 import { useQuizStatues } from "@/hooks/useQuizStatues";
 import { IQuizStatus } from "@/lib/axios/types/quiz";
 
-const ITEMS_PER_PAGE = 10;
+const ITEMS_PER_PAGE = 12;
 const SPACING = 2;
 
 const formatNumber = (value: number) =>
