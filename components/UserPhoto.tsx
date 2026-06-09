@@ -23,19 +23,22 @@ export const UserPhoto = ({
   //const isOnline = useCurrentUserStore((i) => i.onlineUserIds.includes(userId));
 
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const photoResult = useUserPhoto(userId, elmaPhotoUrl);
+  //const photoResult = useUserPhoto(userId, elmaPhotoUrl);
 
-  const photoUrl = useMemo(
-    () => photoResult?.data?.url ?? elmaPhotoUrl ?? '',
-    [photoResult?.data, elmaPhotoUrl],
-  );
+  // const photoUrl = useMemo(
+  //   () => photoResult?.data?.url ?? elmaPhotoUrl ?? '',
+  //   [photoResult?.data, elmaPhotoUrl],
+  // );
+
+  const photoUrl = elmaPhotoUrl;
 
   const openDialog = useCallback(() => setIsDialogOpen(true), []);
   const closeDialog = useCallback(() => setIsDialogOpen(false), []);
 
   const hasPhoto = Boolean(photoUrl);
 
-  const isLoading = Boolean(!userId || photoResult?.isLoading);
+  //const isLoading = Boolean(!userId || photoResult?.isLoading);
+  const isLoading = Boolean(!userId || false);
 
   return (
     <>
