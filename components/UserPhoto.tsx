@@ -1,8 +1,8 @@
 import { Dialog, DialogContent, Skeleton, Tooltip } from '@mui/material';
 import StatusAvatar from './StatusAvatar';
 import { useState, useCallback, useMemo } from 'react';
-import { useUserPhoto } from '@/hooks/useUserPhoto';
-import { useCurrentUserStore } from '@/providers/current-user-provider';
+// import { useUserPhoto } from '@/hooks/useUserPhoto';
+// import { useCurrentUserStore } from '@/providers/current-user-provider';
 
 interface IUserPhotoProps {
   userId: string;
@@ -30,7 +30,7 @@ export const UserPhoto = ({
   //   [photoResult?.data, elmaPhotoUrl],
   // );
 
-  const photoUrl = elmaPhotoUrl;
+  const photoUrl = elmaPhotoUrl ?? '';
 
   const openDialog = useCallback(() => setIsDialogOpen(true), []);
   const closeDialog = useCallback(() => setIsDialogOpen(false), []);
