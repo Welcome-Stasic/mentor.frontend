@@ -54,8 +54,9 @@ export const UserCard = ({ user }: IUserCardProps) => {
         avatar={
           <UserPhoto
             userId={user.id}
+            name={fullName}
             elmaPhotoUrl={crmUser?.photoUrl}
-            isOnline={user.isOnline}
+            isOnline={false}
           />
         }
         title={

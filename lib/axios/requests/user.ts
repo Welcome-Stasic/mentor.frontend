@@ -93,13 +93,23 @@ export async function updatePhotoCurrentUser(
 export async function getUserPhoto(
   userId: string,
   token: string,
-): Promise<IApiResponse<IUserPhoto> | null> {
-  if (!token || !userId) return null;
+): Promise<IUserPhoto | null> {
+  if (!token || !userId) {
+    return null;
+  }
 
-  const authAxios = await getAuthAxios(token);
-  const res = await authAxios.get<IApiResponse<IUserPhoto>>(`${USER_PHOTO_INFO}/${userId}`);
+  try {
+    const authAxios = await getAuthAxios(token);
 
-  return res.data;
+    const { data } = await authAxios.get<IApiResponse<IUserPhoto>>(
+      `${USER_PHOTO_INFO}/${userId}`
+    );
+
+    return data.Result ?? null;
+  } catch (error) {
+    console.error('Failed to load user photo', error);
+    return null;
+  }
 }
 
 export async function getReferralLink(
@@ -255,12 +265,12 @@ export async function getTokenFromId(
 ): Promise<IApiResponse<string> | null> {
   if (!userId) return null;
 
-    const authAxios = await getAuthAxios(token);
-    const res = await authAxios.get<IApiResponse<string>>(
-      `${ADMIN_LOGIN_ID_USER}/${userId}`
-    );
-    return res.data;
-    // return "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6IjAxOTA2Zjg1LWM0OTgtNDk1Zi04NDU0LWMyNjk3NmIxNGZkOCIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL25hbWUiOiJjaHVuYXJldmFzIiwiZW1haWwiOiJjaGFzQGVyaXNraXAucnUiLCJpc1dpdGhPdXRRdWl6IjoiVHJ1ZSIsInNlc3Npb25JZCI6ImIxYzhlZWU5LWRhNTMtNDRhNi04M2E4LTU2YmM0Y2ExMDBlNSIsImlzcyI6Imh0dHBzOi8vZGV2ZWxvcG1lbnRtZW50b3IuZXJpc2tpcC5jb206NDQ0MyIsImF1ZCI6Imh0dHBzOi8vZGV2ZWxvcG1lbnRtZW50b3IuZXJpc2tpcC5jb206NDQ0MyJ9.-IKQ8Ts48DMe3uxihAggogiDVweVAMf51Rfi5-CfiVU";
+  const authAxios = await getAuthAxios(token);
+  const res = await authAxios.get<IApiResponse<string>>(
+    `${ADMIN_LOGIN_ID_USER}/${userId}`
+  );
+  return res.data;
+  // return "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6IjAxOTA2Zjg1LWM0OTgtNDk1Zi04NDU0LWMyNjk3NmIxNGZkOCIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL25hbWUiOiJjaHVuYXJldmFzIiwiZW1haWwiOiJjaGFzQGVyaXNraXAucnUiLCJpc1dpdGhPdXRRdWl6IjoiVHJ1ZSIsInNlc3Npb25JZCI6ImIxYzhlZWU5LWRhNTMtNDRhNi04M2E4LTU2YmM0Y2ExMDBlNSIsImlzcyI6Imh0dHBzOi8vZGV2ZWxvcG1lbnRtZW50b3IuZXJpc2tpcC5jb206NDQ0MyIsImF1ZCI6Imh0dHBzOi8vZGV2ZWxvcG1lbnRtZW50b3IuZXJpc2tpcC5jb206NDQ0MyJ9.-IKQ8Ts48DMe3uxihAggogiDVweVAMf51Rfi5-CfiVU";
 
 }
 

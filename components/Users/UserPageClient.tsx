@@ -128,9 +128,10 @@ export const UserPageClient = ({ userId }: IUserPageClientProps) => {
               <Skeleton variant="circular" width={60} height={60} />
             ) : (
               <UserPhoto
+                name={user?.fullName ?? ''}
                 userId={user?.id ?? ''}
                 elmaPhotoUrl={crmUser?.photoUrl}
-                isOnline={user?.isOnline ?? false}
+                isOnline={false}
               />
             )
           }

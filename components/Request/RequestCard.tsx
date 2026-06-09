@@ -87,7 +87,7 @@ export const RequestCard = ({ quiz, departments, statues }: IRequestCardProps) =
           boxShadow: 2,
         }}>
         <CardHeader
-          avatar={<UserPhoto userId={user?.id ?? ''} isOnline={user?.isOnline ?? false} />}
+          avatar={<UserPhoto userId={user?.id ?? ''} isOnline={false} name={user?.fullName ?? ''} />}
           title={
             <Typography
               variant="subtitle1"

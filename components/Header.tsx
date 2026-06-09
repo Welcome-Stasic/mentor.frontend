@@ -28,7 +28,7 @@ export default function Header({ handleDrawerOpen, open }: IHeaderProps) {
 
   const isMobile = useMediaQuery('(max-width:768px)');
 
-  const { userName, id, photoUrl } = useCurrentUserStore((state) => state);
+  const { userName, id, photoUrl, fullName } = useCurrentUserStore((state) => state);
 
   const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);
 
@@ -85,6 +85,7 @@ export default function Header({ handleDrawerOpen, open }: IHeaderProps) {
             <Tooltip title={userName}>
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
                 <UserPhoto
+                  name={fullName ?? ''}
                   userId={id}
                   isOnline
                   elmaPhotoUrl={picture || photoUrl || ''}

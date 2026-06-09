@@ -9,31 +9,20 @@ export const useUserPhoto = (
   elmaPhotoUrl?: string
 ) => {
   const { data: session } = useSession();
-
   const accessToken = session?.user?.accessToken;
 
   return useQuery({
     queryKey: ['userPhoto', userId],
     enabled: !!accessToken && !!userId && !elmaPhotoUrl,
-    queryFn: async () => {
-      try {
-        const response = await API.user.getUserPhoto(
-          userId!,
-          accessToken!
-        );
-        return response?.Result ?? null;
-      } catch (error) {
-        console.error('Failed to load user photo', error);
-        return null;
-      }
-    },
-    // Не делать повторные запросы при ошибке
+    queryFn: () =>
+      API.user.getUserPhoto(
+        userId!,
+        accessToken!,
+      ),
+    placeholderData: null,
+    staleTime: Infinity,
+    gcTime: 1000 * 60 * 60 * 24,
     retry: false,
-    // Не рефетчить при фокусе окна
     refetchOnWindowFocus: false,
-    // Кэшируем результат
-    staleTime: 1000 * 60 * 60, // 1 час
-    // Храним в кеше
-    gcTime: 1000 * 60 * 60 * 24, // 24 часа
   });
 };

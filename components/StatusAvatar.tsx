@@ -3,6 +3,7 @@ import { Avatar, Badge, Skeleton } from '@mui/material';
 import { CSSObject, styled } from '@mui/material/styles';
 
 interface StatusAvatarProps {
+  name: string;
   photoUrl: string;
   online?: boolean;
   onAvatarClick?: () => void;
@@ -51,7 +52,49 @@ const StyledBadge = styled(Badge, {
   };
 });
 
+function stringToColor(string: string) {
+  let hash = 0;
+  let i;
+
+  for (i = 0; i < string.length; i += 1) {
+    hash = string.charCodeAt(i) + ((hash << 5) - hash);
+  }
+
+  let color = '#';
+
+  for (i = 0; i < 3; i += 1) {
+    const value = (hash >> (i * 8)) & 0xff;
+    color += `00${value.toString(16)}`.slice(-2);
+  }
+
+  return color;
+}
+
+function stringAvatar(name: string) {
+  const safeName = name?.trim();
+
+  if (!safeName) {
+    return {
+      sx: { bgcolor: '#cccccc' },
+      children: '?',
+    };
+  }
+
+  const nameParts = safeName.split(' ');
+  const firstInitial = nameParts[0]?.[0] || '';
+  const secondInitial = nameParts[1]?.[0] || '';
+  const initials = `${firstInitial}${secondInitial}`.toUpperCase();
+
+  return {
+    sx: {
+      bgcolor: stringToColor(safeName),
+    },
+    children: initials || '?',
+  };
+}
+
 const StatusAvatar: React.FC<StatusAvatarProps> = ({
+  name,
   photoUrl,
   online = false,
   onAvatarClick,
@@ -67,6 +110,7 @@ const StatusAvatar: React.FC<StatusAvatarProps> = ({
       variant="dot"
       online={online}>
       <Avatar
+        {...stringAvatar(name)}
         src={photoUrl}
         sx={{
           width,
