@@ -14,11 +14,17 @@ export const useUserPhoto = (
   return useQuery({
     queryKey: ['userPhoto', userId],
     enabled: !!accessToken && !!userId && !elmaPhotoUrl,
-    queryFn: () =>
-      API.user.getUserPhoto(
-        userId!,
-        accessToken!,
-      ),
+    queryFn: async () => {
+      try {
+        const result = await API.user.getUserPhoto(
+          userId!,
+          accessToken!,
+        )
+        return result?.Result ?? null;
+      } catch {
+        return null;
+      }
+    },
     placeholderData: null,
     staleTime: Infinity,
     gcTime: 1000 * 60 * 60 * 24,
