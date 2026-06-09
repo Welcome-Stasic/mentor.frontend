@@ -93,7 +93,7 @@ export async function updatePhotoCurrentUser(
 export async function getUserPhoto(
   userId: string,
   token: string,
-): Promise<IUserPhoto | null> {
+) {
   if (!token || !userId) {
     return null;
   }
@@ -101,11 +101,11 @@ export async function getUserPhoto(
   try {
     const authAxios = await getAuthAxios(token);
 
-    const { data } = await authAxios.get<IApiResponse<IUserPhoto>>(
+    const res = await authAxios.get<IApiResponse<IUserPhoto>>(
       `${USER_PHOTO_INFO}/${userId}`
     );
 
-    return data.Result ?? null;
+    return res.data ?? null;
   } catch (error) {
     console.error('Failed to load user photo', error);
     return null;
