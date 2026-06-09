@@ -35,7 +35,7 @@ export const UserPhoto = ({
 
   const hasPhoto = Boolean(photoUrl);
 
-  const isLoading = Boolean(!userId || photoResult.isLoading);
+  const isLoading = Boolean(!userId || photoResult?.isLoading);
 
   return (
     <>

@@ -100,9 +100,9 @@ RUN chown -R appuser:appgroup /app \
     # Делаем всё read-only кроме необходимых директорий
     && chmod -R 555 /app \
     # Создаем безопасные директории для записи
-    && mkdir -p /app/tmp /app/logs \
-    && chown appuser:appgroup /app/tmp /app/logs \
-    && chmod 755 /app/tmp /app/logs \
+    && mkdir -p /app/tmp /app/logs /app/.next/cache \
+    && chown appuser:appgroup /app/tmp /app/logs /app/.next/cache\
+    && chmod 755 /app/tmp /app/logs /app/.next/cache \
     # Разрешаем чтение node_modules, public и .next/static
     && find /app/node_modules -type f -exec chmod 444 {} \; 2>/dev/null || true \
     && find /app/public -type f -exec chmod 444 {} \; 2>/dev/null || true \
@@ -116,6 +116,7 @@ RUN chown -R appuser:appgroup /app \
 # SECURE MOUNTS
 VOLUME ["/app/logs"]
 VOLUME ["/app/tmp"]
+VOLUME ["/app/.next/cache"]
 
 # Переключаем пользователя
 USER appuser
