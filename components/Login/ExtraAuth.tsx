@@ -27,7 +27,7 @@ export default function ExtraAuth() {
         <Box
           sx={{
             display: "flex",
-            justifyContent: "space-between",
+            justifyContent: "center",
             gap: "10px",
             width: "100%",
             flexWrap: "wrap",
@@ -40,7 +40,7 @@ export default function ExtraAuth() {
           {/* Кнопка Яндекс */}
           <YandexLogin />
           {/* Кнопка Гугл */}
-          <GoogleLogin />
+          {/* <GoogleLogin /> */}
           {/* Кнопка Входа по номеру */}
         {/* <PhoneLogin/> */}
         </Box>
