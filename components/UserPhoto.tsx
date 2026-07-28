@@ -24,17 +24,17 @@ export const UserPhoto = ({
 }: IUserPhotoProps) => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
-  // const photoResult = useUserPhoto(userId, elmaPhotoUrl);
-  // const photoUrl = useMemo(
-  //   () => photoResult?.data?.url ?? elmaPhotoUrl ?? '',
-  //   [photoResult?.data, elmaPhotoUrl],
-  // );
-  // const hasPhoto = Boolean(photoUrl);
-  // const isLoading = Boolean(!userId || photoResult?.isLoading);
-
-  const photoUrl = elmaPhotoUrl ?? '';
+  const photoResult = useUserPhoto(userId, elmaPhotoUrl);
+  const photoUrl = useMemo(
+    () => photoResult?.data?.url ?? elmaPhotoUrl ?? '',
+    [photoResult?.data, elmaPhotoUrl],
+  );
   const hasPhoto = Boolean(photoUrl);
-  const isLoading = Boolean(!userId || false);
+  const isLoading = Boolean(!userId || photoResult?.isLoading);
+
+  // const photoUrl = elmaPhotoUrl ?? '';
+  // const hasPhoto = Boolean(photoUrl);
+  // const isLoading = Boolean(!userId || false);
 
   const openDialog = useCallback(() => setIsDialogOpen(true), []);
   const closeDialog = useCallback(() => setIsDialogOpen(false), []);
