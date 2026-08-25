@@ -35,10 +35,10 @@ type LinkItem = {
 const links: LinkItem[] = [
   { title: 'Корпоративная страница', url: 'https://home.eriskip.com' },
   { title: 'Телефонный справочник', url: 'https://phone.eriskip.com/' },
-  { title: 'Учет рабочего времени', url: 'https://t.me/EriskipTimeControlBot' },
-  { title: 'Инструкции', url: 'http://drexplain.eriskip.com' },
-  { title: 'Азбука', url: 'https://t.me/Eris_Guide_Bot' },
-  { title: 'Библиотекарь', url: 'https://t.me/eris_library_bot' },
+  { title: 'Учет рабочего времени', url: 'https://max.ru/id5920017357_bot' },
+  { title: 'Инструкции', url: 'https://docs.eriskip.com' },
+  { title: 'Азбука', url: 'https://abc.eriskip.com' },
+  // { title: 'Библиотекарь', url: 'https://t.me/eris_library_bot' },
   { title: 'Музей', url: 'https://museum.eriskip.com' },
   { title: 'ELMA', url: 'https://elma.eriskip.com' },
 ];
