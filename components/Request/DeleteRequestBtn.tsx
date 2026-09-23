@@ -1,4 +1,4 @@
-import { useDeleteQuiz } from '@/hooks/useDeleteQuiz';
+import { useDeleteUser } from '@/hooks/user/useDeleteUser';
 import { IQuiz } from '@/lib/axios/types/quiz';
 import { Delete } from '@mui/icons-material';
 import { IconButton, Tooltip } from '@mui/material';
@@ -9,12 +9,12 @@ interface IDeleteRequestBtnProps {
 }
 
 export const DeleteRequestBtn = ({ quiz, disable = false }: IDeleteRequestBtnProps) => {
-  const deleteQuiz = useDeleteQuiz();
+  const deleteUser = useDeleteUser();
 
   const handleDelete = async () => {
     const confirmed = confirm(`Удалить анкету?`);
     if (confirmed) {
-      await deleteQuiz.mutateAsync(quiz.id);
+      await deleteUser.mutateAsync(quiz.applicationUserId);
     }
   };
 
@@ -23,7 +23,7 @@ export const DeleteRequestBtn = ({ quiz, disable = false }: IDeleteRequestBtnPro
       <IconButton
         color="error"
         onClick={handleDelete}
-        loading={deleteQuiz.isPending}
+        loading={deleteUser.isPending}
         disabled={disable}>
         <Delete />
       </IconButton>

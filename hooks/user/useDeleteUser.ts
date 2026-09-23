@@ -14,6 +14,7 @@ export const useDeleteUser = () => {
 
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['users'] });
+      queryClient.invalidateQueries({ queryKey: ['quizzes'] });
     },
   });
 };
