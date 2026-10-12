@@ -1,7 +1,7 @@
-import { API } from '@/lib/axios';
-import { useQuery } from '@tanstack/react-query';
-import { useSession } from 'next-auth/react';
-
+import { API } from "@/lib/axios";
+import { QuizFilters } from "@/types/filters/types";
+import { useQuery } from "@tanstack/react-query";
+import { useSession } from "next-auth/react";
 export const useQuizzes = ({
   pageNumber = 1,
   pageSize = 10,
@@ -12,7 +12,8 @@ export const useQuizzes = ({
   dateOut,
   dateTimeColumn,
   statusId,
-  search
+  search,
+  filters,
 }: {
   pageNumber?: number;
   pageSize?: number;
@@ -24,13 +25,13 @@ export const useQuizzes = ({
   dateTimeColumn?: string;
   statusId?: string;
   search?: string;
+  filters?: QuizFilters;
 }) => {
   const session = useSession();
-  const accessToken = session.data?.user.accessToken || '';
-
+  const accessToken = session.data?.user.accessToken || "";
   return useQuery({
     queryKey: [
-      'quizzes',
+      "quizzes",
       pageNumber,
       pageSize,
       sortColumn,
@@ -40,7 +41,8 @@ export const useQuizzes = ({
       dateOut,
       dateTimeColumn,
       statusId,
-      search
+      search,
+      filters,
     ],
     queryFn: () =>
       API.quiz.getAll(accessToken, {
@@ -53,7 +55,8 @@ export const useQuizzes = ({
         dateOut,
         dateTimeColumn,
         statusId,
-        search
+        search,
+        ...filters,
       }),
     enabled: !!accessToken,
     select: (data) => data?.Result || null,

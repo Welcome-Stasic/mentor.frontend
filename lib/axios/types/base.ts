@@ -15,4 +15,5 @@ export interface IPaginationResponse<T> {
   pageSize: number;
   sortColumn?: string;
   sortDirection?: string;
+  isCurrentlyWorking: boolean;
 }

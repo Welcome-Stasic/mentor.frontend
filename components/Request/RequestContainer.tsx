@@ -1,5 +1,6 @@
 "use client";
 import { useQuizzes } from "@/hooks/useQuizzes";
+import FilterAltOutlinedIcon from "@mui/icons-material/FilterAltOutlined";
 import {
   Box,
   Typography,
@@ -15,12 +16,19 @@ import {
   styled,
   Skeleton,
 } from "@mui/material";
-import { parseAsInteger, useQueryState } from "nuqs";
+import {
+  parseAsArrayOf,
+  parseAsInteger,
+  parseAsString,
+  useQueryState,
+} from "nuqs";
 import { useMemo, useState, useEffect } from "react";
 import { RequestCard } from "./RequestCard";
 import { useDepartments } from "@/hooks/useDepartments";
 import { useQuizStatues } from "@/hooks/useQuizStatues";
 import { IQuizStatus } from "@/lib/axios/types/quiz";
+import { FilterKey, QuizFilters } from "@/types/filters/types";
+import { QUIZ_FILTERS } from "@/types/filters/config";
 
 const ITEMS_PER_PAGE = 12;
 const SPACING = 2;
@@ -53,7 +61,7 @@ export const RequestContainer = () => {
   });
   const [pageUrl, setPageUrl] = useQueryState(
     "page",
-    parseAsInteger.withDefault(1)
+    parseAsInteger.withDefault(1),
   );
   const [sortUrl, setSortUrl] = useQueryState("sort", { defaultValue: "" });
   const [search, setSearch] = useQueryState("search", { defaultValue: "" });
@@ -63,12 +71,27 @@ export const RequestContainer = () => {
     name: "Все",
     quizCount: 0,
   });
+
+  const [activeKeys, setActiveKeys] = useQueryState(
+    "filters",
+    parseAsArrayOf(parseAsString).withDefault([]),
+  );
+
+  const filters = useMemo<QuizFilters>(
+    () =>
+      Object.fromEntries(
+        QUIZ_FILTERS.map((f) => [f.key, activeKeys.includes(f.key)]),
+      ) as QuizFilters,
+    [activeKeys],
+  );
+
   const { data, isLoading, isError } = useQuizzes({
     pageNumber: pageUrl,
     pageSize: ITEMS_PER_PAGE,
     sortDirection: sortUrl === "newest" ? "desc" : "asc",
     statusId: category.id,
     search,
+    filters,
   });
 
   const { data: departments } = useDepartments();
@@ -99,9 +122,24 @@ export const RequestContainer = () => {
     }
   }, [statues, statusUrl]);
 
+  const toggleFilter = (key: FilterKey) => {
+    const willTurnOn = !filters[key];
+
+    if (willTurnOn && key === "isCurrentlyWorking") {
+      setCategory({ id: "", name: "Все", quizCount: 0 });
+      setStatusUrl("");
+    }
+
+    setActiveKeys((prev) =>
+      prev.includes(key) ? prev.filter((k) => k !== key) : [...prev, key],
+    );
+    setPageUrl(1);
+  };
+
   const handleCategoryChange = (selectedCategory: IQuizStatus) => {
     setCategory(selectedCategory);
     setPageUrl(1);
+    setActiveKeys((prev) => prev.filter((k) => k !== "isCurrentlyWorking"));
     setStatusUrl(selectedCategory.id);
   };
 
@@ -122,56 +160,70 @@ export const RequestContainer = () => {
 
   return (
     <Box>
-      <Box
-        mb={4}
-        display="flex"
-        flexWrap="wrap"
-        gap={2}
-        justifyContent="space-between"
-      >
-        <Box sx={{ display: "flex", gap: 1, flexWrap: "wrap" }}>
-          {categories.map((cat) => (
+      <Box>
+        <Box
+          mb={1}
+          display="flex"
+          flexWrap="wrap"
+          gap={2}
+          justifyContent="space-between"
+        >
+          <Box sx={{ display: "flex", gap: 1, flexWrap: "wrap" }}>
+            {categories.map((cat) => (
+              <StyledChip
+                key={cat.id}
+                label={
+                  <>
+                    {cat.name}
+                    {cat.quizCount > 0 && (
+                      <CountBox>{formatNumber(cat.quizCount)}</CountBox>
+                    )}
+                  </>
+                }
+                color={category.id === cat.id ? "primary" : "default"}
+                variant={category.id === cat.id ? "filled" : "outlined"}
+                onClick={() => handleCategoryChange(cat)}
+                clickable
+              />
+            ))}
+          </Box>
+          <Box sx={{ display: "flex", gap: 2, flexWrap: "wrap" }}>
+            <TextField
+              label="Поиск"
+              variant="outlined"
+              size="small"
+              value={search}
+              onChange={handleSearchChange}
+              sx={{ minWidth: 200 }}
+            />
+            <FormControl size="small" sx={{ minWidth: 180 }}>
+              <InputLabel id="sort-select-label">Сортировка по дате</InputLabel>
+              <Select
+                labelId="sort-select-label"
+                value={sortUrl}
+                onChange={handleSortChange}
+                label="Сортировка по дате"
+              >
+                <MenuItem value="newest">Сначала новые</MenuItem>
+                <MenuItem value="oldest">Сначала старые</MenuItem>
+              </Select>
+            </FormControl>
+          </Box>
+        </Box>
+        <Box mb={2} display="flex" flexWrap="wrap" gap={2}>
+          {QUIZ_FILTERS.map((f) => (
             <StyledChip
-              key={cat.id}
-              label={
-                <>
-                  {cat.name}
-                  {cat.quizCount > 0 && (
-                    <CountBox>{formatNumber(cat.quizCount)}</CountBox>
-                  )}
-                </>
-              }
-              color={category.id === cat.id ? "primary" : "default"}
-              variant={category.id === cat.id ? "filled" : "outlined"}
-              onClick={() => handleCategoryChange(cat)}
+              key={f.key}
+              icon={<FilterAltOutlinedIcon />}
+              label={f.label}
+              color={filters[f.key] ? "primary" : "default"}
+              variant={filters[f.key] ? "filled" : "outlined"}
+              onClick={() => toggleFilter(f.key)}
               clickable
             />
           ))}
         </Box>
-        <Box sx={{ display: "flex", gap: 2, flexWrap: "wrap" }}>
-          <TextField
-            label="Поиск"
-            variant="outlined"
-            size="small"
-            value={search}
-            onChange={handleSearchChange}
-            sx={{ minWidth: 200 }}
-          />
-          <FormControl size="small" sx={{ minWidth: 180 }}>
-            <InputLabel id="sort-select-label">Сортировка по дате</InputLabel>
-            <Select
-              labelId="sort-select-label"
-              value={sortUrl}
-              onChange={handleSortChange}
-              label="Сортировка по дате"
-            >
-              <MenuItem value="newest">Сначала новые</MenuItem>
-              <MenuItem value="oldest">Сначала старые</MenuItem>
-            </Select>
-          </FormControl>
-        </Box>
       </Box>
-
       {/* Карточки */}
       <Grid container spacing={SPACING}>
         {isLoading ? (

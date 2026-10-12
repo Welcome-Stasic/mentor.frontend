@@ -52,6 +52,7 @@ export async function getAll(
     applicationUserId?: string | null;
     statusId?: string;
     search?: string;
+    isCurrentlyWorking?: boolean;
   } = {},
 ): Promise<IApiResponse<IPaginationResponse<IQuiz>> | null> {
   try {

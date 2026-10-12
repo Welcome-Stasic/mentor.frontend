@@ -11,6 +11,7 @@ export type QuizzesState = {
   pageSize: number;
   sortColumn: string;
   sortDirection: string;
+  isCurrentlyWorking: boolean;
 };
 
 export type QuizzesActions = {
@@ -27,6 +28,7 @@ export const defaultInitState: QuizzesState = {
   pageSize: 10,
   sortColumn: '',
   sortDirection: '',
+  isCurrentlyWorking: false,
 };
 
 export const initQuizzesState = async (token: string): Promise<QuizzesState> => {
@@ -47,6 +49,7 @@ export const initQuizzesState = async (token: string): Promise<QuizzesState> => 
       pageSize: response.Result.pageSize,
       sortColumn: response.Result.sortColumn || '',
       sortDirection: response.Result.sortDirection || '',
+      isCurrentlyWorking: response.Result.isCurrentlyWorking || false
     };
 
     return state;
