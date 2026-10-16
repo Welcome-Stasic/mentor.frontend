@@ -274,7 +274,7 @@ export default function QuizFirstForm() {
             validate: (value) => {
               if (
                 selectedInstitution &&
-                !selectedInstitution?.type
+                !selectedInstitution?.type?
                   .toLocaleLowerCase()
                   .trim()
                   .includes("школа") &&
