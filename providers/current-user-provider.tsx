@@ -8,18 +8,28 @@ import {
   initCurrentUserState,
 } from '@/stores/current-user-store';
 import { useSession } from 'next-auth/react';
-import { type ReactNode, createContext, useRef, useContext, useEffect } from 'react';
+import {
+  type ReactNode,
+  createContext,
+  useRef,
+  useContext,
+  useEffect,
+  useCallback,
+} from 'react';
 import { useStore } from 'zustand';
 
 export type UserStoreApi = ReturnType<typeof createCurrentUserStore>;
 
-export const CurrentUserStoreContext = createContext<UserStoreApi | undefined>(undefined);
+export const CurrentUserStoreContext =
+  createContext<UserStoreApi | undefined>(undefined);
 
 export interface UserStoreProviderProps {
   children: ReactNode;
 }
 
-export const CurrentUserStoreProvider = ({ children }: UserStoreProviderProps) => {
+export const CurrentUserStoreProvider = ({
+  children,
+}: UserStoreProviderProps) => {
   const session = useSession();
   const accessToken = session.data?.user.accessToken || '';
   const roles = session.data?.user.roles || [];
@@ -31,16 +41,19 @@ export const CurrentUserStoreProvider = ({ children }: UserStoreProviderProps) =
     storeRef.current = createCurrentUserStore(defaultInitState);
   }
 
-  const load = async (accessToken: string) => {
-    const initialState = await initCurrentUserState(accessToken, isAdmin);
-    if (initialState) {
-      storeRef.current?.setState(initialState);
-    }
-  };
-  
+  const load = useCallback(
+    async (token: string) => {
+      const initialState = await initCurrentUserState(token, isAdmin);
+      if (initialState) {
+        storeRef.current?.setState(initialState);
+      }
+    },
+    [isAdmin]
+  );
+
   useEffect(() => {
     load(accessToken);
-  }, [accessToken]);
+  }, [accessToken, load]);
 
   return (
     <CurrentUserStoreContext.Provider value={storeRef.current}>
@@ -49,11 +62,15 @@ export const CurrentUserStoreProvider = ({ children }: UserStoreProviderProps) =
   );
 };
 
-export const useCurrentUserStore = <T,>(selector: (store: CurrentUserStore) => T): T => {
+export const useCurrentUserStore = <T,>(
+  selector: (store: CurrentUserStore) => T
+): T => {
   const currentUserStoreContext = useContext(CurrentUserStoreContext);
 
   if (!currentUserStoreContext) {
-    throw new Error(`useCurrentUserStore must be used within CurrentUserStoreProvider`);
+    throw new Error(
+      `useCurrentUserStore must be used within CurrentUserStoreProvider`
+    );
   }
 
   return useStore(currentUserStoreContext, selector);

@@ -286,7 +286,7 @@ export interface IPage {
   name: string,
   pathPrefix: string;
   roles: string[],
-  icon: OverridableComponent<SvgIconTypeMap<{}, "svg">>
+  icon: OverridableComponent<SvgIconTypeMap>
 }
 
 type KeyPage = "HOME" | "REQUEST" | "TIME_TRACKING" | "SIGNIN_TOKEN" | "REFERRAL" | "MY_JUNIORS" | "MY_MENTOR" | "PROJECTS" | "USERS" | "USER"
