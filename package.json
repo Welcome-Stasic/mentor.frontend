@@ -9,7 +9,8 @@
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "upgrade": "npm update",
-    "upgrade:major": "npx npm-check-updates -u"
+    "upgrade:major": "npx npm-check-updates -u",
+    "prepare": "husky"
   },
   "dependencies": {
     "@emotion/cache": "11.14.0",
@@ -48,6 +49,7 @@
     "eslint": "9.39.2",
     "eslint-config-next": "15.5.9",
     "eslint-config-prettier": "10.1.8",
+    "husky": "9.1.7",
     "prettier": "3.7.4",
     "tsx": "4.21.0",
     "typescript": "5.9.3"

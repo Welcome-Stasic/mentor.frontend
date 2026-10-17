@@ -35,7 +35,7 @@ function CurrentJuniorCard({ junior }: juniorCardProps) {
 
   const photoUrl = useMemo(
     () => photoResult?.data?.url ?? junior.photoUrl ?? "",
-    [photoResult?.data, junior.photoUrl]
+    [photoResult?.data, junior.photoUrl],
   );
 
   return (
@@ -88,7 +88,7 @@ function OldJuniorCard({ junior }: juniorCardProps) {
 
   const photoUrl = useMemo(
     () => photoResult?.data?.url ?? junior.photoUrl ?? "",
-    [photoResult?.data, junior.photoUrl]
+    [photoResult?.data, junior.photoUrl],
   );
 
   return (

@@ -21,10 +21,16 @@ import {
   TableRow,
   Typography,
 } from "@mui/material";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useQueryState } from "nuqs";
 import dayjs from "dayjs";
 import { useUserById } from "@/hooks/useUserById";
+
+  const formatTime = (minutes: number) => {
+    const hours = Math.floor(minutes / 60);
+    const mins = minutes % 60;
+    return `${hours}:${mins.toString().padStart(2, "0")}`;
+  };
 
 export default function ProjectsPage() {
   const [SelectUser, setSelectUser] = useQueryState("selectUser");
@@ -66,26 +72,20 @@ export default function ProjectsPage() {
 
   const isLoading = projectResult.isPending || projectTime.isLoading;
 
-  const formatTime = (minutes: number) => {
-    const hours = Math.floor(minutes / 60);
-    const mins = minutes % 60;
-    return `${hours}:${mins.toString().padStart(2, "0")}`;
-  };
+  const getProjectTime = useCallback(
+    (projectName: string) => {
+      return projectTime.projectTimeMap.get(projectName) || 0;
+    },
+    [projectTime.projectTimeMap]
+  );
 
-  const getProjectTime = (projectName: string) => {
-    return projectTime.projectTimeMap.get(projectName) || 0;
-  };
-
-  const getFilteredProjects = (projectList: typeof projects) => {
-    if (allDisplayProject) {
-      return projectList;
-    } else {
-      return projectList.filter((project) => {
-        const projectMinutes = getProjectTime(project.name);
-        return projectMinutes > 0;
-      });
-    }
-  };
+  const getFilteredProjects = useCallback(
+    (projectList: typeof projects) => {
+      if (allDisplayProject) {
+        return projectList;
+      }
+      return projectList.filter((project) => getProjectTime(project.name) > 0);
+    }, [allDisplayProject, getProjectTime]);
 
   const groupedByProject = useMemo(() => {
     const filteredProjects = getFilteredProjects(projects);
@@ -107,11 +107,11 @@ export default function ProjectsPage() {
     });
 
     return entries;
-  }, [projects, currentUserFullName, allDisplayProject]);
+  }, [projects, currentUserFullName, getFilteredProjects]);
 
   const filteredProjects = useMemo(() => {
     return getFilteredProjects(projects);
-  }, [projects, allDisplayProject]);
+  }, [projects, getFilteredProjects]);
 
   return (
     <>

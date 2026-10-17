@@ -4,18 +4,17 @@ import { API } from '@/lib/axios';
 import { useSession } from 'next-auth/react';
 import { useQuery } from '@tanstack/react-query';
 import { IGetAllJuniorsDto } from '@/lib/axios/types/user';
-import { useMemo } from 'react';
 
 export const useAllJuniors = (params: IGetAllJuniorsDto, isEnabled: boolean) => {
   const { data: session } = useSession();
   const accessToken = session?.user?.accessToken ?? '';
 
-  const stableParams = useMemo(() => params, [JSON.stringify(params)]);
+  const paramsKey = JSON.stringify(params);
 
   return useQuery({
-    queryKey: ['allJuniors', stableParams],
+    queryKey: ['allJuniors', paramsKey, accessToken],
     queryFn: async () => {
-      const data = await API.user.getAllJuniors(stableParams, accessToken);
+      const data = await API.user.getAllJuniors(params, accessToken);
       return data?.Result ?? [];
     },
     enabled: Boolean(accessToken && isEnabled),

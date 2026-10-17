@@ -236,7 +236,7 @@ export default function QuizFirstForm() {
             return (
               <Autocomplete
                 disablePortal
-                options={institutionResult?.data ?? []}
+                options={Array.from( new Map((institutionResult?.data ?? []).map((i) => [i.id, i])).values())}
                 getOptionLabel={(option) => option.name || ""}
                 isOptionEqualToValue={(option, value) => option.id === value.id}
                 value={selectedInstitution}
@@ -272,17 +272,9 @@ export default function QuizFirstForm() {
         <TextField
           {...register("specialty", {
             validate: (value) => {
-              if (
-                selectedInstitution &&
-                !selectedInstitution?.type
-                  .toLocaleLowerCase()
-                  .trim()
-                  .includes("школа") &&
-                !value
-              ) {
+              if ( selectedInstitution && !selectedInstitution?.type?.trim().toLocaleLowerCase().includes("школа") && !value ) {
                 return "Поле обязательно";
               }
-
               return true;
             },
           })}

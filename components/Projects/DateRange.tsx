@@ -21,9 +21,9 @@ export default function DateRange() {
     serialize: (value) => value || "",
   });
   useEffect(() => {
-    setDateFrom(dayjs().startOf("month").format("DD.MM.YYYY"));
-    setDateTo(dayjs().format('DD.MM.YYYY'));
-  }, []);
+    if (!dateFrom) setDateFrom(dayjs().startOf("month").format("DD.MM.YYYY"));
+    if (!dateTo) setDateTo(dayjs().format("DD.MM.YYYY"));
+  }, [setDateFrom, setDateTo, dateFrom, dateTo]);
 
   const dateFromValue = useMemo(() => {
     return dateFrom ? dayjs(dateFrom, "DD.MM.YYYY") : null;

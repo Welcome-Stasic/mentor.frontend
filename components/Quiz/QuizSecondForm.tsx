@@ -21,7 +21,6 @@ import { useForm, SubmitHandler } from 'react-hook-form';
 import BackdropLoader from '../BackdropLoader';
 import { useQuestions } from '@/hooks/useQuestions';
 import { redirect } from 'next/navigation';
-
 interface IFormData {
   [key: string]: string;
 }
@@ -51,9 +50,7 @@ export default function QuizSecondForm() {
 
   const selectedDepartmentLabel = selectedDepartment?.label || '';
 
-  const deptQuestions = selectedDepartmentLabel
-    ? DepartmentQuestions[selectedDepartmentLabel] || []
-    : [];
+  const deptQuestions = selectedDepartmentLabel ? DepartmentQuestions[selectedDepartmentLabel] || [] : [];
 
   const onSubmit: SubmitHandler<IFormData> = async (data) => {
     setErrorMessages([]);
@@ -134,37 +131,43 @@ export default function QuizSecondForm() {
         flexDirection="column"
         gap={2}
         onSubmit={handleSubmit(onSubmit)}>
-        {questions.map((q) => {
-          const name = `q${q.number}`;
-          const isRequired = !!q.requiredMessage;
-          const validationRules = isRequired ? { required: q.requiredMessage } : {};
-          const error = errors[name];
+        {[...new Set(questions.map((q) => q.section))].map((section) => (
+            <Box key={section} sx={{ mb: 4 }}>
+              <Typography variant="h6" sx={{ mb: 2 }}>
+                Блок {section}
+              </Typography>
 
-          return (
-            <FormControl key={name} fullWidth error={!!error}>
-              <FormLabel sx={{ mb: 1 }}>{q.question}</FormLabel>
-              {q.type === 'select' ? (
-                <Select defaultValue="" {...register(name, validationRules)}>
-                  {q.options?.map((opt) => (
-                    <MenuItem key={opt.value} value={opt.value ?? ''}>
-                      {opt.label}
-                    </MenuItem>
-                  ))}
-                </Select>
-              ) : (
-                <TextField
-                  multiline
-                  minRows={2}
-                  {...register(name, validationRules)}
-                  error={!!error}
-                />
-              )}
+              {questions.filter((q) => q.section === section).map((q) => {
+                  const name = `q${q.number}`;
+                  const isRequired = !!q.requiredMessage;
+                  const validationRules = isRequired ? { required: q.requiredMessage } : {};
+                  const error = errors[name];
 
-              <FormHelperText>{error?.message}</FormHelperText>
-            </FormControl>
-          );
-        })}
-
+                  return (
+                    <FormControl key={name} fullWidth error={!!error}>
+                      <FormLabel sx={{ mb: 1 }}>{q.question}</FormLabel>
+                      {q.type === 'select' ? (
+                        <Select defaultValue="" {...register(name, validationRules)}>
+                          {q.options?.map((opt) => (
+                            <MenuItem key={opt.value} value={opt.value ?? ''}>
+                              {opt.label}
+                            </MenuItem>
+                          ))}
+                        </Select>
+                      ) : (
+                        <TextField
+                          multiline
+                          minRows={2}
+                          {...register(name, validationRules)}
+                          error={!!error}
+                        />
+                      )}
+                      <FormHelperText>{error?.message}</FormHelperText>
+                    </FormControl>
+                  );
+                })}
+            </Box>
+          ))}
         {/* Рендер дополнительных вопросов для выбранного отдела */}
         {deptQuestions.map((q) => {
           const name = `dept_q${q.number}`;
