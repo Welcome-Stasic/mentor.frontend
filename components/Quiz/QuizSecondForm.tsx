@@ -21,7 +21,6 @@ import { useForm, SubmitHandler } from 'react-hook-form';
 import BackdropLoader from '../BackdropLoader';
 import { useQuestions } from '@/hooks/useQuestions';
 import { redirect } from 'next/navigation';
-
 interface IFormData {
   [key: string]: string;
 }
