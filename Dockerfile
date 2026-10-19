@@ -12,6 +12,8 @@ RUN apk add --no-cache \
 
 WORKDIR /app
 
+RUN corepack enable && corepack prepare pnpm@latest --activate
+
 # ============================================
 # STAGE 2: SECURE DEPENDENCIES INSTALLATION
 # ============================================
@@ -19,16 +21,10 @@ FROM base AS deps
 WORKDIR /app
 
 # Копируем ТОЛЬКО файлы зависимостей
-COPY package.json package-lock.json ./
+COPY package.json pnpm-lock.yaml ./
 
 # Устанавливаем с максимальной защитой
-RUN npm ci \
-    --ignore-scripts \
-    --no-audit \
-    --no-fund \
-    --omit=dev \
-    --loglevel=error \
-    && npm cache clean --force
+RUN pnpm install --frozen-lockfile --ignore-scripts --reporter=append-only
 
 # ============================================
 # STAGE 3: SECURE BUILD WITH DEV DEPENDENCIES
@@ -37,13 +33,8 @@ FROM base AS build_deps
 WORKDIR /app
 
 # Для сборки нужны dev зависимости
-COPY package.json package-lock.json ./
-RUN npm ci \
-    --ignore-scripts \
-    --no-audit \
-    --no-fund \
-    --loglevel=error \
-    && npm cache clean --force
+COPY package.json pnpm-lock.yaml ./
+RUN pnpm install --frozen-lockfile --ignore-scripts --reporter=append-only
 
 FROM base AS builder
 WORKDIR /app
@@ -54,7 +45,7 @@ ENV NEXT_TELEMETRY_DISABLED=1
 ENV NODE_ENV=production
 
 # Безопасная сборка
-RUN npm run build
+RUN pnpm run build
 
 # ============================================
 # STAGE 4: PRODUCTION RUNNER (MAXIMUM SECURITY)
@@ -93,8 +84,6 @@ ENV NODE_OPTIONS="--max-http-header-size=16384 --disable-proto=throw"
 COPY --from=builder /app/public ./public
 COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
-COPY --from=deps /app/node_modules ./node_modules
-
 # Устанавливаем правильные права и владельца
 RUN chown -R appuser:appgroup /app \
     # Делаем всё read-only кроме необходимых директорий
@@ -103,14 +92,9 @@ RUN chown -R appuser:appgroup /app \
     && mkdir -p /app/tmp /app/logs /app/.next/cache \
     && chown appuser:appgroup /app/tmp /app/logs /app/.next/cache\
     && chmod 755 /app/tmp /app/logs /app/.next/cache \
-    # Разрешаем чтение node_modules, public и .next/static
-    && find /app/node_modules -type f -exec chmod 444 {} \; 2>/dev/null || true \
-    && find /app/public -type f -exec chmod 444 {} \; 2>/dev/null || true \
-    && find /app/.next/static -type f -exec chmod 444 {} \; 2>/dev/null || true \
     # Разрешаем выполнение server.js
     && chmod 555 /app/server.js 2>/dev/null || true \
     # Разрешаем навигацию по директориям
-    && find /app -type d -exec chmod 555 {} \; 2>/dev/null || true \
     && chmod 755 /app/tmp /app/logs
 
 # SECURE MOUNTS
