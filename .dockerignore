@@ -24,6 +24,7 @@
 !next.config.js
 !next.config.ts
 !tsconfig.json
+!pnpm-lock.yaml
 
 # Явно исключаем ОПАСНЫЕ файлы
 .git
